@@ -339,7 +339,7 @@ The difference compared to earlier is that we ask the Game API if we should do a
 
 If the layout of the `GameMemory` struct changes and a reload occurs, then the code in the game DLL might end up using the wrong memory for the wrong thing. This can lead to weird behavior or in worst case a crash. In the case of weird behavior you'll probably notice it, so then you can just issue a full reset (as described in the previous section).
 
-However, you cannot avoid all crashes. One trick you can do is to compare the size of the `GameMemory` struct before and after the reload. If that sizes have changed then you could issue a full reset, just as a precaution. In order to know the size of the `GameMemory` you could add a procedure to the game API that simply returns `size_of(GameMemory)`. Note that if `GameMemory` contains a pointer to a some dynamically allocated struct, then this will not help.
+However, you cannot avoid all crashes. One trick you can do is to compare the size of the `GameMemory` struct before and after the reload. If those sizes differ then you could issue a full reset, just as a precaution. In order to know the size of the `GameMemory` you could add a procedure to the game API that simply returns `size_of(GameMemory)`. Note that if `GameMemory` contains a pointer to a some dynamically allocated struct, then this will not help for when that struct's layout changes.
 
 Another idea that could help is to stop compiling the game DLL externally. Instead you could have two hotkeys in your game: One that issues a recompile by invoking the Odin compiler and then follow it up by hot reloading the DLL. The other hotkey could also do the compile but do a full reset instead of a hot reload. This way you could press the full reset button when you know you've changed struct layouts (also it feels pretty funky to make your game compile and reload itself).
 
@@ -350,7 +350,7 @@ Some people try to implement serialization and deserialization of all the state 
 ### My global variable dies when I hot reload!
 
 If you make a global variable inside `game.odin` and hot reload then that global variable will be reset its initial state when the new game DLL is loaded. This can be fixed by
-only using global variables that are pointers to fields within `GameMemory`, then when a hot reload occurs and `game_hot_reloaded` is run, you can reassign those global pointers to the correct memory inside the `GameMemory` struct.
+only using global variables that are pointers to fields within `GameMemory`. When a hot reload occurs and `game_hot_reloaded` is run, you can then reassign those global pointers to the correct memory inside the `GameMemory` struct.
 
 In code this would look something like:
 
@@ -379,7 +379,7 @@ I do this in my game. There is a global pointer to the current world. But that w
 
 When the old game DLL is unloaded and you've stored pointers to procedures within that DLL, then you are in trouble. Here are a couple of solutions:
 
-1. Don't unload old game DLL in your main program. This will make those procedures still stay around. But if you make changes to the procedures being pointed to, then it will still use the old code, which is not ideal.
+1. Don't unload old game DLL in your main program. This will make those procedures still stay around. But if you make changes to the procedures being pointed to, then it will still use the old code, which is not ideal. This doesn't really solve the problem of hot reload not working for procedure pointers, but it makes sure your program doesn't crash.
 2. In the `game_hot_reloaded` procedure, try to find all the places where you have procedure pointers and patch them up again. This is harder than it sounds since you might have dynamic arrays of structs that contain procedure pointers where it is unclear where they came from.
 3. Only use procedure pointers when you set up well-defined objects such as structs that define APIs. In this case you re-setup those APIs in `game_hot_reloaded`.
 4. Simplify your code by trying to use enums instead of procedure pointers. This will make your code easier to follow and also fix this issue. You can then switch on those enums and call the correct, up-to-date procedure. This ties back to earlier points about hot reload being better for 'pure games' compared to general purpose game engines. You can simplify your game a lot by just using enums to guide your gameplay branching, many of the places where you thought you needed procedure pointers will work just as well with enums, and the code will be easier to read too! General purpose game engines are more prone to store highly dynamic state where an enum may not suffice since you don't know what the intent of the end-user is, which makes it harder to solve this issue for those types of programs.
