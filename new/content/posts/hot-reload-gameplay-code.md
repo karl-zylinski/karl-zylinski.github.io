@@ -1,7 +1,6 @@
 ---
 title: "Hot Reload Gameplay Code: What, why, limitations and examples!"
 date: 2023-09-15T15:47:11+02:00
-draft: true
 
 cover:
   image: "hot_reload.png"
