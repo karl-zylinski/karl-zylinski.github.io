@@ -67,9 +67,9 @@ GameMemory :: struct {
 
 g_mem: ^GameMemory
 
-// This function dynamically allocates the GameMemory that we'll use to store
+// This procedure dynamically allocates the GameMemory that we'll use to store
 // all the state in our game. We assign it to a global variable so we can use it
-// from the other functions.
+// from the other procedures.
 @(export)
 game_init :: proc() {
     g_mem = new(GameMemory)
@@ -102,7 +102,7 @@ game_memory :: proc() -> rawptr {
 
 // Run after a hot reload occurs. When hot reload occurs a new game DLL
 // is loaded and that game DLL needs to use the same game memory as the
-// previous game DLL. Therefore this function is fed the GameMemory pointer.
+// previous game DLL. Therefore this procedure is fed the GameMemory pointer.
 @(export)
 game_hot_reloaded :: proc(mem: ^GameMemory) {
     g_mem = mem
@@ -402,7 +402,7 @@ You'll also need to copy the `raylib.dll` file inside `raylib/windows` to where 
 
 #### Split `game_init` into `game_init` and `game_init_window`
 
-In your game DLL you have an `game_init` procedure. Now, you could create your Raylib window in there. But then, whenever you do a full reset, it would try to create another window! A solution is to have a `game_init_window` and `game_shutdown_window` function exposed by the game DLL in which you open and close your Raylib window respectively. You'll only run the `game_init_window` function before the main loop and the `shutdown_window` function after the main loop finishes.
+In your game DLL you have an `game_init` procedure. Now, you could create your Raylib window in there. But then, whenever you do a full reset, it would try to create another window! A solution is to have a `game_init_window` and `game_shutdown_window` procedure exposed by the game DLL in which you open and close your Raylib window respectively. You'll only run the `game_init_window` procedure before the main loop and the `shutdown_window` procedure after the main loop finishes.
 
 ## That's it!
 
