@@ -1,0 +1,49 @@
+baseURL: http://zylinski.se/
+languageCode: en-us
+title: Karl Zylinski
+theme: paper
+enableEmoji: true
+pygmentsUseClasses: true
+enableInlineShortcodes: true
+enableRobotsTXT: true
+
+outputs:
+    home:
+        - HTML
+        - RSS
+        - JSON
+
+
+params:
+    env: production
+    defaultTheme: auto
+    ShowShareButtons: true
+    ShowToc: true
+    ShowCodeCopyButtons: true
+    ShowRssButtonInSectionTermList: true
+
+languages:
+    en:
+        menu:
+            main:
+                - name: Twitter
+                  url: https://twitter.com/karl_zylinski
+                  weight: 5
+                - name: Mastodon
+                  url: https://mastodon.gamedev.place/@karl_zylinski
+                  weight: 10
+                - name: karl@zylinski.se
+                  url: mailto:karl@zylinski.se
+                  weight: 15
+
+markup:
+    goldmark:
+        renderer:
+            unsafe: true
+    highlight:
+        noClasses: false
+        # anchorLineNos: true
+        # codeFences: true
+        # guessSyntax: true
+        # lineNos: true
+        style: monokai

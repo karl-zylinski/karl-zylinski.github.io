@@ -1,0 +1,30 @@
+[submodule "new/themes/ananke"]
+	path = new/themes/ananke
+	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git
+[submodule "new/themes/pickles"]
+	path = new/themes/pickles
+	url = https://github.com/mismith0227/hugo_theme_pickles
+[submodule "new/themes/kiera"]
+	path = new/themes/kiera
+	url = https://github.com/funkydan2/hugo-kiera
+[submodule "new/themes/dead"]
+	path = new/themes/dead
+	url = https://github.com/barklan/hugo-dead-simple
+[submodule "new/themes/poison"]
+	path = new/themes/poison
+	url = https://github.com/lukeorth/poison
+[submodule "new/themes/lowkey"]
+	path = new/themes/lowkey
+	url = https://github.com/nixentric/Lowkey-Hugo-Theme
+[submodule "new/themes/hugo-bearblog"]
+	path = new/themes/hugo-bearblog
+	url = https://github.com/janraasch/hugo-bearblog.git
+[submodule "new/themes/mini"]
+	path = new/themes/mini
+	url = https://github.com/nodejh/hugo-theme-mini.git
+[submodule "new/themes/bnl"]
+	path = new/themes/bnl
+	url = https://github.com/davidhampgonsalves/hugo-black-and-light-theme
+[submodule "new/paper"]
+	path = new/paper
+	url = https://github.com/adityatelange/hugo-PaperMod
