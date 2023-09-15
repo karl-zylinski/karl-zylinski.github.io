@@ -310,9 +310,7 @@ for {
     reload := (last_game_write_err == os.ERROR_NONE && game_api.lib_write_time != last_game_write) || full_reset
 
     if reload {
-        new_game_api, new_game_api_ok := load_game_api(game_api_version)
-        
-        if new_game_api_ok {
+        if new_game_api, new_game_api_ok := load_game_api(game_api_version) {
             if full_reset {
                 game_api.shutdown()
                 unload_game_api(game_api)
