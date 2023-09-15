@@ -22,6 +22,9 @@ params:
     ShowCodeCopyButtons: true
     ShowRssButtonInSectionTermList: true
 
+    assets:
+        disableFingerprinting: true
+        
 languages:
     en:
         menu:
