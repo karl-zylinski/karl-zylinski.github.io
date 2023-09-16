@@ -34,7 +34,7 @@ In general, I would say that hot reload is extra helpful when tweaking fine deta
 - **You make changes to the memory layout of your game.** This means adding fields to structs or reordering fields. This might seem like a big downside, but the biggest frustration hot reload solves is that you don't have to restart when making changes to or fine tuning the behavior of the game. I tend to spend a lot more time on gameplay behavior and algorithms than adding and removing fields from my structs.
 - **Your code relies heavily on procedure (function) pointers.** The hot reload will load new game code and kick out the old one. It will keep the same game memory around. Now, if that game memory has pointers to procedures within the old code then you are in trouble. There is more details on this under the heading [Can I patch up procedure pointers that point to the old game DLL?](#can-i-patch-up-procedure-pointers-that-point-to-the-old-game-dll)
 
-## Example implementation in Odinlang
+## Example implementation in Odin Programming Language
 
 Let's look at an example of how to do this. I will be using [Odin programming language](https://odin-lang.org/), but the general ideas are transferable to languages like C and C++.
 
