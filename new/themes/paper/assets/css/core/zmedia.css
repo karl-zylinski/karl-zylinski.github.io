@@ -27,8 +27,8 @@
     .footer {
         padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
     }
-    
-    .post-content pre code {
+
+    .post-content code {
         font-size: 0.7em;
     }
 }
