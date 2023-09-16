@@ -1,0 +1,2 @@
+hugo
+xcopy public\* .. /E

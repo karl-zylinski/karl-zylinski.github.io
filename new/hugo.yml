@@ -7,13 +7,6 @@ pygmentsUseClasses: true
 enableInlineShortcodes: true
 enableRobotsTXT: true
 
-outputs:
-    home:
-        - HTML
-        - RSS
-        - JSON
-
-
 params:
     env: production
     defaultTheme: auto
