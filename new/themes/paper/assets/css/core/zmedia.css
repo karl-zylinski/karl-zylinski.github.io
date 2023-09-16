@@ -27,9 +27,7 @@
     .footer {
         padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
     }
-}
-
-@media screen and (max-width: 600px) {
+    
     .post-content pre code {
         font-size: 0.7em;
     }
