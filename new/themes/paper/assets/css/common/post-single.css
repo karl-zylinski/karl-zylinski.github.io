@@ -191,8 +191,9 @@
 }
 
 .post-content code {
-    margin: auto 4px;
-    padding: 4px 6px;
+    padding: 2px 2px;
+    margin: 0 -2px;
+    font-size: 0.78em;
     line-height: 1.5;
     background: var(--code-bg);
     border-radius: 2px;
@@ -202,6 +203,7 @@
     display: block;
     margin: auto 0;
     padding: 10px;
+    font-size: 1em;
     color: rgb(213, 213, 214);
     background: var(--hljs-bg) !important;
     border-radius: var(--radius);
