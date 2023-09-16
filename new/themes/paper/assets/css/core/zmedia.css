@@ -29,6 +29,12 @@
     }
 }
 
+@media screen and (max-width: 600px) {
+    .post-content pre code {
+        font-size: 0.7em;
+    }
+}
+
 /* footer */
 @media screen and (max-width: 900px) {
     .list .top-link {

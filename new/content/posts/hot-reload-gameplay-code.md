@@ -55,12 +55,12 @@ package game
 
 import "core:fmt"
 
-/* Our game's state lives within this
-struct. In order for hot reload to work
-the game's memory must be transferable
-from one game DLL to another when a hot
-reload occurs. We can do that when all
-the game's memory live in here. */
+// Our game's state lives within this struct.
+// In order for hot reload to work the game's
+// memory must be transferable from one game
+// DLL to another when a hot reload occurs. We
+// can do that when all the game's memory live
+// in here.
 GameMemory :: struct {
   some_state: int,
 }
