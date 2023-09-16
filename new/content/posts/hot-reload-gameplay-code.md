@@ -32,9 +32,9 @@ In general, I would say that hot reload is extra helpful when tweaking fine deta
 ### Hot reload is *not* helpful when:
 
 - **You make changes to the memory layout of your game.** This means adding fields to structs or reordering fields. This might seem like a big downside, but the biggest frustration hot reload solves is that you don't have to restart when making changes to or fine tuning the behavior of the game. I tend to spend a lot more time on gameplay behavior and algorithms than adding and removing fields from my structs.
-- **Your code relies heavily on procedure (function) pointers.** The hot reload will load new game code and kick out the old one. It will keep the same game memory around. Now, if that game memory has pointers to procedures within the old code then you are in trouble. With this in mind, I think that hot reload might be more suited for 'pure games' than general purpose game engines. In my experience general purpose game engines will need to create more layers and abstractions that may contain lots of procedure pointers. A pure game tends to be more direct and rely on state such as enums to branch the code rather than procedure pointers. There is more details on this under the heading [Can I somehow patch up procedure pointers that point to the old game DLL?](#can-i-somehow-patch-up-procedure-pointers-that-point-to-the-old-game-dll)
+- **Your code relies heavily on procedure (function) pointers.** The hot reload will load new game code and kick out the old one. It will keep the same game memory around. Now, if that game memory has pointers to procedures within the old code then you are in trouble. With this in mind, I think that hot reload might be more suited for 'pure games' than general purpose game engines. In my experience general purpose game engines will need to create more layers and abstractions that may contain lots of procedure pointers. A pure game tends to be more direct and rely on state such as enums to branch the code rather than procedure pointers. There is more details on this under the heading [Can I avoid crashes when struct layouts change?](#can-i-avoid-crashes-when-struct-layouts-change)
 
-## An example implementation in the Odin Programming Language
+## Example implementation in Odinlang
 
 Let's look at an example of how to do this. I will be using [Odin programming language](https://odin-lang.org/), but the general ideas are transferable to languages like C and C++.
 
@@ -354,7 +354,7 @@ for {
 
 The difference compared to earlier is that we ask the Game API if we should do a full reset. If we should, then we run `game_api.shutdown()` clearing the memory, after which we unload the old game API. We then run `game_api.init()` again. This is like restarting the game, but without having to restart the exe. It doesn't have anything to do with hot reload really, but it is handy.
 
-### How do I avoid crashes when struct layouts change?
+### Can I avoid crashes when struct layouts change?
 
 If the layout of the `GameMemory` struct changes and a reload occurs, then the code in the game DLL might end up using the wrong memory for the wrong thing. This can lead to weird behavior or in worst case a crash. In the case of weird behavior you'll probably notice it, so then you can just issue a full reset (as described in the previous section).
 
@@ -394,7 +394,7 @@ game_hot_reloaded :: proc(mem: ^GameMemory) {
 
 I do this in my game. There is a global pointer to the current world. But that world actually lives inside `GameMemory` and is reassigned when `game_hot_reloaded` is run.
 
-### Can I somehow patch up procedure pointers that point to the old game DLL?
+### Can I patch up procedure pointers that point to the old game DLL?
 
 When the old game DLL is unloaded and you've stored pointers to procedures within that DLL, then you are in trouble. Here are a couple of solutions:
 
@@ -402,6 +402,41 @@ When the old game DLL is unloaded and you've stored pointers to procedures withi
 2. In the `game_hot_reloaded` procedure, try to find all the places where you have procedure pointers and patch them up again. This is harder than it sounds since you might have dynamic arrays of structs that contain procedure pointers where it is unclear where they came from.
 3. Only use procedure pointers when you set up well-defined objects such as structs that define APIs. In this case you re-setup those APIs in `game_hot_reloaded`.
 4. Simplify your code by trying to use enums instead of procedure pointers. This will make your code easier to follow and also fix this issue. You can then switch on those enums and call the correct, up-to-date procedure. This ties back to earlier points about hot reload being better for 'pure games' compared to general purpose game engines. You can simplify your game a lot by just using enums to guide your gameplay branching, many of the places where you thought you needed procedure pointers will work just as well with enums, and the code will be easier to read too! General purpose game engines are more prone to store highly dynamic state where an enum may not suffice since you don't know what the intent of the end-user is, which makes it harder to solve this issue for those types of programs.
+
+### Release build without hot reload
+
+When you ship your game you probably don't want to include the hot reload stuff. For a release build you could create a separate main_release program that skips all the hot reload stuff and directly includes the game package. Something like this:
+
+```C
+package main_release
+
+/* In our earlier examples we compiled using
+`odin build main.odin -file`. Here I assume that
+you've split everything into three separate
+packages: game, main and main_release. Therefore
+we are here loading the game package, which
+contains game.odin. */
+import "../game"
+
+main :: proc() {
+  game.game_init()
+
+  for {
+    if game.game_update() == false {
+      break
+    }
+  }
+
+  game.game_shutdown()
+}
+```
+
+Note that this will directly include the game code into the main_release program. The game.dll is not needed for this type of release build.
+
+### Can't recompile game DLL with debugger attached
+
+When Visual Studio is attached to main.exe and you try to recompile you'll notice that it fails due to the game.pdb being locked. I haven't found a way around this. This has the side-effect that I only have a debugger attached when I really need to, I usually just run my game
+from within Sublime Text using a build command. Let me know if you find a way around this!
 
 ### Using hot reload in Odin together with Raylib
 
@@ -423,11 +458,9 @@ You'll also need to copy the `raylib.dll` file inside `raylib/windows` to where 
 
 In your game DLL you have an `game_init` procedure. Now, you could create your Raylib window in there. But then, whenever you do a full reset, it would try to create another window! A solution is to have a `game_init_window` and `game_shutdown_window` procedure exposed by the game DLL in which you open and close your Raylib window respectively. You'll only run the `game_init_window` procedure before the main loop and the `shutdown_window` procedure after the main loop finishes.
 
-#### Raylib DLL lifetime?
+#### Is the Raylib DLL lifetime bound to game.dll?
 
-### Release build without hot reload
-
-### Debugger
+The Raylib DLL is automatically loaded when game.dll is loaded by the main program. So you may wonder when the Raylib DLL is unloaded. The answer is that the Raylib DLL is implicitly pulled in by game.dll, but unloading game.dll does not unload the implicitly pulled in Raylib DLL. So you do not have to worry that the Raylib DLL and its internal global state gets trashed when game.dll is reloaded.
 
 ## That's it!
 
