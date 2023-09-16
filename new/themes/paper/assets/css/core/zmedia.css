@@ -28,8 +28,14 @@
         padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
     }
 
-    .post-content code {
-        font-size: 0.7em;
+
+    .post-content pre code {
+
+        margin-left: -14px;
+        margin-right: -14px;
+        border-radius: 0px;
+        padding: 14px;
+        font-size: 0.68em;
     }
 }
 

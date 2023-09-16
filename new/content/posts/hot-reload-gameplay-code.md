@@ -55,30 +55,28 @@ package game
 
 import "core:fmt"
 
-// Our game's state lives within this struct.
-// In order for hot reload to work the game's
-// memory must be transferable from one game
-// DLL to another when a hot reload occurs. We
-// can do that when all the game's memory live
-// in here.
+/* Our game's state lives within this struct. In
+order for hot reload to work the game's memory
+must be transferable from one game DLL to
+another when a hot reload occurs. We can do that
+when all the game's memory live in here. */
 GameMemory :: struct {
   some_state: int,
 }
 
 g_mem: ^GameMemory
 
-/* Allocates the GameMemory that we use
-to store our game's state. We assign it
-to a global variable so we can use it
-from the other procedures. */
+/* Allocates the GameMemory that we use to store
+our game's state. We assign it to a global
+variable so we can use it from the other
+procedures. */
 @(export)
 game_init :: proc() {
   g_mem = new(GameMemory)
 }
 
-/* Simulation and rendering goes here.
-Return false when you wish to terminate
-the program. */
+/* Simulation and rendering goes here. Return
+false when you wish to terminate the program. */
 @(export)
 game_update :: proc() -> bool {
   g_mem.some_state += 1
@@ -86,36 +84,33 @@ game_update :: proc() -> bool {
   return true
 }
 
-/* Called by the main program when the
-main loop has exited. Clean up your
-memory here. */
+/* Called by the main program when the main loop
+has exited. Clean up your memory here. */
 @(export)
 game_shutdown :: proc() {
   free(g_mem)
 }
 
-/* Returns a pointer to the game memory.
-When hot reloading, the main program
-needs a pointer to the game memory. It
-can then load a new game DLL and tell
-it to use the same memory by calling
-game_hot_reloaded on the new game DLL,
-supplying it the game memory pointer. */
+/* Returns a pointer to the game memory. When
+hot reloading, the main program needs a pointer
+to the game memory. It can then load a new game
+DLL and tell it to use the same memory by calling
+game_hot_reloaded on the new game DLL, supplying
+it the game memory pointer. */
 @(export)
 game_memory :: proc() -> rawptr {
   return g_mem
 }
 
-/* Used to set the game memory pointer
-after a hot reload occurs. See comment
-above game_memory. */
+/* Used to set the game memory pointer after a
+hot reload occurs. See game_memory comments. */
 @(export)
 game_hot_reloaded :: proc(mem: ^GameMemory) {
   g_mem = mem
 }
 ```
 
-In order to compile this code as a DLL, save it to file named `game.doin` and then compile it using the command line:
+In order to compile this code as a DLL, save it to file named `game.odin` and then compile it using the command line:
 `odin build game.odin -file -build-mode:dll -out:game.dll`
 
 ### Part 2: The main program
@@ -132,14 +127,13 @@ import "core:os"
 import "core:fmt"
 import "core:c/libc"
 
-/* The main program loads a game DLL and
-checks once per frame if it changed. If
-changed, then it loads it as a new game
-DLL. It will feed the new DLL the memory
-the old one used. */
+/* The main program loads a game DLL and checks
+once per frame if it changed. If changed, then
+it loads it as a new game DLL. It will feed the
+new DLL the memory the old one used. */
 main :: proc() {
-  /* Used to version the game DLL. 
-  Incremented on each game DLL reload.*/
+  /* Used to version the game DLL. Incremented
+  on each game DLL reload.*/
   game_api_version := 0
   game_api, game_api_ok := load_game_api(game_api_version)
 
@@ -155,49 +149,44 @@ main :: proc() {
 
   // same as while(true) in C
   for {
-    /* This updates and renders the
-    game. It returns false when we want
-    to exit the program (break the main
-    loop). */
+    /* This updates and renders the game. It
+    returns false when we want to exit the
+    program (break the main loop). */
     if game_api.update() == false {
         break
     }
 
-    /* Get the last write date of the
-    game DLL and compare it to the date
-    of the DLL the current game API.
-    If different, the try to do a hot
-    reload. */
+    /* Get the last write date of the game DLL
+    and compare it to the date of the DLL the
+    current game API. If different, the try to
+    do a hot reload. */
     dll_time, dll_time_err := os.last_write_time_by_name("game.dll")
 
     if dll_time_err == os.ERROR_NONE &&
        game_api.dll_time != dll_time {
-      /* Load a new game API. Might fail
-      due to game.dll being written by
-      compiler. In that case it will try
-      again next frame. */
+      /* Load a new game API. Might fail due to
+      game.dll still being written by compiler.
+      In that case it will try again next frame. */
 
       new_api, new_api_ok := load_game_api(game_api_version)
 
       if new_api_ok {
-        /* Pointer to game memory used
-        by OLD game DLL. */
+        /* Pointer to game memory used by OLD
+        game DLL. */
         game_memory := game_api.memory()
 
-        /* Unload the old game DLL. Note
-        that the game memory survives,
-        it will only be deallocated when
-        explicitly freed. */
+        /* Unload the old game DLL. Note that
+        the game memory survives, it will only
+        be deallocated when explicitly freed. */
         unload_game_api(game_api)
 
-        /* Replace game API with new one.
-        Now any call such as
-        game_api.update() will use the
-        new code. */
+        /* Replace game API with new one. Now
+        any call such as game_api.update() will
+        use the new code. */
         game_api = new_api
 
-        /* Tell the new game API to use
-        the old one's game memory. */
+        /* Tell the new game API to use the old
+        one's game memory. */
         game_api.hot_reloaded(game_memory)
 
         game_api_version += 1
@@ -210,8 +199,8 @@ main :: proc() {
   unload_game_api(game_api)
 }
 
-/* Contains pointers to the procedures
-exposed by the game DLL. */
+/* Contains pointers to the procedures exposed
+by the game DLL. */
 GameAPI :: struct {
   init: proc(),
   update: proc() -> bool,
@@ -222,15 +211,15 @@ GameAPI :: struct {
   // The loaded DLL handle
   lib: dynlib.Library,
 
-  /* Used to compare write date on disk
-  vs when game API was created. */
+  /* Used to compare write date on disk vs when
+  game API was created. */
   dll_time: os.File_Time,
   api_version: int,
 }
 
-/* Load the game DLL and return a new
-GameAPI that contains pointers to the
-required procedures of the game DLL. */
+/* Load the game DLL and return a new GameAPI
+that contains pointers to the required
+procedures of the game DLL. */
 load_game_api :: proc(api_version: int) -> (GameAPI, bool) {
   dll_time, dll_time_err := os.last_write_time_by_name("game.dll")
 
@@ -239,21 +228,20 @@ load_game_api :: proc(api_version: int) -> (GameAPI, bool) {
     return {}, false
   }
 
-  /* Can't load the game DLL directly.
-  This would lock it and prevent hot
-  reload since the Odin compiler can no
-  longer write to it. Instead, make a 
-  unique name based on api_version and
+  /* Can't load the game DLL directly. This
+  would lock it and prevent hot reload since the
+  compiler can no longer write to it. Instead,
+  make a unique name based on api_version and
   copy the DLL to that location. */
   dll_name := fmt.tprintf("game_{0}.dll", api_version)
 
-  /* Copy the DLL. Sometimes fails since
-  our program tries to copy it before
-  the compiler has finished writing it.
-  In that case, try again next frame!
+  /* Copy the DLL. Sometimes fails since our
+  program tries to copy it before the compiler
+  has finished writing it. In that case,
+  try again next frame!
 
-  Note: Here I use Windows copy command,
-  there are better ways to copy a file. */
+  Note: Here I use Windows copy command, there
+  are better ways to copy a file. */
   copy_cmd := fmt.ctprintf("copy game.dll {0}", dll_name)
   if libc.system(copy_cmd) != 0 {
     fmt.println("Failed to copy game.dll to {0}", dll_name)
@@ -268,10 +256,9 @@ load_game_api :: proc(api_version: int) -> (GameAPI, bool) {
     return {}, false
   }
 
-  /* Fetch all procedures marked with
-  @(export) inside the game DLL. Note
-  that we manually cast them to the
-  correct signatures. */
+  /* Fetch all procedures marked with @(export)
+  inside the game DLL. Note that we manually
+  cast them to the correct signatures. */
   api := GameAPI {
     init = cast(proc())(dynlib.symbol_address(lib, "game_init") or_else nil),
     update = cast(proc() -> bool)(dynlib.symbol_address(lib, "game_update") or_else nil),
@@ -300,8 +287,8 @@ unload_game_api :: proc(api: GameAPI) {
 
   /* Delete the copied game DLL.
 
-  Note: I use the windows del command,
-  there are better ways to do this. */
+  Note: I use the windows del command, there are
+  better ways to do this. */
   del_cmd := fmt.ctprintf("del game_{0}.dll", api.api_version)
   if libc.system(del_cmd) != 0 {
     fmt.println("Failed to remove game_{0}.dll copy", api.api_version)
