@@ -153,7 +153,7 @@ main :: proc() {
     returns false when we want to exit the
     program (break the main loop). */
     if game_api.update() == false {
-        break
+      break
     }
 
     /* Get the last write date of the game DLL
@@ -162,12 +162,13 @@ main :: proc() {
     do a hot reload. */
     dll_time, dll_time_err := os.last_write_time_by_name("game.dll")
 
-    if dll_time_err == os.ERROR_NONE &&
-       game_api.dll_time != dll_time {
+    reload := dll_time_err == os.ERROR_NONE &&
+       game_api.dll_time != dll_time
+
+    if reload {
       /* Load a new game API. Might fail due to
       game.dll still being written by compiler.
       In that case it will try again next frame. */
-
       new_api, new_api_ok := load_game_api(game_api_version)
 
       if new_api_ok {
@@ -326,7 +327,9 @@ for {
   dll_time, dll_time_err := os.last_write_time_by_name("game.dll")
 
   full_reset := game_api.full_reset()
-  reload := full_reset || (dll_time_err == os.ERROR_NONE && game_api.dll_time != dll_time)
+  reload := full_reset ||
+    (dll_time_err == os.ERROR_NONE &&
+     game_api.dll_time != dll_time)
 
   if reload {
     new_api, new_api_ok := load_game_api(game_api_version)
