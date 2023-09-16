@@ -402,7 +402,7 @@
 </span></span><span class="line"><span class="cl">    <span class="n">dll_time</span><span class="p">,</span> <span class="nl">dll_time_err</span> <span class="p">:</span><span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="nf">last_write_time_by_name</span><span class="p">(</span><span class="s">&#34;game.dll&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="nl">reload</span> <span class="p">:</span><span class="o">=</span> <span class="n">dll_time_err</span> <span class="o">==</span> <span class="n">os</span><span class="p">.</span><span class="n">ERROR_NONE</span> <span class="o">&amp;&amp;</span>
-</span></span><span class="line"><span class="cl">       <span class="n">game_api</span><span class="p">.</span><span class="n">dll_time</span> <span class="o">!=</span> <span class="n">dll_time</span>
+</span></span><span class="line"><span class="cl">              <span class="n">game_api</span><span class="p">.</span><span class="n">dll_time</span> <span class="o">!=</span> <span class="n">dll_time</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">reload</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">      <span class="cm">/* Load a new game API. Might fail due to

@@ -163,7 +163,7 @@ main :: proc() {
     dll_time, dll_time_err := os.last_write_time_by_name("game.dll")
 
     reload := dll_time_err == os.ERROR_NONE &&
-       game_api.dll_time != dll_time
+              game_api.dll_time != dll_time
 
     if reload {
       /* Load a new game API. Might fail due to
