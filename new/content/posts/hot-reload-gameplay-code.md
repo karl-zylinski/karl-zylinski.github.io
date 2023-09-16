@@ -6,7 +6,7 @@ cover:
   image: "hot_reload_gameplay_code.png"
 ---
 
-In this post I'll talk about what hot reload for video game programming is, why you would use it, what the limitations are. I will also take you through an example implementation in [Odin programming language](https://odin-lang.org/). The final section is on some caveats, improvements and how to use hot reload in Odin together with [Raylib](https://www.raylib.com/). The front parts are language agnostic while the further down you read the more Odin specific it gets.
+This post is about what hot reload for video game code is, why you would use it and what the limitations are. I'll also present an example implementation in [Odin Programming Language](https://odin-lang.org/). The final section is on some caveats, improvements and how to use hot reload in Odin together with [Raylib](https://www.raylib.com/). The front parts are language agnostic while the further down you read the more Odin specific it gets.
 
 The methods I will outline here are for people who are writing their own game 'from scratch', meaning you don't use any game engine.
 
