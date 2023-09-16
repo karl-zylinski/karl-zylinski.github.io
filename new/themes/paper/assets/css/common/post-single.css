@@ -203,7 +203,7 @@
     display: block;
     margin: auto 0;
     padding: 10px;
-    font-size: 1em;
+    font-size: 0.9em;
     color: rgb(213, 213, 214);
     background: var(--hljs-bg) !important;
     border-radius: var(--radius);
