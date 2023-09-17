@@ -1,7 +1,10 @@
-<div class="social-icons">
+<ul id="menu" class="social-icons">
     {{- range . }}
-    <a href="{{ trim .url " " | safeURL }}" target="_blank" rel="noopener noreferrer me" title="{{ (.title | default .name) | title }}">
-        {{ partial "svg.html" . }}
-    </a>
+    <li>
+        <a href="{{ trim .url " " | safeURL }}" target="_blank" rel="noopener noreferrer me" title="{{ (.title | default .name) | title }}">
+            {{ partial "svg.html" . }}
+        </a>
+    </li>
     {{- end }}
-</div>
+</ul>
+

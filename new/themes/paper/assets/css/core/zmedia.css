@@ -35,6 +35,26 @@
         padding: 14px;
         font-size: 0.68em;
     }
+
+    #menu a {
+        margin-left: 5px;
+    }
+
+    .logo a {
+        font-size: 22px;
+        margin-top: 2px;
+    }
+
+    .social-icons a svg {
+        height: 22px;
+        width: 22px;
+    }
+
+    .nav {
+
+        margin-top: 0px;
+    }
+
 }
 
 /* footer */
