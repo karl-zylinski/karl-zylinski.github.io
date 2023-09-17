@@ -17,6 +17,20 @@ params:
 
     assets:
         disableFingerprinting: true
+
+    homeInfoParams:
+        Title: "Karl Zylinski"
+
+    socialIcons:
+        - name: "Twitter"
+          url: "https://twitter.com/karl_zylinski"
+        - name: "Mastodon"
+          url: "https://mastodon.gamedev.place/@karl_zylinski"
+        - name: "YouTube"
+          url: "https://www.youtube.com/channel/UC5YnADU2rChK7598A9gKygQ"
+        - name: "Email"
+          url: "mailto:karl@zylinski.se"
+
         
 languages:
     en:
@@ -28,6 +42,9 @@ languages:
                 - name: Mastodon
                   url: https://mastodon.gamedev.place/@karl_zylinski
                   weight: 10
+                - name: "YouTube"
+                  url: "https://www.youtube.com/channel/UC5YnADU2rChK7598A9gKygQ"
+                  weight: 12
                 - name: karl@zylinski.se
                   url: mailto:karl@zylinski.se
                   weight: 15
