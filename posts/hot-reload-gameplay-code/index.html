@@ -538,7 +538,7 @@ The methods I will outline here are for people who are writing their own game &l
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">unload_game_api</span> <span class="o">::</span> <span class="nf">proc</span><span class="p">(</span><span class="nl">api</span><span class="p">:</span> <span class="n">GameAPI</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="n">api</span><span class="p">.</span><span class="n">lib</span> <span class="o">!=</span> <span class="n">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="n">dynlib</span><span class="p">.</span><span class="nf">unload_library</span><span class="p">(</span><span class="n">api</span><span class="p">.</span><span class="n">lib</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dynlib</span><span class="p">.</span><span class="nf">unload_library</span><span class="p">(</span><span class="n">api</span><span class="p">.</span><span class="n">lib</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  <span class="cm">/* Delete the copied game DLL.

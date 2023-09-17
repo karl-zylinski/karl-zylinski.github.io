@@ -283,7 +283,7 @@ load_game_api :: proc(api_version: int) -> (GameAPI, bool) {
 
 unload_game_api :: proc(api: GameAPI) {
   if api.lib != nil {
-      dynlib.unload_library(api.lib)
+    dynlib.unload_library(api.lib)
   }
 
   /* Delete the copied game DLL.
