@@ -14,9 +14,6 @@ params:
     ShowToc: true
     ShowCodeCopyButtons: true
     ShowRssButtonInSectionTermList: true
-
-    assets:
-        disableFingerprinting: true
         
 languages:
     en:
