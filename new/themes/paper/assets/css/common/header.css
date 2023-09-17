@@ -18,6 +18,10 @@
     margin: auto var(--gap);
 }
 
+#home-info a {
+    font-decoration: underline;
+}
+
 .logo {
     flex-wrap: inherit;
 }

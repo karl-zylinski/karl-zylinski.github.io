@@ -29,6 +29,11 @@
     font-size: 14px;
 }
 
+
+.home-info p a {
+    box-shadow: rgb(218, 218, 219) 0px 1px 0px 0px
+}
+
 .home-info .entry-content {
     -webkit-line-clamp: unset;
 }
