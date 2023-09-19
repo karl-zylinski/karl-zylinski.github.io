@@ -394,18 +394,6 @@ game_hot_reloaded :: proc(mem: ^GameMemory) {
 
 I do this in my game. There is a global pointer to the current world. But that world actually lives inside `GameMemory` and is reassigned when `game_hot_reloaded` is run.
 
-### Your style of programming impacts the effectiveness of hot reload
-
-How you write your code will impact how well hot reload works. For example, if you tend to start your game and set lots of variables during startup, which then impacts the gameplay later, then hot reload will work less good since it's not gonna rerun those initial startup functions.
-
-On the other hand, thing will work better if your game works by bringing entities into different states, where the code for how to get into each state and how the state is initialized is not predetermined on startup. The less precomputed state that you save 'for later' the better things are gonna work.
-
-I've previously made a video on making state machines using Unions in Odin:
-
-{{< youtube bGc7C3U89-I >}}
-
-One interesting thing about hot reload is that it works better when your code is both simple while at the same time not relying on predetermined state. These are qualities which makes your game less buggy and the code is easier to read since you see what is gonna happen between one line to the next.
-
 ### Can I patch up procedure pointers that point to the old game DLL?
 
 When the old game DLL is unloaded and you've stored pointers to procedures within `GameMemory`, then you are in trouble. The DLL those procedures live in will get unloaded and your procedure pointers will be broken. Here are a couple of ideas on how to tackle this:
