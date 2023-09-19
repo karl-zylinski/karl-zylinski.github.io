@@ -394,6 +394,18 @@ game_hot_reloaded :: proc(mem: ^GameMemory) {
 
 I do this in my game. There is a global pointer to the current world. But that world actually lives inside `GameMemory` and is reassigned when `game_hot_reloaded` is run.
 
+### Your style of programming impacts the effectiveness of hot reload
+
+How you write your code will impact how well hot reload works. For example, if you tend to start your game and set lots of variables during startup, which then impacts the gameplay later, then hot reload will work less good since it's not gonna rerun those that initial startup functions.
+
+On the other hand, if your game works by bringing entities into different states, where the code for how to get into each state is not predetermined on startup, then it will work much better. The less precomputed state that you save 'for later' the better things are gonna work.
+
+I've previously made a video on making state machines using Unions in Odin:
+
+{{< youtube bGc7C3U89-I >}}
+
+One interesting thing about hot reload is that it works better when your code is both simple while at the same time not relying on predetermined state. These are qualities which makes your game less buggy and the code is easier to read since you see what is gonna happen between one line to the next.
+
 ### Can I patch up procedure pointers that point to the old game DLL?
 
 When the old game DLL is unloaded and you've stored pointers to procedures within `GameMemory`, then you are in trouble. The DLL those procedures live in will get unloaded and your procedure pointers will be broken. Here are a couple of ideas on how to tackle this:
@@ -410,12 +422,6 @@ When you ship your game you probably don't want to include the hot reload stuff.
 ```C
 package main_release
 
-/* In our earlier examples we compiled using
-`odin build main.odin -file`. Here I assume that
-you've split everything into three separate
-packages: game, main and main_release. Therefore
-we are here loading the game package, which
-contains game.odin. */
 import "../game"
 
 main :: proc() {
@@ -431,9 +437,9 @@ main :: proc() {
 }
 ```
 
-Like it says in the comment in the code: For this example we have split our game into three separate packages. These could live in three folders called game, main and main_release. You'd compile the game DLL by running `odin build game -build-mode:dll -out:game.dll` and the main program by running `odin build main` and finally the main_release program by running `odin build main_release`.
+In our earlier examples we compiled using `odin build main.odin -file`, i.e. we hadn't separated things into packages, instead we compiled specific source files directly. Now we need the code that goes into the game DLL to live in a separate package it can be imported into our main_release program. Therefore we would in this example split everything into three packages that live in folders named game, main and main_release. You'd compile the game DLL by running `odin build game -build-mode:dll -out:game.dll` and the main program by running `odin build main` and finally the main_release program by running `odin build main_release`.
 
-Note: The main_release program directly includes the game code. The game.dll is not needed for this type of release build, it's all compiled into a single exe.
+Note: The main_release program directly imports the game code. The game.dll is not needed for this type of release build, it's all compiled into a single exe.
 
 ### I can't recompile game DLL with debugger attached
 
