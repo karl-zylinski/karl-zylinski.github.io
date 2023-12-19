@@ -24,10 +24,8 @@ params:
     socialIcons:
         - name: "Twitter"
           url: "https://twitter.com/karl_zylinski"
-        - name: "Mastodon"
-          url: "https://mastodon.gamedev.place/@karl_zylinski"
         - name: "YouTube"
-          url: "https://www.youtube.com/channel/UC5YnADU2rChK7598A9gKygQ"
+          url: "https://www.youtube.com/@karl_zylinski"
         - name: "Email"
           url: "mailto:karl@zylinski.se"
 
@@ -38,9 +36,6 @@ languages:
             main:
                 - name: Twitter
                   url: https://twitter.com/karl_zylinski
-                  weight: 5
-                - name: Mastodon
-                  url: https://mastodon.gamedev.place/@karl_zylinski
                   weight: 10
                 - name: "YouTube"
                   url: "https://www.youtube.com/channel/UC5YnADU2rChK7598A9gKygQ"
