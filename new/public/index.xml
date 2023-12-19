@@ -5,16 +5,14 @@
     <link>http://zylinski.se/</link>
     <description>Recent content on Karl Zylinski</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Fri, 15 Sep 2023 15:47:11 +0200</lastBuildDate><atom:link href="http://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language><atom:link href="http://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Hot Reload Gameplay Code: What, why, limitations and examples!</title>
-      <link>http://zylinski.se/posts/hot-reload-gameplay-code/</link>
-      <pubDate>Fri, 15 Sep 2023 15:47:11 +0200</pubDate>
+      <title></title>
+      <link>http://zylinski.se/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://zylinski.se/posts/hot-reload-gameplay-code/</guid>
-      <description>This post is about what hot reload for gameplay code is, why you would use it and what the limitations are. I&amp;rsquo;ll also present an example implementation in Odin Programming Language. The final section is on some caveats, improvements and how to use hot reload in Odin together with Raylib. The front parts are language agnostic while the further down you read the more Odin specific it gets.
-The methods I will outline here are for people who are writing their own game &amp;lsquo;from scratch&amp;rsquo;, meaning you don&amp;rsquo;t use any game engine.</description>
+      <guid>http://zylinski.se/</guid>
+      <description>baseURL: &#34;https://adityatelange.github.io/hugo-PaperMod/&#34; # if your site is in &#39;https&#39;, then make sure your base url isn&#39;t written using &#39;http&#39; otherwise your sitemap would contain http (as opposeed to https) URLs. This would affect Google indexing of your URLs.title: PaperModpaginate: 5theme: hugo-PaperModenableInlineShortcodes: trueenableRobotsTXT: truebuildDrafts: falsebuildFuture: falsebuildExpired: falseenableEmoji: truepygmentsUseClasses: true# googleAnalytics: UA-123-45minify:disableXML: true# minifyOutput: truelanguages:en:languageName: &#34;</description>
     </item>
     
   </channel>
