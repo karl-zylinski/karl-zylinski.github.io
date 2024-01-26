@@ -431,7 +431,7 @@ Note: The main_release program directly imports the game code. The game.dll is n
 
 ### I can't recompile game DLL with debugger attached
 
-When Visual Studio is attached to main.exe and you try to recompile you'll notice that it fails due to the game.pdb being locked. My work around is t o use the [RAD Debugger](https://github.com/EpicGames/raddebugger) instead of Visual Studio or VSCode. It works perfectly well with Odin and with it you'll be able to hot reload and keep the debugger attached. It is alpha software however, so it has some weird things about it.
+When Visual Studio is attached to main.exe and you try to recompile you'll notice that it fails due to the game.pdb being locked. My workaround is to use the [RAD Debugger](https://github.com/EpicGames/raddebugger) instead of Visual Studio or VSCode. It works perfectly well with Odin and with it you'll be able to hot reload and keep the debugger attached. It is alpha software however, so it has some weird things about it.
 
 ### Using hot reload in Odin together with Raylib
 
