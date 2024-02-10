@@ -2,7 +2,7 @@
 title: "Make games with Odin and Raylib #1: Setup + First Program"
 date: 2024-02-09T15:47:11+02:00
 
-draft: true
+draft: false
 
 cover:
   image: "/odinraylib1/odinwhat.png"
@@ -12,12 +12,12 @@ Hello, welcome to the first post in this blog series on making games with Odin a
 
 This blog has a companion YouTube video that says pretty much the same stuff, but in video format: LINK
 
-I'll begin by describing what Odin and Raylib is, after that we'll proceed to download the Odin compiler, required software, setup a code editor and finally we'll make our first tiny Odin + Raylib program.
+I'll begin by describing what Odin and Raylib is, after that we'll download the Odin compiler, required software, setup a code editor and finally we'll make our first tiny Odin + Raylib program.
 
-I work on Windows, so some instructions might be a bit Windows-centric, but it should be mostly the same if you are on mac or Linux.
+I work on Windows, so some instructions might be a bit Windows-centric, but I will try to put in notes for what you'll need to do on mac or Linux.
 
 ## What's Odin?
-![PortableBuildTools](/odinraylib1/odinwhat.png)
+![Odin Logo wish Question Mark](/odinraylib1/odinwhat.png)
 
 Odin, sometimes referred to as Odinlang, is a programming language that tries to be a modern alternative to the old language C. It is also a fairly simple language, making it beginner friendly. Odin is a so-called 'low level' language, meaning that you have a great deal of control, making it suitable for creating video games. Why do video games need so much control? Because they need often need to do a lot of things very quickly, so there is great benefit in being able to tell the computer what to do in great detail.
 
@@ -41,7 +41,7 @@ Before we get started with the code we'll have to download and setup some softwa
 
 In order to turn the Odin code we are about to write into a program you can run, you need to download the Odin compiler. Compilation is the process by which the computer takes code and outputs a program you can run. While you can follow the instructions at https://odin-lang.org/docs/install/, I would instead recommend this simpler approach:
 
-> NOTE: If you are on mac or Linux, just follow the official instructions, my simplified instructions are for Windows only.
+> *Mac / Linux*: If you are on mac or Linux, just follow the official instructions and skip to the next section. My simplified instructions are for Windows only.
 
 Firstly, download the compiler from here: https://github.com/odin-lang/Odin/releases/latest. Scroll to the bottom and download the Odin compiler for the platform you are on. If you are on Windows it will be a file called `
 odin-windows-amd64-dev-<year>-<month>.zip`. Download the file and extract the contents to the folder `c:\odin`.
@@ -81,7 +81,7 @@ main :: proc() {
     rl.CloseWindow()
 }
 ```
-When you've typed it all in, go ahead and save it to `c:\code\my_first_game\my_first_game.odin` (you'll have to create those code and my_first_game directories).
+When you've typed it all in, go ahead and save it to `c:\code\my_first_game\my_first_game.odin` (you'll have to create those `code` and `my_first_game` directories).
 
 ## Let's compile the code!
 
@@ -99,11 +99,13 @@ Sublime will pop up a new build system file, in it type this:
 }
 ```
 
-and then save it. Name it something like `my_first_game.sublime-build`. Make sure to save it in the folder Sublime suggests.
+and then save it. Name it something like `my_first_game.sublime-build`. Make sure to save it in the folder Sublime suggests. Make sure you use the `.sublime-build` ending, otherwise Sublime will not find it.
 
-> NOTE: We use the absolute c:/odin/odin.exe path. You could also add c:/odin to the PATH environment variable. But it doesn't really matter. Also please note that I use / here instead of \\. If you use \\ then be aware that you have to type two of them, i.e. \\\\.
+The `working_dir` denotes the working directory, meaning the directory from which we will run the compiler. We let this point to the directory where we put our code. The `shell_cmd` part is the command that our build system will run. In this case it will tell the odin compiler to compile and run our code. The period `.` in `c:/odin/odin.exe run .` is an old-school way to denote 'the current directory', which means whatever we wrote on the `working_dir` line. Odin treats all files inside a directory as part of a 'package', so it will take all the code files inside the working directory and compile them as a package. However, we only have one file (`main.odin`), but if we add more odin files later then they will get picked up as well.
 
-The `working_dir` denotes the working directory, meaning the directory from which we will run the compiler. The `shell_cmd` part is the command that our build system will run. In this case it will tell the odin compiler to compile and run our code. The period `.` is an old-school way to denote 'the current directory', which means whatever we wrote on the `working_dir` line. Odin treats all files inside a directory as part of a 'package', so it will take all the code files inside the working directory and compile them as a package. However, we only have one file (`main.odin`), but if we add more files later then they will get picked up as well.
+> **NOTE**: We use the absolute `c:/odin/odin.exe` path. You could also add c:/odin to the PATH environment variable in order to make `odin.exe` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`.
+
+> *Mac / Linux*: A good place to put the code is `~/code/my_first_game`, where `~` denotes your home directory. If you followed the official instructions then you probably have the odin executable available system-wide, so the `shell_cmd` just nedes to be `odin run .`
 
 Return to `main.odin` and go to the menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system. It should compile and run your first Odin program:
 
