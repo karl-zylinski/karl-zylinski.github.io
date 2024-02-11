@@ -1,7 +1,7 @@
 baseURL: http://zylinski.se/
 languageCode: en-us
 title: Karl Zylinski
-theme: paper
+theme: "paper"
 enableEmoji: true
 pygmentsUseClasses: true
 enableInlineShortcodes: true

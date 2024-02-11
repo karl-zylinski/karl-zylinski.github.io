@@ -28,3 +28,6 @@
 [submodule "new/paper"]
 	path = new/paper
 	url = https://github.com/adityatelange/hugo-PaperMod
+[submodule "new/themes/hugo-video"]
+	path = new/themes/hugo-video
+	url = https://github.com/martignoni/hugo-video.git
