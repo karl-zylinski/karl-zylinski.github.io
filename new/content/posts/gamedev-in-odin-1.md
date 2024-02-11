@@ -2,6 +2,8 @@
 title: "Make games using Odin and Raylib #1: Setup + First Program"
 date: 2024-02-09T15:47:11+02:00
 
+draft: true
+
 cover:
   image: "/odinraylib1/cover.png"
 ---
