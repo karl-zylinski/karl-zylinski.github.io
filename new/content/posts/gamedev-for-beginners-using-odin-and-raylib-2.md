@@ -6,9 +6,9 @@ cover:
   image: "/odinraylib2/cover.png"
 ---
 
-In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable.
+In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
 
-This post has a companion YouTube video that says pretty much the same stuff, but in video format. If you get confused by this post, then chances are that the companion video can help you understand. Here's the video:
+Here's the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:
 
 Let's go!
 
