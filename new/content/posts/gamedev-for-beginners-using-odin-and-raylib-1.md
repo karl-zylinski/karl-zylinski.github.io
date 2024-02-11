@@ -10,7 +10,7 @@ Hello there! Welcome to the first post in this blog series on making games with 
 
 The target audience for this series is people who know a tiny bit of programming, but who have never done video games programming before. You don't need to have any deep programming experience, but you will benefit from knowing what a variable and a function is.
 
-This post has a companion YouTube video that says pretty much the same stuff, but in video format: LINK. If you get confused by this post, then chances are that the companion video can help you understand, or the other way around.
+This post has a companion YouTube video that says pretty much the same stuff, but in video format. If you get confused by this post, then chances are that the companion video can help you understand. Here's the video:
 
 I'll begin by describing what Odin and Raylib is, after that we'll download the Odin compiler, download some required software, setup a code editor and finally we'll make our first tiny Odin + Raylib program.
 
@@ -45,7 +45,7 @@ Before we get started with the code we'll have to download and setup some softwa
 
 In order to turn the Odin code we are about to write into a program you can run, you need to download the Odin compiler. Compilation is the process by which the computer takes code and outputs a program you can run. While you can follow the instructions at https://odin-lang.org/docs/install/, I would instead recommend this simpler approach:
 
-> **Mac / Linux:** If you are on mac or Linux, just follow the official instructions and skip to the next section. My simplified instructions are for Windows only.
+> **MAC / LINUX:** If you are on mac or Linux, just follow the official instructions and skip to the next section. My simplified instructions are for Windows only.
 
 Firstly, download the compiler from here: https://github.com/odin-lang/Odin/releases/latest. Scroll to the bottom and download the Odin compiler, it will be a file called `
 odin-windows-amd64-dev-<year>-<month>.zip`. Download the file and extract the contents to the folder `c:\odin`.
@@ -111,7 +111,7 @@ This file tells Sublime to compile our game using the command `c:/odin/odin run 
 
 > **NOTE:** We use the absolute `c:/odin/odin` path. You could also add `c:/odin` to the PATH environment variable in order to make `odin` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`. This is due to `\` being a special character.
 
-> **Mac / Linux:** A good place to put the code is `~/code/my_first_game`, where `~` denotes your home directory. The odin compiler you can put at `~/odin`, or where ever you like really.
+> **MAC / LINUX:** A good place to put the code is `~/code/my_first_game`, where `~` denotes your home directory. The odin compiler you can put at `~/odin`, or where ever you like really.
 
 Return to `main.odin` and go to the menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system to build and run your game. It should compile and run your first Odin program:
 
@@ -167,7 +167,7 @@ Finally, I'll just say something about the first two lines of our program:
 `import rl "vendor:raylib"` tells the Odin compiler that we want to use Raylib in our program. The Odin compiler comes with built in support for Raylib, as part of the "vendor" collection of libraries. We say that we are importing the Raylib _package_, anything you import in this way will end up under a name such as `rl.`, and the things you can access by typing `rl.` is said to be part of the same package.
 The `rl` just after `import` tells the compiler to give raylib the alias `rl`, if we instead had written `import "vendor:raylib"`, then we would have had to write `raylib.InitWindow(...` etc everywhere, which would have gotten a bit cumbersome.
 
-> **NOTE:** There are numerous other vendor packages, you can see them all by looking into `c:\odin\vendor`. You'll find stuff like DirectX, OpenGL and SDL in there.
+> **INTERESTING ODIN THING:** There are numerous other vendor packages, you can see them all by looking into `c:\odin\vendor`. You'll find stuff like DirectX, OpenGL and SDL in there.
 
 What about the first line `package game`? All files within a folder in Odin are said to be part of a package. And all those files must start with the same `package NAME` line. The name you put there is a technicality only used if you export your code as library, for an executable like our game it does not matter, so we'll just put `game` there.
 
