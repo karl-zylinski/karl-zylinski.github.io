@@ -246,18 +246,18 @@
     text-align: center;
 }
 
+.post-content figure:has(iframe) {
+    width: 100%;
+}
+
 .post-content figure > img {
     margin: 0 0 5px 0;
 }
 
-.post-content figure > video {
-    margin-bottom: 0;
-}
-
 .post-content figure > figcaption {
     margin: 0 auto;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: 16px;
     font-style: italic;
     text-align: center;

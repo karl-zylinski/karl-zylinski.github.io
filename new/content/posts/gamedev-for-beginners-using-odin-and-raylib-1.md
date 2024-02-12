@@ -33,8 +33,11 @@ If you come from a high level language such as Javascript, C# or Python, then pl
 
 [Raylib](https://www.raylib.com/) is a library, meaning a collection of ready-made code. It lets you draw graphics, create windows, process keyboard, mouse and gamepad input, and also output sound. It's a simple and easy-to-use library created for learning game programming, so it's a great fit for your first game.
 
+<figure>
 {{<youtube -RROryQQq-s >}}
-A showcase of things people made with Raylib
+<figcaption>A showcase of things people made with Raylib</figcaption>
+</figure>
+
 
 Note that Raylib is not a game engine. What we will do here is write Odin code that uses Raylib and from that code output a stand-alone executable game that you can run. It is a straight-to-the-point and fun way to make games.
 
@@ -44,7 +47,10 @@ Odin comes with built in support for Raylib, you do not need to install anything
 
 Yes. I've recently made and shipped a whole game called CAT & ONION using Odin and Raylib. Here's a trailer, to give you a sense of what's possible:
 
+<figure>
 {{< youtube gggtSXiJkKc >}}
+<figcaption>Trailer for my game CAT & ONION. The game is made completely using Odin and Raylib!</figcaption>
+</figure>
 
 ## Download and setup the Odin compiler
 
