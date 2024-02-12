@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Make games using Odin and Raylib #2: A controllable player | Karl Zylinski</title>
+<meta name="keywords" content="">
+<meta name="description" content="In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
+Here&rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:">
+<meta name="author" content="">
+<link rel="canonical" href="http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.js" onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="http://zylinski.se/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://zylinski.se/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://zylinski.se/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://zylinski.se/apple-touch-icon.png">
+<link rel="mask-icon" href="http://zylinski.se/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+<link rel="stylesheet" href="/style.css"><meta property="og:title" content="Make games using Odin and Raylib #2: A controllable player" />
+<meta property="og:description" content="In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
+Here&rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/" />
+<meta property="og:image" content="http://zylinski.se/odinraylib2/cover.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-02-11T15:47:11+02:00" />
+<meta property="article:modified_time" content="2024-02-11T15:47:11+02:00" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="http://zylinski.se/odinraylib2/cover.png" />
+<meta name="twitter:title" content="Make games using Odin and Raylib #2: A controllable player"/>
+<meta name="twitter:description" content="In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
+Here&rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://zylinski.se/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Make games using Odin and Raylib #2: A controllable player",
+      "item": "http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Make games using Odin and Raylib #2: A controllable player",
+  "name": "Make games using Odin and Raylib #2: A controllable player",
+  "description": "In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.\nHere\u0026rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:",
+  "keywords": [
+    
+  ],
+  "articleBody": "In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.\nHere’s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:\nLet’s go!\nDrawing something more than just a blue background The last post left off with our program looking like this:\npackage game import rl \"vendor:raylib\" main :: proc() { rl.InitWindow(1280, 720, \"My First Game\") for !rl.WindowShouldClose() { rl.BeginDrawing() rl.ClearBackground(rl.BLUE) rl.EndDrawing() } rl.CloseWindow() } This game is currently just a pure blue background. Let’s add something more to it. On the row after the line rl.ClearBackground(rl.BLUE), add this:\nrl.DrawRectangleV({640,320}, {64, 64}, rl.GREEN) If you hit F7 and recompile you’ll now see a green box on top of a blue background:\nIf we look at the line we just added we see that rl.DrawRectangleV seems to be a proc that accepts a couple of numbers and something at the end that tells it that we want a green box. The {640, 320} says that we want the box to be at the position x = 640, y = 320, where x and y are counted from the top left of the window. This is in the middle of our window (remember: we gave rl.InitWindow the window size 1280 by 720). The {64, 64} says how big we want the box to be, i.e. we want it to be 64 pixels wide and 64 pixels high.\nHow can I know this proc exists in Raylib and also know what things it is possible to feed it? Try this: Open the Windows file explorer and go to c:\\odin\\vendor. In there you’ll see a folder called raylib. The odin files in that folder are the ones that get imported by the line import rl \"vendor:raylib\" at the top of your program. Go inside the raylib folder and drag \u0026 drop raylib.odin into your code editor. Search for DrawRectangleV in there, you should find this line:\nThis line tells us that DrawRectangleV accepts three parameters. The first one is the position of the rectangle, where we put in {640, 320}. The Vector2 to the right of the word position tells us that this proc expects position to be of type Vector2. What is Vector2? It’s just a thing that consists of two decimal numbers. We can use a Vector2 to denote positions, directions and sizes in 2 dimensional space. The second parameter size is also a Vector2, that’s where we sent in {64, 64}.\nFinally the last parameter is of type Color. Raylib comes with a few predefined colors, such as rl.GREEN. Try replacing rl.GREEN in our code with something like {255, 180, 0, 255}, which should make the box orange instead. Those four numbers denote red, green, blue and alpha respectively. {255, 255, 255, 255} means completely white and {0, 0, 0, 255} means completely black. The alpha number at the end tells Raylib how transparent you want the rectangle to be.\nSUBLIME TIP: If you have both your main.odin file and raylib.odin open in Sublime you can also click on DrawRectangleV in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in raylib.odin. You can also press Ctrl + Shift + R and type DrawRectangle and get suggestions for all the procs in all your open files that contain those words.\nNOTE: There’s no actual code inside raylib.odin, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in raylib.odin is only there to instruct our Odin code on how it can talk to Raylib’s C code.\nLet’s make the little box controllable! Let’s say that we want the little green box to be the controllable player character of our game (or perhaps the box it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed or are being held down etc.\nWe currently draw the player at position {640, 320} each frame. Let’s make it so we can change that position. So that we can vary it. First thing we need to do is to move the player position into a variable. Just before the line for !rl.WindowShouldClose() {, add this:\nplayer_pos := rl.Vector2 { 640, 320 } You may recognize the Vector2 thingy from when we looked inside raylib.odin. What we are saying here is that we want to make a new Vector2 and give it the initial value { 640, 320 }. We give this Vector2 a name: player_pos. This player_pos is now a variable that we can use and modify.\nINTERESTING ODIN THING: When you looked at the code inside raylib.odin then it just said Vector2, but in your program you must say rl.Vector2 to use that type. This is because everything that comes out of Raylib ends up under the rl. thingy, as prescribed by the line import rl \"vendor:raylib\". If you want to, you could add a line just before the main proc that says Vec2 :: rl.Vector2. That makes it possible to write Vec2 instead of rl.Vector2.\nChange the line that draws the player rectangle so it now says:\nrl.DrawRectangleV(player_pos, {64, 64}, rl.GREEN) If you now re-run the game then… nothing has changed at all. But now we will be able to alter player_pos by checking if keyboard keys are being held. Just before the rl.DrawRectangleV line, add this:\nif rl.IsKeyDown(.LEFT) { player_pos.x -= 400*rl.GetFrameTime() } if rl.IsKeyDown(.RIGHT) { player_pos.x += 400*rl.GetFrameTime() } Now if you re-run the game and hold down the left or right arrow keys, then this should happen:\nThose lines starting with if will run the code inbetween the curly braces if the condition is true:\nIn this case the condition is rl.IsKeyDown(.LEFT). This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the for !rl.WindowShouldClose() { looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: player_pos.x -= 400*rl.GetFrameTime(). This line says to decrease the x component of player_pos by 400*rl.GetFrameTime(). Note the -=, writing it like that is a shorter way of writing player_pos.x = player_pos.x - 400*rl.GetFrameTime().\nNow, what about the 400*rl.GetFrameTime() part? This means “400 pixels per second”. Why? Because rl.GetFrameTime() tells us how many seconds the previous frame took. If you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting 400*rl.GetFrameTime() from player_pos.x each lap of the main loop will, if you hold the left or right arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments.\nIf that doesn’t make sense, then think of it like this: If your game would suddenly get terrible frame rate and only draw 2 frames per second, then rl.GetFrameTime() would report 0.5 s per frame. So the first frame the box would move 400*0.5=200 pixels and then 200 pixels more the next frame, totaling 400 pixels in one second.\nHow short can a frame be? If your game runs at 60 frames per second then rl.GetFrameTime() reports something like 0.016 seconds. However, we haven’t put in any kind of limit to our frame rate yet, so rl.GetFrameTime() could very well be reporting tiny values such as 0.00001 s.\nAs for the second if statement:\nif rl.IsKeyDown(.RIGHT) { player_pos.x += 400*rl.GetFrameTime() } everything is the same except that we are checking if the right arrow key is held, and in that case we are adding instead of subtracting to player_pos.x.\nLet’s make it possible to jump! At this point your main proc should look something like this:\nmain :: proc() { rl.InitWindow(1280, 720, \"My First Game\") player_pos := rl.Vector2 { 640, 320 } for !rl.WindowShouldClose() { rl.BeginDrawing() rl.ClearBackground(rl.BLUE) if rl.IsKeyDown(.LEFT) { player_pos.x -= 400*rl.GetFrameTime() } if rl.IsKeyDown(.RIGHT) { player_pos.x += 400*rl.GetFrameTime() } rl.DrawRectangleV(player_pos, {64, 64}, rl.GREEN) rl.EndDrawing() } rl.CloseWindow() } Let’s make it so that the player can jump by pressing the space key! Jumping usually involves giving the player a speed upwards and then having gravity pull them down again. In order to represent this we need to add a new variable that can hold the player’s velocity.\nPHYSICS LINGO: The word speed just means a single number that represents how fast you are going, without indicating in which direction you are going. The word velocity both specifies how fast you are going, but also in what direction. In a 2D game it is therefore suitable to use a Vector2 to represent the velocity.\nJust after the line player_pos := rl.Vector2 { 640, 320 }, add this line:\nplayer_vel: rl.Vector2 Where “vel” in player_vel is short for “velocity”.\nIn Odin, writing a variable name such as player_vel followed by a : and then the type rl.Vector2 will make a new rl.Vector2 and set both the x and y parts to zero. In Odin, whenever you don’t say what initial value a new variable has, it always gets a zero value. Note the difference around the : in these two lines:\nplayer_pos := rl.Vector2 { 640, 320 } player_vel: rl.Vector2 When you want to both create a new variable and also give it a specific value, you then use :=, but if you only want to make a new variable without specifying a value, then you can use : (in which case it will be default-initialized to all zeroes). Furthermore, this:\nplayer_pos := rl.Vector2 { 640, 320 } is identical to this:\nplayer_pos: rl.Vector2 = { 640, 320 } The latter one looks like the player_vel line, but with a value tacked on the end. But both lines have the same effect: You’re creating a new variable of type rl.Vector2 that has the initial value {640, 320}.\nAnyways, back to actually using this player_vel. Let’s replace this code:\nif rl.IsKeyDown(.LEFT) { player_pos.x -= 400*rl.GetFrameTime() } if rl.IsKeyDown(.RIGHT) { player_pos.x += 400*rl.GetFrameTime() } with this code:\nif rl.IsKeyDown(.LEFT) { player_vel.x = -400 } else if rl.IsKeyDown(.RIGHT) { player_vel.x = 400 } else { player_vel.x = 0 } player_pos += player_vel * rl.GetFrameTime() If you compile and run, everything should be like before. Soon we will add jumping, but there are three things to note about these changes:\nFirstly, we now set player_vel.x when the left or right arrow is held, we do not add or subtract to it. If none of them is held, then we set player_ve.x to zero. This makes sense if you think about it, we want the speed to be 400 pixels per second when we hold one of the arrow keys, but it should be zero when we do not hold any of them.\nSecondly, before this we’ve used += to add to variables that contain a single number. However, both player_pos and player_vel are Vector2, i.e. they contain two numbers. In Odin the math operators such as +, +=, *, - etc all work on both single numbers, but they also work on arrays of numbers, given that the two arrays contain the same number of things. What’s an array? It’s essentially a list of things. A Vector2 is an array of size 2 that contains decimal numbers. We’ll look more at arrays later.\nThirdly, we now only multiply by rl.GetFrameTime() in one place. We multiply the whole player_vel by this, giving us how far the player should move this frame.\nNow, let’s add the jumping. Just before the line player_pos += player_vel * rl.GetFrameTime(), add this:\nplayer_vel.y += 2000 * rl.GetFrameTime() if rl.IsKeyPressed(.SPACE) { player_vel.y = -600 } The first new line, player_vel.y += 2000 * rl.GetFrameTime(), simulates gravity. It will constantly increase the y component of the player’s velocity, pulling the player downwards on the screen. The number 2000 is chosen arbitrarily, it’s just a number that feels good when playing. Note that we have to multiply 2000 by rl.GetFrameTime(). This is because we are accelerating the player, and we want to apply the same amount of downwards acceleration per second.\nThe rest of the new lines check if the space key has been pressed this frame, and if it has, it sets the y component of the velocity to -600, which is a fairly fast upwards velocity.\nNote the difference between this:\nif rl.IsKeyPressed(.SPACE) { and the earlier code we wrote:\nif rl.IsKeyDown(.LEFT) { The first one says IsKeyPressed, the second one says IsKeyDown. The IsKeyPressed proc checks if the key has just been pressed. It will only be true for a single frame. The IsKeyDown check will be true for as long as the key is kept held down. We only want to jump once when pressing space, but we want to be able to continuously walk left and right.\nIf we run the game now, all that happens is this silly thing:\nThere’s no floor in our world! Let’s add that. Just after player_pos += player_vel * rl.GetFrameTime(), do this:\nif player_pos.y \u003e f32(rl.GetScreenHeight()) - 64 { player_pos.y = f32(rl.GetScreenHeight()) - 64 } What this code does is that it checks if the y component of the players position is bigger than the height of the screen minus 64. If it is, then it moves the player back up. If that’s confusing, then look at this picture:\nRemember that the player’s height is 64 pixels. The position of the player is actually the top left position of the rectangle. Therefore, if we want to check if the bottom of the player is outside the bottom of the screen, then we need to check if player_pos.y is bigger than the height of the screen minus 64.\nIf this is the case, then we snap player_pos.y to a value that makes the player sit so that the bottom of the player touches the bottom of the screen.\nNOTE: Raylib provides the height of the screen using rl.GetScreenHeight(). This proc will return 720, i.e. the value we initially fed into rl.InitWindow. It’s a good idea to ask raylib instead of just writing 720, as the window might have changed size.\nWhat’s up with that f32( thing in if player_pos.y \u003e f32(rl.GetScreenHeight()) - 64 {? As I’ve said before the player’s position is a Vector2, and a Vector2 consists of decimal numbers. The type of those decimal numbers is actually called f32, which stands for “32 bit floating point number”. So a Vector2 is actually just two f32 values tucked into a single thing called a Vector2.\nNow, rl.GetScreenHeight() gives you a value of type i32, which stands for “32 bit integer number”. Odin doesn’t automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player’s position to the screen height, we must convert the screen height to a decimal number too. The f32() thingy that surrounds the rl.GetScreenHeight() does just that, it is called a cast and it’s a way to convert one type to another type.\nIf you now play the game again, you can walk around with the arrow keys and press space to jump:\nIf you play your lil game for more than 10 seconds you’ll probably notice something funny: You can jump while still in the air…\nThat’s hardly realistic! Unless you wanna make flappy bird or something. But we wanna make 2D platformer mechanics, so let’s fix it.\nThere are several different ways to fix things like this. We’re gonna add a variable called player_grounded and use that to make sure you can only jump when you’re standing on the ground.\nJust after the line player_vel: rl.Vector2, add this line:\nplayer_grounded: bool This creates a new variable called player_grounded of type bool. bool is a special type of variable that can only take on two values: true or false. Just like with player_vel we did not explicitly say what value player_grounded starts at, which means it will have “the zero value”, which in this case means false.\nChange this code:\nif player_pos.y \u003e f32(rl.GetScreenHeight()) - 64 { player_pos.y = f32(rl.GetScreenHeight()) - 64 } so that it now says this:\nif player_pos.y \u003e f32(rl.GetScreenHeight()) - 64 { player_pos.y = f32(rl.GetScreenHeight()) - 64 player_grounded = true } I.e. when the player hits the floor we say that the player is grounded.\nWe can now change the code that makes the player jump from this:\nif rl.IsKeyPressed(.SPACE) { player_vel.y = -600 } to this\nif player_grounded \u0026\u0026 rl.IsKeyPressed(.SPACE) { player_vel.y = -600 player_grounded = false } There are two changes here:\nFirstly, there is now a player_grounded \u0026\u0026 thingy before the rl.IsKeyPressed. What this does is check if both player_grounded is true and also if rl.IsKeyPressed(.SPACE) returns true. \u0026\u0026 is called the AND operator and it is used to check if two bool values are both true. But then you might say: “But Karl! player_grounded is of type bool, but rl.IsKeyPressed(.SPACE) is a call to a proc in Raylib.” Yes. But procs can return values, and in this case the type that these rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose procs have been returning are all of type bool. If you and look up IsKeyPressed in raylib.odin, you’ll see this:\nIsKeyPressed :: proc(key: KeyboardKey) -\u003e bool The -\u003e bool thingy at the end is telling us what type of value this proc returns.\nThe second change is that we now set player_grounded = false when you press space, so that you can’t jump again until you’ve hit ground, at which point the player_grounded will become true again.\nNow, if you run the game again, you’ll finally have a jumping mechanic that works properly. No more jumping while in the air!\nThat’s it for today! Thanks for reading! The next part of this series is not out yet. But it will be about replacing the green box with an animation of a running cat! If you wanna know when it comes out, then follow me on Twitter, Threads or YouTube.\nPlease leave any questions as comments on the video version of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.\nAlso, if you’ve enjoyed this series so far and want to support me, then please consider buying my game CAT \u0026 ONION on itch.io or wishlist it on Steam. When you buy on itch.io you also get the full Odin + Raylib source of the game.\nHave a great day!\n/Karl\n",
+  "wordCount" : "3208",
+  "inLanguage": "en",
+  "image":"http://zylinski.se/odinraylib2/cover.png","datePublished": "2024-02-11T15:47:11+02:00",
+  "dateModified": "2024-02-11T15:47:11+02:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Karl Zylinski",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://zylinski.se/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        
+
+        
+        <ul id="menu" class="social-icons">
+    <li>
+        <a href="https://twitter.com/karl_zylinski" target="_blank" rel="noopener noreferrer me" title="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
+    </path>
+</svg>
+        </a>
+    </li>
+    <li>
+        <a href="https://www.youtube.com/channel/UC5YnADU2rChK7598A9gKygQ" target="_blank" rel="noopener noreferrer me" title="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z">
+    </path>
+    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+</svg>
+        </a>
+    </li>
+    <li>
+        <a href="mailto:karl@zylinski.se" target="_blank" rel="noopener noreferrer me" title="Email">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+    <polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+        </a>
+    </li>
+</ul>
+
+
+        <div class="logo">
+            <a href="http://zylinski.se/" accesskey="h" title="Karl Zylinski (Alt + H)">Karl Zylinski</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Make games using Odin and Raylib #2: A controllable player
+    </h1>
+    <div class="post-meta"><span title='2024-02-11 15:47:11 +0200 +0200'>February 11, 2024</span>
+
+</div>
+  </header> 
+<figure class="entry-cover"><img loading="lazy" src="http://zylinski.se/odinraylib2/cover.png" alt="">
+        
+</figure><div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#drawing-something-more-than-just-a-blue-background" aria-label="Drawing something more than just a blue background">Drawing something more than just a blue background</a></li>
+                <li>
+                    <a href="#lets-make-the-little-box-controllable" aria-label="Let&amp;rsquo;s make the little box controllable!">Let&rsquo;s make the little box controllable!</a></li>
+                <li>
+                    <a href="#lets-make-it-possible-to-jump" aria-label="Let&amp;rsquo;s make it possible to jump!">Let&rsquo;s make it possible to jump!</a></li>
+                <li>
+                    <a href="#thats-it-for-today" aria-label="That&amp;rsquo;s it for today!">That&rsquo;s it for today!</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.</p>
+<p>Here&rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:</p>
+<p>Let&rsquo;s go!</p>
+<h2 id="drawing-something-more-than-just-a-blue-background">Drawing something more than just a blue background<a hidden class="anchor" aria-hidden="true" href="#drawing-something-more-than-just-a-blue-background">#</a></h2>
+<p>The last post left off with our program looking like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">package</span> <span class="n">game</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">import</span> <span class="n">rl</span> <span class="s">&#34;vendor:raylib&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">main</span> <span class="o">::</span> <span class="nf">proc</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rl</span><span class="p">.</span><span class="nf">InitWindow</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="s">&#34;My First Game&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">!</span><span class="n">rl</span><span class="p">.</span><span class="nf">WindowShouldClose</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">BeginDrawing</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">ClearBackground</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">BLUE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">EndDrawing</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">rl</span><span class="p">.</span><span class="nf">CloseWindow</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This game is currently just a pure blue background. Let&rsquo;s add something more to it. On the row after the line <code>rl.ClearBackground(rl.BLUE)</code>, add this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">rl</span><span class="p">.</span><span class="nf">DrawRectangleV</span><span class="p">({</span><span class="mi">640</span><span class="p">,</span><span class="mi">320</span><span class="p">},</span> <span class="p">{</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">},</span> <span class="n">rl</span><span class="p">.</span><span class="n">GREEN</span><span class="p">)</span>
+</span></span></code></pre></div><p>If you hit F7 and recompile you&rsquo;ll now see a green box on top of a blue background:</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/green_box.png" alt="The green box rendering on top of our blue background">
+</p>
+<p>If we look at the line we just added we see that <code>rl.DrawRectangleV</code> seems to be a proc that accepts a couple of numbers and something at the end that tells it that we want a green box. The <code>{640, 320}</code> says that we want the box to be at the position <code>x = 640, y = 320</code>, where x and y are counted from the top left of the window. This is in the middle of our window (remember: we gave <code>rl.InitWindow</code> the window size <code>1280</code> by <code>720</code>). The <code>{64, 64}</code> says how big we want the box to be, i.e. we want it to be 64 pixels wide and 64 pixels high.</p>
+<p>How can I know this proc exists in Raylib and also know what things it is possible to feed it? Try this: Open the Windows file explorer and go to <code>c:\odin\vendor</code>. In there you&rsquo;ll see a folder called <code>raylib</code>. The odin files in that folder are the ones that get imported by the line <code>import rl &quot;vendor:raylib&quot;</code> at the top of your program. Go inside the <code>raylib</code> folder and drag &amp; drop <code>raylib.odin</code> into your code editor. Search for <code>DrawRectangleV</code> in there, you should find this line:</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/draw_rectangle.png" alt="DrawRectangleV in Raylib.odin">
+</p>
+<p>This line tells us that <code>DrawRectangleV</code> accepts three <em>parameters</em>. The first one is the position of the rectangle, where we put in <code>{640, 320}</code>. The <code>Vector2</code> to the right of the word <code>position</code> tells us that this proc expects <code>position</code> to be of <em>type</em> <code>Vector2</code>. What is <code>Vector2</code>? It&rsquo;s just a thing that consists of two decimal numbers. We can use a <code>Vector2</code> to denote positions, directions and sizes in 2 dimensional space. The second parameter <code>size</code> is also a <code>Vector2</code>, that&rsquo;s where we sent in <code>{64, 64}</code>.</p>
+<p>Finally the last parameter is of type <code>Color</code>. Raylib comes with a few predefined colors, such as <code>rl.GREEN</code>. Try replacing <code>rl.GREEN</code> in our code with something like <code>{255, 180, 0, 255}</code>, which should make the box orange instead. Those four numbers denote red, green, blue and alpha respectively. <code>{255, 255, 255, 255}</code> means completely white and <code>{0, 0, 0, 255}</code> means completely black. The alpha number at the end tells Raylib how transparent you want the rectangle to be.</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/color.png" alt="About colors in raylib">
+</p>
+<blockquote>
+<p><strong>SUBLIME TIP:</strong> If you have both your <code>main.odin</code> file and <code>raylib.odin</code> open in Sublime you can also click on <code>DrawRectangleV</code> in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in <code>raylib.odin</code>. You can also press <code>Ctrl + Shift + R</code> and type <code>DrawRectangle</code> and get suggestions for all the procs in all your open files that contain those words.</p>
+</blockquote>
+<blockquote>
+<p><strong>NOTE:</strong> There&rsquo;s no actual code inside <code>raylib.odin</code>, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in <code>raylib.odin</code> is only there to instruct our Odin code on how it can talk to Raylib&rsquo;s C code.</p>
+</blockquote>
+<h2 id="lets-make-the-little-box-controllable">Let&rsquo;s make the little box controllable!<a hidden class="anchor" aria-hidden="true" href="#lets-make-the-little-box-controllable">#</a></h2>
+<p>Let&rsquo;s say that we want the little green box to be the controllable player character of our game (or perhaps the box it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed or are being held down etc.</p>
+<p>We currently draw the player at position <code>{640, 320}</code> each frame. Let&rsquo;s make it so we can change that position. So that we can <em>vary</em> it. First thing we need to do is to move the player position into a <em>variable</em>. Just before the line <code>for !rl.WindowShouldClose() {</code>, add this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_pos</span> <span class="p">:</span><span class="o">=</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span> <span class="p">{</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">320</span> <span class="p">}</span>
+</span></span></code></pre></div><p>You may recognize the <code>Vector2</code> thingy from when we looked inside <code>raylib.odin</code>. What we are saying here is that we want to make a new <code>Vector2</code> and give it the initial value <code>{ 640, 320 }</code>. We give this <code>Vector2</code> a name: <code>player_pos</code>. This <code>player_pos</code> is now a variable that we can use and modify.</p>
+<blockquote>
+<p><strong>INTERESTING ODIN THING:</strong> When you looked at the code inside <code>raylib.odin</code> then it just said <code>Vector2</code>, but in your program you must say <code>rl.Vector2</code> to use that type. This is because everything that comes out of Raylib ends up under the <code>rl.</code> thingy, as prescribed by the line <code>import rl &quot;vendor:raylib&quot;</code>. If you want to, you could add a line just before the <code>main</code> proc that says <code>Vec2 :: rl.Vector2</code>. That makes it possible to write <code>Vec2</code> instead of <code>rl.Vector2</code>.</p>
+</blockquote>
+<p>Change the line that draws the player rectangle so it now says:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">rl</span><span class="p">.</span><span class="nf">DrawRectangleV</span><span class="p">(</span><span class="n">player_pos</span><span class="p">,</span> <span class="p">{</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">},</span> <span class="n">rl</span><span class="p">.</span><span class="n">GREEN</span><span class="p">)</span>
+</span></span></code></pre></div><p>If you now re-run the game then&hellip; nothing has changed at all. But now we will be able to alter  <code>player_pos</code> by checking if keyboard keys are being held. Just before the <code>rl.DrawRectangleV</code> line, add this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">-=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Now if you re-run the game and hold down the left or right arrow keys, then this should happen:</p>
+<p><video autoplay loop muted width="100%"><source src="/odinraylib2/move_box.mp4"></video></p>
+<p>Those lines starting with <code>if</code> will run the code inbetween the curly braces if the condition is  true:</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/if_left.png" alt="if the condition is true, then run the code between the curly braces">
+</p>
+<p>In this case the condition is <code>rl.IsKeyDown(.LEFT)</code>. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the <code>for !rl.WindowShouldClose() {</code> looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: <code>player_pos.x -= 400*rl.GetFrameTime()</code>. This line says to decrease the x component of <code>player_pos</code> by <code>400*rl.GetFrameTime()</code>. Note the <code>-=</code>, writing it like that is a shorter way of writing <code>player_pos.x = player_pos.x - 400*rl.GetFrameTime()</code>.</p>
+<p>Now, what about the <code>400*rl.GetFrameTime()</code> part? This means &ldquo;400 pixels per second&rdquo;. Why? Because <code>rl.GetFrameTime()</code> tells us how many seconds the previous frame took. If you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting <code>400*rl.GetFrameTime()</code> from <code>player_pos.x</code> each lap of the main loop will, if you hold the left or right arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments.</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/400_pixels.gif" alt="Green box moving 400 pixels in 1 second">
+</p>
+<p>If that doesn&rsquo;t make sense, then think of it like this: If your game would suddenly get <em>terrible</em> frame rate and only draw 2 frames per second, then <code>rl.GetFrameTime()</code> would report 0.5 s per frame. So the first frame the box would move <code>400*0.5=200</code> pixels and then 200 pixels more the next frame, totaling 400 pixels in one second.</p>
+<p>How short can a frame be? If your game runs at 60 frames per second then <code>rl.GetFrameTime()</code> reports something like <code>0.016</code> seconds. However, we haven&rsquo;t put in any kind of limit to our <em>frame rate</em> yet, so <code>rl.GetFrameTime()</code> could very well be reporting tiny values such as <code>0.00001</code> s.</p>
+<p>As for the second if statement:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>everything is the same except that we are checking if the right arrow key is held, and in that case we are adding instead of subtracting to <code>player_pos.x</code>.</p>
+<h2 id="lets-make-it-possible-to-jump">Let&rsquo;s make it possible to jump!<a hidden class="anchor" aria-hidden="true" href="#lets-make-it-possible-to-jump">#</a></h2>
+<p>At this point your <code>main</code> proc should look something like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">main</span> <span class="o">::</span> <span class="nf">proc</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rl</span><span class="p">.</span><span class="nf">InitWindow</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="s">&#34;My First Game&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">player_pos</span> <span class="p">:</span><span class="o">=</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span> <span class="p">{</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">320</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">!</span><span class="n">rl</span><span class="p">.</span><span class="nf">WindowShouldClose</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">BeginDrawing</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">ClearBackground</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="n">BLUE</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">-=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">DrawRectangleV</span><span class="p">(</span><span class="n">player_pos</span><span class="p">,</span> <span class="p">{</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">},</span> <span class="n">rl</span><span class="p">.</span><span class="n">GREEN</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">rl</span><span class="p">.</span><span class="nf">EndDrawing</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">rl</span><span class="p">.</span><span class="nf">CloseWindow</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Let&rsquo;s make it so that the player can jump by pressing the space key! Jumping usually involves giving the player a speed upwards and then having gravity pull them down again. In order to represent this we need to add a new variable that can hold the player&rsquo;s <em>velocity</em>.</p>
+<blockquote>
+<p><strong>PHYSICS LINGO:</strong> The word speed just means a single number that represents how fast you are going, without indicating in which direction you are going. The word velocity both specifies how fast you are going, but also in what direction. In a 2D game it is therefore suitable to use a <code>Vector2</code> to represent the velocity.</p>
+</blockquote>
+<p>Just after the line <code>player_pos := rl.Vector2 { 640, 320 }</code>, add this line:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_vel</span><span class="p">:</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span>
+</span></span></code></pre></div><p>Where &ldquo;vel&rdquo; in <code>player_vel</code> is short for &ldquo;velocity&rdquo;.</p>
+<p>In Odin, writing a variable name such as <code>player_vel</code> followed by a <code>:</code> and then the type <code>rl.Vector2</code> will make a new <code>rl.Vector2</code> and set both the x and y parts to zero. In Odin, whenever you don&rsquo;t say what initial value a new variable has, it always gets a zero value. Note the difference around the <code>:</code> in these two lines:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_pos</span> <span class="p">:</span><span class="o">=</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span> <span class="p">{</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">320</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nl">player_vel</span><span class="p">:</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span>
+</span></span></code></pre></div><p>When you want to both create a new variable and also give it a specific value, you then use <code>:=</code>, but if you only want to make a new variable without specifying a value, then you can use <code>:</code> (in which case it will be default-initialized to all zeroes). Furthermore, this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_pos</span> <span class="p">:</span><span class="o">=</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span> <span class="p">{</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">320</span> <span class="p">}</span>
+</span></span></code></pre></div><p>is identical to this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_pos</span><span class="p">:</span> <span class="n">rl</span><span class="p">.</span><span class="n">Vector2</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">320</span> <span class="p">}</span>
+</span></span></code></pre></div><p>The latter one looks like the <code>player_vel</code> line, but with a value tacked on the end. But both lines have the same effect: You&rsquo;re creating a new variable of type <code>rl.Vector2</code> that has the initial value <code>{640, 320}</code>.</p>
+<p>Anyways, back to actually using this <code>player_vel</code>. Let&rsquo;s replace this code:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">-=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mi">400</span><span class="o">*</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>with this code:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">400</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">RIGHT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">400</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">player_pos</span> <span class="o">+=</span> <span class="n">player_vel</span> <span class="o">*</span> <span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span></code></pre></div><p>If you compile and run, everything should be like before. Soon we will add jumping, but there are three things to note about these changes:</p>
+<p><em>Firstly</em>, we now set <code>player_vel.x</code> when the left or right arrow is held, we do not add or subtract to it. If none of them is held, then we set <code>player_ve.x</code> to zero. This makes sense if you think about it, we want the speed to be 400 pixels per second when we hold one of the arrow keys, but it should be zero when we do not hold any of them.</p>
+<p><em>Secondly</em>, before this we&rsquo;ve used <code>+=</code> to add to variables that contain a single number. However, both <code>player_pos</code> and <code>player_vel</code> are <code>Vector2</code>, i.e. they contain two numbers. In Odin the math operators such as <code>+</code>, <code>+=</code>, <code>*</code>, <code>-</code> etc all work on both single numbers, but they also work on <em>arrays</em> of numbers, given that the two arrays contain the same number of things. What&rsquo;s an <em>array</em>? It&rsquo;s essentially a list of things. A <code>Vector2</code> is an array of size 2 that contains decimal numbers. We&rsquo;ll look more at arrays later.</p>
+<p><em>Thirdly</em>, we now only multiply by <code>rl.GetFrameTime()</code> in one place. We multiply the whole <code>player_vel</code> by this, giving us how far the player should move this frame.</p>
+<p>Now, let&rsquo;s add the jumping. Just before the line <code>player_pos += player_vel * rl.GetFrameTime()</code>, add this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">player_vel</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">2000</span> <span class="o">*</span> <span class="n">rl</span><span class="p">.</span><span class="nf">GetFrameTime</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(.</span><span class="n">SPACE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">600</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>The first new line, <code>player_vel.y += 2000 * rl.GetFrameTime()</code>, simulates gravity. It will constantly increase the y component of the player&rsquo;s velocity, pulling the player downwards on the screen. The number <code>2000</code> is chosen arbitrarily, it&rsquo;s just a number that <em>feels good</em> when playing. Note that we have to multiply <code>2000</code> by <code>rl.GetFrameTime()</code>. This is because we are <em>accelerating</em> the player, and we want to apply the same amount of downwards acceleration per second.</p>
+<p>The rest of the new lines check if the space key has been pressed this frame, and if it has, it sets the y component of the velocity to <code>-600</code>, which is a fairly fast upwards velocity.</p>
+<p>Note the difference between this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(.</span><span class="n">SPACE</span><span class="p">)</span> <span class="p">{</span>
+</span></span></code></pre></div><p>and the earlier code we wrote:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyDown</span><span class="p">(.</span><span class="n">LEFT</span><span class="p">)</span> <span class="p">{</span>
+</span></span></code></pre></div><p>The first one says <code>IsKeyPressed</code>, the second one says <code>IsKeyDown</code>. The <code>IsKeyPressed</code> proc checks if the key has <em>just been pressed</em>. It will only be true for a single frame. The <code>IsKeyDown</code> check will be true for as long as the key is kept held down. We only want to jump once when pressing space, but we want to be able to continuously walk left and right.</p>
+<p>If we run the game now, all that happens is this silly thing:</p>
+<p><video autoplay loop muted width="100%"><source src="/odinraylib2/fall.mp4"></video></p>
+<p>There&rsquo;s no floor in our world! Let&rsquo;s add that. Just after <code>player_pos += player_vel * rl.GetFrameTime()</code>, do this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>What this code does is that it checks if the y component of the players position is <em>bigger</em> than the height of the screen minus 64. If it is, then it moves the player back up. If that&rsquo;s confusing, then look at this picture:</p>
+<p>
+  <img loading="lazy" src="/odinraylib2/player_pos_on_screen.png" alt="Shows player position on screen">
+</p>
+<p>Remember that the player&rsquo;s height is 64 pixels. The position of the player is actually the top left position of the rectangle. Therefore, if we want to check if the bottom of the player is outside the bottom of the screen, then we need to check if <code>player_pos.y</code> is bigger than <em>the height of the screen minus 64</em>.</p>
+<p>If this is the case, then we snap <code>player_pos.y</code> to a value that makes the player sit so that the bottom of the player touches the bottom of the screen.</p>
+<blockquote>
+<p><strong>NOTE:</strong> Raylib provides the height of the screen using <code>rl.GetScreenHeight()</code>. This proc will return <code>720</code>, i.e. the value we initially fed into <code>rl.InitWindow</code>. It&rsquo;s a good idea to ask raylib instead of just writing <code>720</code>, as the window might have changed size.</p>
+</blockquote>
+<p>What&rsquo;s up with that <code>f32(</code> thing in <code>if player_pos.y &gt; f32(rl.GetScreenHeight()) - 64 {</code>? As I&rsquo;ve said before the player&rsquo;s position is a <code>Vector2</code>, and a <code>Vector2</code> consists of decimal numbers. The type of those decimal numbers is actually called <code>f32</code>, which stands for &ldquo;32 bit floating point number&rdquo;. So a <code>Vector2</code> is actually just two <code>f32</code> values tucked into a single thing called a <code>Vector2</code>.</p>
+<p>Now, <code>rl.GetScreenHeight()</code> gives you a value of type <code>i32</code>, which stands for &ldquo;32 bit integer number&rdquo;. Odin doesn&rsquo;t automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player&rsquo;s position to the screen height, we must convert the screen height to a decimal number too. The <code>f32()</code> thingy that surrounds the <code>rl.GetScreenHeight()</code> does just that, it is called a <em>cast</em> and it&rsquo;s a way to convert one type to another type.</p>
+<p>If you now play the game again, you can walk around with the arrow keys and press space to jump:</p>
+<p><video autoplay loop muted width="100%"><source src="/odinraylib2/jumping_around.mp4"></video></p>
+<p>If you play your lil game for more than 10 seconds you&rsquo;ll probably notice something funny: You can jump while still in the air&hellip;</p>
+<p><video autoplay loop muted width="100%"><source src="/odinraylib2/flying_around.mp4"></video></p>
+<p>That&rsquo;s hardly realistic! Unless you wanna make flappy bird or something. But we wanna make 2D platformer mechanics, so let&rsquo;s fix it.</p>
+<p>There are several different ways to fix things like this. We&rsquo;re gonna add a variable called <code>player_grounded</code> and use that to make sure you can only jump when you&rsquo;re standing on the ground.</p>
+<p>Just after the line <code>player_vel: rl.Vector2</code>, add this line:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="nl">player_grounded</span><span class="p">:</span> <span class="kt">bool</span>
+</span></span></code></pre></div><p>This creates a new variable called <code>player_grounded</code> of type <code>bool</code>. <code>bool</code> is a special type of variable that can only take on two values: <code>true</code> or <code>false</code>. Just like with <code>player_vel</code> we did not explicitly say what value <code>player_grounded</code> starts at, which means it will have &ldquo;the zero value&rdquo;, which in this case means <code>false</code>.</p>
+<p>Change this code:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>so that it now says this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_pos</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">f32</span><span class="p">(</span><span class="n">rl</span><span class="p">.</span><span class="nf">GetScreenHeight</span><span class="p">())</span> <span class="o">-</span> <span class="mi">64</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_grounded</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>I.e. when the player hits the floor we say that the player is grounded.</p>
+<p>We can now change the code that makes the player jump from this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(.</span><span class="n">SPACE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">600</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>to this</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">player_grounded</span> <span class="o">&amp;&amp;</span> <span class="n">rl</span><span class="p">.</span><span class="nf">IsKeyPressed</span><span class="p">(.</span><span class="n">SPACE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_vel</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">600</span>
+</span></span><span class="line"><span class="cl">    <span class="n">player_grounded</span> <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>There are two changes here:</p>
+<p>Firstly, there is now a <code>player_grounded &amp;&amp;</code> thingy before the <code>rl.IsKeyPressed</code>. What this does is check if <em>both</em> <code>player_grounded</code> is <code>true</code> <em>and also</em> if <code>rl.IsKeyPressed(.SPACE)</code> returns <code>true</code>. <code>&amp;&amp;</code> is called the AND operator and it is used to check if two <code>bool</code> values are both true. But then you might say: &ldquo;But Karl! <code>player_grounded</code> is of type bool, but <code>rl.IsKeyPressed(.SPACE)</code> is a call to a proc in Raylib.&rdquo; Yes. But procs can return values, and in this case the type that these <code>rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose</code> procs have been returning are all of type bool. If you and look up <code>IsKeyPressed</code> in <code>raylib.odin</code>, you&rsquo;ll see this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="n">IsKeyPressed</span> <span class="o">::</span> <span class="nf">proc</span><span class="p">(</span><span class="nl">key</span><span class="p">:</span> <span class="n">KeyboardKey</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+</span></span></code></pre></div><p>The <code>-&gt; bool</code> thingy at the end is telling us what type of value this proc returns.</p>
+<p>The second change is that we now set <code>player_grounded = false</code> when you press space, so that you can&rsquo;t jump again until you&rsquo;ve hit ground, at which point the <code>player_grounded</code> will become <code>true</code> again.</p>
+<p>Now, if you run the game again, you&rsquo;ll finally have a jumping mechanic that works properly. No more jumping while in the air!</p>
+<p><video autoplay loop muted width="100%"><source src="/odinraylib2/proper_jumping.mp4"></video></p>
+<h2 id="thats-it-for-today">That&rsquo;s it for today!<a hidden class="anchor" aria-hidden="true" href="#thats-it-for-today">#</a></h2>
+<p>Thanks for reading! The next part of this series is not out yet. But it <em>will</em> be about replacing the green box with an animation of a running cat! If you wanna know when it comes out, then follow me on Twitter, Threads or YouTube.</p>
+<p>Please leave any questions as comments on the <a href="LINK">video version</a> of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.</p>
+<p>Also, if you&rsquo;ve enjoyed this series so far and want to support me, then please consider buying my game CAT &amp; ONION on <a href="https://zylinski.itch.io/cat-and-onion">itch.io</a> or <a href="https://store.steampowered.com/app/2781210/CAT__ONION/">wishlist it on Steam</a>. When you buy on itch.io you also get the full Odin + Raylib source of the game.</p>
+<p>Have a great day!</p>
+<p>/Karl</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+
+<h3>Share this post</h3>
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on twitter"
+        href="https://twitter.com/intent/tweet/?text=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player&amp;url=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f&amp;hashtags=">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f&amp;title=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player&amp;summary=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player&amp;source=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on reddit"
+        href="https://reddit.com/submit?url=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f&title=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on whatsapp"
+        href="https://api.whatsapp.com/send?text=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player%20-%20http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on telegram"
+        href="https://telegram.me/share/url?text=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player&amp;url=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Make games using Odin and Raylib #2: A controllable player on ycombinator"
+        href="https://news.ycombinator.com/submitlink?t=Make%20games%20using%20Odin%20and%20Raylib%20%232%3a%20A%20controllable%20player&u=http%3a%2f%2fzylinski.se%2fposts%2fgamedev-for-beginners-using-odin-and-raylib-2%2f">
+        <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+            xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+            <path
+                d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+        </svg>
+    </a>
+</div>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="http://zylinski.se/">Karl Zylinski</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

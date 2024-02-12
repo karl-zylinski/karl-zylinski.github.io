@@ -62,17 +62,17 @@ Finally the last parameter is of type `Color`. Raylib comes with a few predefine
 
 ## Let's make the little box controllable!
 
-Let's say that we want the little green box to be the controllable player character of our game (or perhaps the box it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed, being held down etc.
+Let's say that we want the little green box to be the controllable player character of our game (or perhaps the box it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed or are being held down etc.
 
-We currently draw the player at position `{640, 320}` each frame. Let's make it so we can change that position. So that we can _vary_ it. First thing we need to do is to move the player position into a _variable_. Just before the `for !rl.WindowShouldClose() {` line, add this:
+We currently draw the player at position `{640, 320}` each frame. Let's make it so we can change that position. So that we can _vary_ it. First thing we need to do is to move the player position into a _variable_. Just before the line `for !rl.WindowShouldClose() {`, add this:
 
 ```C
 player_pos := rl.Vector2 { 640, 320 }
 ```
 
-You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` give it the initial value `{ 640, 320 }`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
+You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` and give it the initial value `{ 640, 320 }`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
 
-> **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl.` thingy, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`, and then you can use just `Vec2` everywhere you currently use `rl.Vector2`.
+> **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl.` thingy, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`. That makes it possible to write `Vec2` instead of `rl.Vector2`.
 
 Change the line that draws the player rectangle so it now says:
 
@@ -92,7 +92,7 @@ if rl.IsKeyDown(.RIGHT) {
 }
 ```
 
-Now if you re-run the and hold down the left or right arrow keys, then this should happen:
+Now if you re-run the game and hold down the left or right arrow keys, then this should happen:
 
 <video autoplay loop muted width="100%"><source src="/odinraylib2/move_box.mp4"></video>
 
@@ -102,11 +102,13 @@ Those lines starting with `if` will run the code inbetween the curly braces if t
 
 In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the `for !rl.WindowShouldClose() {` looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: `player_pos.x -= 400*rl.GetFrameTime()`. This line says to decrease the x component of `player_pos` by `400*rl.GetFrameTime()`. Note the `-=`, writing it like that is a shorter way of writing `player_pos.x = player_pos.x - 400*rl.GetFrameTime()`.
 
-Now, what about the `400*rl.GetFrameTime()` part? This means "400 pixels per second". Why? Because `rl.GetFrameTime()` tells us how many seconds the previous frame took. How short can a frame be? If your game runs at 60 frames per second then `rl.GetFrameTime()` reports something like `0.016` seconds. However, we haven't put in any kind of limit to our _frame rate_ yet, so `rl.GetFrameTime()` could very well be reporting tiny values such as `0.00001` s.
+Now, what about the `400*rl.GetFrameTime()` part? This means "400 pixels per second". Why? Because `rl.GetFrameTime()` tells us how many seconds the previous frame took. If you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will, if you hold the left or right arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments.
 
 ![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif)
 
-Anyways, if you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will, if you hold the arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments. If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totalling 400 pixels in one second.
+If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totaling 400 pixels in one second.
+
+How short can a frame be? If your game runs at 60 frames per second then `rl.GetFrameTime()` reports something like `0.016` seconds. However, we haven't put in any kind of limit to our _frame rate_ yet, so `rl.GetFrameTime()` could very well be reporting tiny values such as `0.00001` s.
 
 As for the second if statement:
 
@@ -257,7 +259,9 @@ If this is the case, then we snap `player_pos.y` to a value that makes the playe
 
 > **NOTE:** Raylib provides the height of the screen using `rl.GetScreenHeight()`. This proc will return `720`, i.e. the value we initially fed into `rl.InitWindow`. It's a good idea to ask raylib instead of just writing `720`, as the window might have changed size.
 
-What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a Vector2, and a Vector2 consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
+What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a `Vector2`, and a `Vector2` consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". So a `Vector2` is actually just two `f32` values tucked into a single thing called a `Vector2`.
+
+Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
 
 If you now play the game again, you can walk around with the arrow keys and press space to jump:
 
@@ -277,7 +281,7 @@ Just after the line `player_vel: rl.Vector2`, add this line:
 player_grounded: bool
 ```
 
-This creates a new variables called `player_grounded` of type `bool`. `bool` is special type of variable that can only take on two values: `true` or `false`. Just like with `player_vel` we did not explicitly say what value `player_grounded` starts at, which means it will have "the zero value", which in this case means `false`.
+This creates a new variable called `player_grounded` of type `bool`. `bool` is a special type of variable that can only take on two values: `true` or `false`. Just like with `player_vel` we did not explicitly say what value `player_grounded` starts at, which means it will have "the zero value", which in this case means `false`.
 
 Change this code:
 ```C
@@ -311,7 +315,7 @@ if player_grounded && rl.IsKeyPressed(.SPACE) {
 
 There are two changes here:
 
-Firstly, there is now a `player_grounded &&` thingy before the `rl.IsKeyPressed`. What this does is check if _both_ `player_grounded` is `true` and also if `rl.IsKeyPressed(.SPACE)` returns `true`. `&&` is called the AND operator and it is used to check if two `bool` values are both true. But then you might say: "But Karl! `player_grounded` is of type bool, but `rl.IsKeyPressed(.SPACE)` is a call to a proc in Raylib." Yes. But procs can return values, and in this case the type that these `rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose` procs have been returning are all of type bool. If you and look up `IsKeyPressed` in `raylib.odin`, you'll see this:
+Firstly, there is now a `player_grounded &&` thingy before the `rl.IsKeyPressed`. What this does is check if _both_ `player_grounded` is `true` _and also_ if `rl.IsKeyPressed(.SPACE)` returns `true`. `&&` is called the AND operator and it is used to check if two `bool` values are both true. But then you might say: "But Karl! `player_grounded` is of type bool, but `rl.IsKeyPressed(.SPACE)` is a call to a proc in Raylib." Yes. But procs can return values, and in this case the type that these `rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose` procs have been returning are all of type bool. If you and look up `IsKeyPressed` in `raylib.odin`, you'll see this:
 
 ```C
 IsKeyPressed :: proc(key: KeyboardKey) -> bool
@@ -327,11 +331,11 @@ Now, if you run the game again, you'll finally have a jumping mechanic that work
 
 ## That's it for today!
 
-Thanks for reading! If you have any questions, then please leave them as comments on the video version of this post.
+Thanks for reading! The next part of this series is not out yet. But it _will_ be about replacing the green box with an animation of a running cat! If you wanna know when it comes out, then follow me on Twitter, Threads or YouTube.
 
-The next part of this series is not out yet. But it _will_ be about replacing the green box with an animation of a running cat!
+Please leave any questions as comments on the [video version](LINK) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
 
-If you wanna know when it comes out, then follow me on Twitter, Threads or YouTube.
+Also, if you've enjoyed this series so far and want to support me, then please consider buying my game CAT & ONION on [itch.io](https://zylinski.itch.io/cat-and-onion) or [wishlist it on Steam](https://store.steampowered.com/app/2781210/CAT__ONION/). When you buy on itch.io you also get the full Odin + Raylib source of the game.
 
 Have a great day!
 

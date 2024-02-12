@@ -238,20 +238,21 @@
     margin: 1rem auto;
 }
 
+.post-content figure {
+
+    display: table;
+}
+
 .post-content figure.align-center {
     text-align: center;
 }
 
 .post-content figure > figcaption {
-    color: var(--primary);
     font-size: 16px;
-    font-weight: bold;
-    margin: 8px 0 16px;
-}
-
-.post-content figure > figcaption > p {
-    color: var(--secondary);
-    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    display: table-caption;
+    caption-side: bottom ;
     font-weight: normal;
 }
 
