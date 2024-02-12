@@ -50,19 +50,19 @@ How can I know this proc exists in Raylib and also know what things it is possib
 
 ![DrawRectangleV in Raylib.odin](/odinraylib2/draw_rectangle.png)
 
-This line tells us that `DrawRectangleV` accepts three _parameters_. The first one is the position of the rectangle, where we put in `{640, 320}`. The `Vector2` to the right of the word `position` tells us that this proc expects `position` to be of _type_ Vector2. What is Vector2? It's just a thing that consists of two decimal numbers. We can use a `Vector2` to denote positions, directions and sizes in 2 dimensional space. The second parameter `size` is also a `Vector2`, that's where we sent in `{64, 64}`.
+This line tells us that `DrawRectangleV` accepts three _parameters_. The first one is the position of the rectangle, where we put in `{640, 320}`. The `Vector2` to the right of the word `position` tells us that this proc expects `position` to be of _type_ `Vector2`. What is `Vector2`? It's just a thing that consists of two decimal numbers. We can use a `Vector2` to denote positions, directions and sizes in 2 dimensional space. The second parameter `size` is also a `Vector2`, that's where we sent in `{64, 64}`.
 
-Finally the last parameter is of type `Color`. Raylib comes with a few predefined colors, such as `rl.GREEN`. Try replacing `rl.GREEN` in our code with something like `{255, 180, 0, 255}`, which should make the box orange instead. Those four numbers denote red, green, blue and alpha respectively. `{255, 255, 255, 255}` means comletely white and `{0, 0, 0, 255}` means completely black. The alpha number at the end tells Raylib how transparent you want the rectangle to be.
+Finally the last parameter is of type `Color`. Raylib comes with a few predefined colors, such as `rl.GREEN`. Try replacing `rl.GREEN` in our code with something like `{255, 180, 0, 255}`, which should make the box orange instead. Those four numbers denote red, green, blue and alpha respectively. `{255, 255, 255, 255}` means completely white and `{0, 0, 0, 255}` means completely black. The alpha number at the end tells Raylib how transparent you want the rectangle to be.
 
 ![About colors in raylib](/odinraylib2/color.png)
 
 > **SUBLIME TIP:** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words.
 
-> **NOTE:** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code.
+> **NOTE:** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code.
 
 ## Let's make the little box controllable!
 
-Let's say that we want the little green box to be the controllable player character of our game (or perhaps it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed, being held down etc.
+Let's say that we want the little green box to be the controllable player character of our game (or perhaps the box it is orange for you now, if you experimented with the colors). Then we need to be able to move it! Raylib comes with a big collection of different procs that allow us to check if keyboard keys, gamepad buttons and mouse buttons have been pressed, being held down etc.
 
 We currently draw the player at position `{640, 320}` each frame. Let's make it so we can change that position. So that we can _vary_ it. First thing we need to do is to move the player position into a _variable_. Just before the `for !rl.WindowShouldClose() {` line, add this:
 
@@ -70,7 +70,7 @@ We currently draw the player at position `{640, 320}` each frame. Let's make it 
 player_pos := rl.Vector2 { 640, 320 }
 ```
 
-You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` and have it start at position `{ 640, 320}`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
+You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` give it the initial value `{ 640, 320 }`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
 
 > **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl.` thingy, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`, and then you can use just `Vec2` everywhere you currently use `rl.Vector2`.
 
@@ -106,7 +106,7 @@ Now, what about the `400*rl.GetFrameTime()` part? This means "400 pixels per sec
 
 ![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif)
 
-Anyways, if you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will make our green box move 400 pixels to the left, but in many tiny increments. If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per scond, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totalling 400 pixels in one second.
+Anyways, if you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will, if you hold the arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments. If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totalling 400 pixels in one second.
 
 As for the second if statement:
 
@@ -206,9 +206,9 @@ If you compile and run, everything should be like before. Soon we will add jumpi
 
 _Firstly_, we now set `player_vel.x` when the left or right arrow is held, we do not add or subtract to it. If none of them is held, then we set `player_ve.x` to zero. This makes sense if you think about it, we want the speed to be 400 pixels per second when we hold one of the arrow keys, but it should be zero when we do not hold any of them.
 
-_Secondly_, before this we've used `+=` to add to variables that contain a single number. However, both `player_pos` and `player_vel` are Vector2, i.e. they contain two numbers. In Odin the math operators such as `+`, `+=`, `*`, `-` etc all work on both single numbers, but they also work on _arrays_ of numbers, given that the two arrays are of the same length. What's an _array_? It's essentially a list of things. A Vector2 is an array of size 2 that contains decimal numbers. We'll look more at arrays later.
+_Secondly_, before this we've used `+=` to add to variables that contain a single number. However, both `player_pos` and `player_vel` are `Vector2`, i.e. they contain two numbers. In Odin the math operators such as `+`, `+=`, `*`, `-` etc all work on both single numbers, but they also work on _arrays_ of numbers, given that the two arrays contain the same number of things. What's an _array_? It's essentially a list of things. A `Vector2` is an array of size 2 that contains decimal numbers. We'll look more at arrays later.
 
-_Thirdly_, we now only multiply by `rl.GetFrameTime()` in one place. We multiply the whole `player_vel` by this, giving us how far the player should move considering how long time our previous frame took.
+_Thirdly_, we now only multiply by `rl.GetFrameTime()` in one place. We multiply the whole `player_vel` by this, giving us how far the player should move this frame.
 
 Now, let's add the jumping. Just before the line `player_pos += player_vel * rl.GetFrameTime()`, add this:
 
@@ -257,7 +257,7 @@ If this is the case, then we snap `player_pos.y` to a value that makes the playe
 
 > **NOTE:** Raylib provides the height of the screen using `rl.GetScreenHeight()`. This proc will return `720`, i.e. the value we initially fed into `rl.InitWindow`. It's a good idea to ask raylib instead of just writing `720`, as the window might have changed size.
 
-What's up with that `f32()` thing that surrounds `rl.GetScreenHeight()`? As I've said before the player's position is a Vector2, and a Vector2 consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert a type to another type.
+What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a Vector2, and a Vector2 consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
 
 If you now play the game again, you can walk around with the arrow keys and press space to jump:
 
@@ -269,7 +269,7 @@ If you play your lil game for more than 10 seconds you'll probably notice someth
 
 That's hardly realistic! Unless you wanna make flappy bird or something. But we wanna make 2D platformer mechanics, so let's fix it.
 
-There are several different ways to fix things like this. We're gonna add a variable called `player_grounded` and use that to make sure you can only jump when you're... grounded.
+There are several different ways to fix things like this. We're gonna add a variable called `player_grounded` and use that to make sure you can only jump when you're standing on the ground.
 
 Just after the line `player_vel: rl.Vector2`, add this line:
 
@@ -311,7 +311,7 @@ if player_grounded && rl.IsKeyPressed(.SPACE) {
 
 There are two changes here:
 
-Firstly, there is now a `player_grounded &&` thingy before the `rl.IsKeyPressed`. What this does is check if _both_ `player_grounded` is `true` and also if `rl.IsKeyPressed(.SPACE)` returns `true`. `&&` is called the AND operator and it is used to combine two `bool` values into one. But then you might say: "But Karl! `player_grounded` is of type bool, but `rl.IsKeyPressed(.SPACE)` is a call to a proc in Raylib." Yes. But procs can return values, and in this case the type that these `rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose` procs have been returning are all of type bool. If you and look up `IsKeyPressed` in `raylib.odin`, you'll see this:
+Firstly, there is now a `player_grounded &&` thingy before the `rl.IsKeyPressed`. What this does is check if _both_ `player_grounded` is `true` and also if `rl.IsKeyPressed(.SPACE)` returns `true`. `&&` is called the AND operator and it is used to check if two `bool` values are both true. But then you might say: "But Karl! `player_grounded` is of type bool, but `rl.IsKeyPressed(.SPACE)` is a call to a proc in Raylib." Yes. But procs can return values, and in this case the type that these `rl.IsKeyPressed/rl.IsKeyDown/rl.WindowShouldClose` procs have been returning are all of type bool. If you and look up `IsKeyPressed` in `raylib.odin`, you'll see this:
 
 ```C
 IsKeyPressed :: proc(key: KeyboardKey) -> bool
@@ -319,9 +319,9 @@ IsKeyPressed :: proc(key: KeyboardKey) -> bool
 
 The `-> bool` thingy at the end is telling us what type of value this proc returns.
 
-The second change is that we now set `player_grounded = false` when you press space, so that you can't jump again until you've hit ground.
+The second change is that we now set `player_grounded = false` when you press space, so that you can't jump again until you've hit ground, at which point the `player_grounded` will become `true` again.
 
-Now, if you run the game again, you'll finally have a jumping mechanic that works properly. No more jumping in air.
+Now, if you run the game again, you'll finally have a jumping mechanic that works properly. No more jumping while in the air!
 
 <video autoplay loop muted width="100%"><source src="/odinraylib2/proper_jumping.mp4"></video>
 

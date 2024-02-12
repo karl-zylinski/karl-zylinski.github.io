@@ -183,4 +183,4 @@ As you can see in this image, I accidentally typed `BegunDrawing` instead of `Be
 
 If you have any questions or thoughts, then please put them as comments on the [video version](LINK) of this post.
 
-Thanks for reading! I hope to see you in part 2, where we will write some _gameplay code_.
+Thanks for reading! I hope to see you in [part 2]({{< ref "/posts/gamedev-for-beginners-using-odin-and-raylib-2" >}} "Go to next part"), where we will add a player that we can control.
