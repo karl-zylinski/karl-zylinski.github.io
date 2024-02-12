@@ -130,7 +130,7 @@ This file tells Sublime to compile our game using the command `c:/odin/odin run 
 
 Return to `main.odin` and go to the top left menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system to build and run your game. It should compile and run your first Odin program:
 
-![SublimeText](/odinraylib1/my_first_game.png)
+![SublimeText](/odinraylib1/my_first_game.png "Our first Odin + Raylib program: It's just a blue background for now, but soon we'll have gameplay in there!")
 
 You should now see a window with a blue background! It's not much, but soon we'll add things moving around in there!
 
@@ -140,7 +140,7 @@ You should now see a window with a blue background! It's not much, but soon we'l
 
 If your program did not compile, chances are you mistyped something in the code. When you compile and there is an error, you'll see information in the console at the bottom of your sublime window:
 
-![Compilation Error](/odinraylib1/error.png)
+![Compilation Error](/odinraylib1/error.png "If you mistyped anything, then the errors from the compilation will be visible in the console")
 
 As you can see in this image, I accidentally typed `BegunDrawing` instead of `BeginDrawing`. The error message is in this case helpful and suggests what I might have meant instead.
 
@@ -166,7 +166,7 @@ main :: proc() {
 
 Let's start by looking at the line `main :: proc() {`. This line defines a new _procedure_. A procedure, or proc as I will call it, is a block of code with a name attached. The code inside the proc can be run if you know the proc's name. In this case we are creating a proc called `main`. When an Odin program starts, it looks for a proc called `main` and starts the program from the top of that proc. The proc runs from the opening curly brace `{`, to the matching closing curly brace `}`, as shown below:
 
-![Main Proc with arrows of where it starts and ends](/odinraylib1/main.png)
+![Main Proc with arrows of where it starts and ends](/odinraylib1/main.png "The program will start at the top of the `main` proc. All procs run from the opening curly brace `{` to the closing curly brace `}`")
 
 When the closing curly brace `}` of the main proc is reached, then the game has finished running and will shut down. In essence your whole game goes in-between those two curly braces of the main proc.
 
@@ -175,8 +175,7 @@ When the closing curly brace `}` of the main proc is reached, then the game has 
 Looking inside the `main` proc we see a bunch of lines that all start with `rl`. All those lines are _calls_ to procs within Raylib, i.e. code that is instructing Raylib to do stuff. By _proc call_ I mean that you use the name of a proc in order to run the code inside that proc. As mentioned before, Raylib can draw graphics, create windows and much more. The line `rl.InitWindow(1280, 720, "My First Game")` creates a window of size 1280x720 pixels and gives the window the title "My First Game".
 
 The line `for !rl.WindowShouldClose() {` makes a loop that runs for as long as the window created by Raylib wants to stay open. `rl.WindowShouldClose()` is a proc in Raylib that essentially tells us if the user pressed the close button of the window. But we want to know if the user _didn't_ press it, which is why we put the `!` in front to negate the answer from Raylib. The stuff between the two curly braces `{}` is the code that the loop will run, over and over again, until the user tries to close the window.
-
-![Image saying that the code inbetween the two curly braces of the for loop will run over and over as long as the window isn't closed](/odinraylib1/main_loop.png)
+![Image saying that the code inbetween the two curly braces of the for loop will run over and over as long as the window isn't closed](/odinraylib1/main_loop.png "This loop will run as long as the window wants to stay open. The code between the curly braces will run over and over again.")
 
 This loop will be the 'main loop' of our video game. Video games consist of constantly updating images on the screen, called frames. Gamers often talk about how many 'FPS' or Frames Per Second their game runs at, which essentially means how many times per second our `for` manages to loop. The more stuff you add in there, the lower the FPS.
 

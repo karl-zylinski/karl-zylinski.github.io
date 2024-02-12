@@ -2,6 +2,8 @@
 title: "Make games using Odin and Raylib #2: A controllable player"
 date: 2024-02-11T15:47:11+02:00
 
+draft: true
+
 cover:
   image: "/odinraylib2/cover.png"
 ---
@@ -9,7 +11,7 @@ cover:
 In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
 
 Here's the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:
-
+{{<youtube PUTIDHERE>}}
 Let's go!
 
 ## Drawing something more than just a blue background
@@ -42,19 +44,19 @@ rl.DrawRectangleV({640,320}, {64, 64}, rl.GREEN)
 
 If you hit F7 and recompile you'll now see a green box on top of a blue background:
 
-![The green box rendering on top of our blue background](/odinraylib2/green_box.png)
+![The green box rendering on top of our blue background](/odinraylib2/green_box.png "A green box rendered on top of our blue background. The green box will act as our player character.")
 
 If we look at the line we just added we see that `rl.DrawRectangleV` seems to be a proc that accepts a couple of numbers and something at the end that tells it that we want a green box. The `{640, 320}` says that we want the box to be at the position `x = 640, y = 320`, where x and y are counted from the top left of the window. This is in the middle of our window (remember: we gave `rl.InitWindow` the window size `1280` by `720`). The `{64, 64}` says how big we want the box to be, i.e. we want it to be 64 pixels wide and 64 pixels high.
 
 How can I know this proc exists in Raylib and also know what things it is possible to feed it? Try this: Open the Windows file explorer and go to `c:\odin\vendor`. In there you'll see a folder called `raylib`. The odin files in that folder are the ones that get imported by the line `import rl "vendor:raylib"` at the top of your program. Go inside the `raylib` folder and drag & drop `raylib.odin` into your code editor. Search for `DrawRectangleV` in there, you should find this line:
 
-![DrawRectangleV in Raylib.odin](/odinraylib2/draw_rectangle.png)
+![DrawRectangleV in Raylib.odin](/odinraylib2/draw_rectangle.png "How DrawRectangleV is defined in `raylib.odin`. It's a proc that accepts three parameters. Those parameters control the position, size and colors of the box.")
 
 This line tells us that `DrawRectangleV` accepts three _parameters_. The first one is the position of the rectangle, where we put in `{640, 320}`. The `Vector2` to the right of the word `position` tells us that this proc expects `position` to be of _type_ `Vector2`. What is `Vector2`? It's just a thing that consists of two decimal numbers. We can use a `Vector2` to denote positions, directions and sizes in 2 dimensional space. The second parameter `size` is also a `Vector2`, that's where we sent in `{64, 64}`.
 
 Finally the last parameter is of type `Color`. Raylib comes with a few predefined colors, such as `rl.GREEN`. Try replacing `rl.GREEN` in our code with something like `{255, 180, 0, 255}`, which should make the box orange instead. Those four numbers denote red, green, blue and alpha respectively. `{255, 255, 255, 255}` means completely white and `{0, 0, 0, 255}` means completely black. The alpha number at the end tells Raylib how transparent you want the rectangle to be.
 
-![About colors in raylib](/odinraylib2/color.png)
+![About colors in raylib](/odinraylib2/color.png "What the different parts of a Raylib color mean.")
 
 > **SUBLIME TIP:** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words.
 
@@ -94,17 +96,20 @@ if rl.IsKeyDown(.RIGHT) {
 
 Now if you re-run the game and hold down the left or right arrow keys, then this should happen:
 
+<figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/move_box.mp4"></video>
+<figcaption>Now you can move the green box with the left and right arrow keys!</figcaption>
+</figure>
 
 Those lines starting with `if` will run the code inbetween the curly braces if the condition is  true:
 
-![if the condition is true, then run the code between the curly braces](/odinraylib2/if_left.png)
+![if the condition is true, then run the code between the curly braces](/odinraylib2/if_left.png "The anatomy an if-statement. The stuff between the `if` and the `{` is the condition for running the code between the two curly braces `{}`")
 
 In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the `for !rl.WindowShouldClose() {` looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: `player_pos.x -= 400*rl.GetFrameTime()`. This line says to decrease the x component of `player_pos` by `400*rl.GetFrameTime()`. Note the `-=`, writing it like that is a shorter way of writing `player_pos.x = player_pos.x - 400*rl.GetFrameTime()`.
 
 Now, what about the `400*rl.GetFrameTime()` part? This means "400 pixels per second". Why? Because `rl.GetFrameTime()` tells us how many seconds the previous frame took. If you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will, if you hold the left or right arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments.
 
-![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif)
+![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif "A 400 pixels wide ruler showing that the player moves 400 pixels in 1 second when we offset it by `400*rl.GetFrameTime()` each frame.")
 
 If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totaling 400 pixels in one second.
 
@@ -239,7 +244,10 @@ The first one says `IsKeyPressed`, the second one says `IsKeyDown`. The `IsKeyPr
 
 If we run the game now, all that happens is this silly thing:
 
+<figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/fall.mp4"></video>
+<figcaption>Our world has no floor! You just keeping falling forever.</figcaption>
+</figure>
 
 There's no floor in our world! Let's add that. Just after `player_pos += player_vel * rl.GetFrameTime()`, do this:
 
@@ -265,11 +273,17 @@ Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "3
 
 If you now play the game again, you can walk around with the arrow keys and press space to jump:
 
+<figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/jumping_around.mp4"></video>
+<figcaption>There's now a floor and you can jump around ...</figcaption>
+</figure>
 
 If you play your lil game for more than 10 seconds you'll probably notice something funny: You can jump while still in the air...
 
+<figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/flying_around.mp4"></video>
+<figcaption>... but you can jump in the air!</figcaption>
+</figure>
 
 That's hardly realistic! Unless you wanna make flappy bird or something. But we wanna make 2D platformer mechanics, so let's fix it.
 
@@ -327,7 +341,10 @@ The second change is that we now set `player_grounded = false` when you press sp
 
 Now, if you run the game again, you'll finally have a jumping mechanic that works properly. No more jumping while in the air!
 
+<figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/proper_jumping.mp4"></video>
+<figcaption>At last: A floor to stand on, the ability to jump and no in-air jumping!</figcaption>
+</figure>
 
 ## That's it for today!
 
