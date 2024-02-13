@@ -2,14 +2,20 @@
 title: "Make games using Odin and Raylib #2: A controllable player"
 date: 2024-02-11T15:47:11+02:00
 
+draft: true
+
 cover:
   image: "/odinraylib2/cover.png"
 ---
 
-In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
+In this second post about making games using Odin and Raylib we shall look at how to **add a simple player character and make it moveable**. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
 
 Here's the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:
+<figure>
 {{<youtube PUTIDHERE>}}
+<figcaption>The companion video for this post. It contains mostly the same information. It can be helpful if you get confused by anything.</figcaption>
+</figure>
+
 Let's go!
 
 ## Drawing something more than just a blue background
@@ -40,13 +46,13 @@ This game is currently just a pure blue background. Let's add something more to 
 rl.DrawRectangleV({640,320}, {64, 64}, rl.GREEN)
 ```
 
-If you hit F7 and recompile you'll now see a green box on top of a blue background:
+If you recompile (just hit F7 if you setup the Sublime Build System at the end of the last post) you'll now see a green box on top of a blue background:
 
 ![The green box rendering on top of our blue background](/odinraylib2/green_box.png "A green box rendered on top of our blue background. The green box will act as our player character.")
 
 If we look at the line we just added we see that `rl.DrawRectangleV` seems to be a proc that accepts a couple of numbers and something at the end that tells it that we want a green box. The `{640, 320}` says that we want the box to be at the position `x = 640, y = 320`, where x and y are counted from the top left of the window. This is in the middle of our window (remember: we gave `rl.InitWindow` the window size `1280` by `720`). The `{64, 64}` says how big we want the box to be, i.e. we want it to be 64 pixels wide and 64 pixels high.
 
-How can I know this proc exists in Raylib and also know what things it is possible to feed it? Try this: Open the Windows file explorer and go to `c:\odin\vendor`. In there you'll see a folder called `raylib`. The odin files in that folder are the ones that get imported by the line `import rl "vendor:raylib"` at the top of your program. Go inside the `raylib` folder and drag & drop `raylib.odin` into your code editor. Search for `DrawRectangleV` in there, you should find this line:
+How can I know this proc exists in Raylib and also know what things it is possible to feed it? Try this: Open the Windows file explorer and go to `c:\odin\vendor` (on Mac / Linux open the file browser and go to `<where your odin install is>/vendor`). In there you'll see a folder called `raylib`. The odin files in that folder are the ones that get imported by the line `import rl "vendor:raylib"` at the top of your program. Go inside the `raylib` folder and drag & drop `raylib.odin` into your code editor. Search for `DrawRectangleV` in there, you should find this line:
 
 ![DrawRectangleV in Raylib.odin](/odinraylib2/draw_rectangle.png "How DrawRectangleV is defined in `raylib.odin`. It's a proc that accepts three parameters. Those parameters control the position, size and colors of the box.")
 
@@ -56,9 +62,9 @@ Finally the last parameter is of type `Color`. Raylib comes with a few predefine
 
 ![About colors in raylib](/odinraylib2/color.png "What the different parts of a Raylib color mean.")
 
-> **SUBLIME TIP:** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words.
+> **NOTE:** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code. This kind of interface to a library written in another language is called a _binding_.
 
-> **NOTE:** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code.
+> **SUBLIME TIP:** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words. You can also drag n drop the whole `vendor/raylib` directory into Sublime and also drag n drop the whole `my_first_game` directory into Sublime, to make all files in those two directories available to the F12 command and the `Ctrl + Shift + R` command.
 
 ## Let's make the little box controllable!
 
@@ -72,7 +78,7 @@ player_pos := rl.Vector2 { 640, 320 }
 
 You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` and give it the initial value `{ 640, 320 }`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
 
-> **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl.` thingy, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`. That makes it possible to write `Vec2` instead of `rl.Vector2`.
+> **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl` prefix, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`. That makes it possible to write `Vec2` instead of `rl.Vector2`.
 
 Change the line that draws the player rectangle so it now says:
 
@@ -105,11 +111,11 @@ Those lines starting with `if` will run the code inbetween the curly braces if t
 
 In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the `for !rl.WindowShouldClose() {` looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: `player_pos.x -= 400*rl.GetFrameTime()`. This line says to decrease the x component of `player_pos` by `400*rl.GetFrameTime()`. Note the `-=`, writing it like that is a shorter way of writing `player_pos.x = player_pos.x - 400*rl.GetFrameTime()`.
 
-Now, what about the `400*rl.GetFrameTime()` part? This means "400 pixels per second". Why? Because `rl.GetFrameTime()` tells us how many seconds the previous frame took. If you wait a full second, then the main loop will have run many times, and each frame it checks how long the previous frame took. So subtracting `400*rl.GetFrameTime()` from `player_pos.x` each lap of the main loop will, if you hold the left or right arrow for 1 second, make our green box move 400 pixels to the left, but in many tiny increments.
+Now, what about the `400*rl.GetFrameTime()` part? My intent is to move the player _400 pixels per second_. I can achieve this by multiplying 400 by `rl.GetFrameTime()`. This works because `rl.GetFrameTime()` reports how many seconds the previous frame took.
 
 ![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif "A 400 pixels wide ruler showing that the player moves 400 pixels in 1 second when we offset it by `400*rl.GetFrameTime()` each frame.")
 
-If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then 200 pixels more the next frame, totaling 400 pixels in one second.
+If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then `400*0.5=200` pixels more the next frame, totaling 400 pixels in one second.
 
 How short can a frame be? If your game runs at 60 frames per second then `rl.GetFrameTime()` reports something like `0.016` seconds. However, we haven't put in any kind of limit to our _frame rate_ yet, so `rl.GetFrameTime()` could very well be reporting tiny values such as `0.00001` s.
 
@@ -207,9 +213,9 @@ if rl.IsKeyDown(.LEFT) {
 player_pos += player_vel * rl.GetFrameTime()
 ```
 
-If you compile and run, everything should be like before. Soon we will add jumping, but there are three things to note about these changes:
+If you compile and run, everything should be like before, but behind the scenes `player_vel` is now used to alter `player_pos`. Soon we will add jumping, but there are three things to note about these changes:
 
-_Firstly_, we now set `player_vel.x` when the left or right arrow is held, we do not add or subtract to it. If none of them is held, then we set `player_ve.x` to zero. This makes sense if you think about it, we want the speed to be 400 pixels per second when we hold one of the arrow keys, but it should be zero when we do not hold any of them.
+_Firstly_, we now set `player_vel.x` when the left or right arrow is held, we do not add or subtract to it. We just set it to the value we want. The addition happens later on the `player_pos += player_vel * rl.GetFrameTime()` line. If none of the arrow keys are held, then we set `player_vel.x` to zero. 
 
 _Secondly_, before this we've used `+=` to add to variables that contain a single number. However, both `player_pos` and `player_vel` are `Vector2`, i.e. they contain two numbers. In Odin the math operators such as `+`, `+=`, `*`, `-` etc all work on both single numbers, but they also work on _arrays_ of numbers, given that the two arrays contain the same number of things. What's an _array_? It's essentially a list of things. A `Vector2` is an array of size 2 that contains decimal numbers. We'll look more at arrays later.
 
@@ -225,7 +231,7 @@ if rl.IsKeyPressed(.SPACE) {
 }
 ```
 
-The first new line, `player_vel.y += 2000 * rl.GetFrameTime()`, simulates gravity. It will constantly increase the y component of the player's velocity, pulling the player downwards on the screen. The number `2000` is chosen arbitrarily, it's just a number that _feels good_ when playing. Note that we have to multiply `2000` by `rl.GetFrameTime()`. This is because we are _accelerating_ the player, and we want to apply the same amount of downwards acceleration per second.
+The first new line, `player_vel.y += 2000 * rl.GetFrameTime()`, simulates gravity. It will constantly increase the y component of the player's velocity, pulling the player downwards on the screen at an ever increasing speed. The number `2000` is chosen arbitrarily, it's just a number that _feels good_ when playing. Note that we have to multiply `2000` by `rl.GetFrameTime()`. This is because we are _accelerating_ the player, and we want to apply the same amount of downwards acceleration per second.
 
 The rest of the new lines check if the space key has been pressed this frame, and if it has, it sets the y component of the velocity to `-600`, which is a fairly fast upwards velocity.
 
@@ -255,9 +261,9 @@ if player_pos.y > f32(rl.GetScreenHeight()) - 64 {
 }
 ```
 
-What this code does is that it checks if the y component of the players position is _bigger_ than the height of the screen minus 64. If it is, then it moves the player back up. If that's confusing, then look at this picture:
+What this code does is that it checks if the y component of the players position is _bigger_ than the height of the screen minus 64. If it is, then it moves the player back up. If that's confusing, I try to illustrate this in this picture:
 
-![Shows player position on screen](/odinraylib2/player_pos_on_screen.png)
+![Shows player position on screen](/odinraylib2/player_pos_on_screen.png "Illustration of the player sticking out slightly from the bottom of the screen. Since the player is 64 pixels high, this means that that `player_pos.y` has become bigger than `rl.GetScreenHeight() - 64`.")
 
 Remember that the player's height is 64 pixels. The position of the player is actually the top left position of the rectangle. Therefore, if we want to check if the bottom of the player is outside the bottom of the screen, then we need to check if `player_pos.y` is bigger than _the height of the screen minus 64_.
 
@@ -265,9 +271,7 @@ If this is the case, then we snap `player_pos.y` to a value that makes the playe
 
 > **NOTE:** Raylib provides the height of the screen using `rl.GetScreenHeight()`. This proc will return `720`, i.e. the value we initially fed into `rl.InitWindow`. It's a good idea to ask raylib instead of just writing `720`, as the window might have changed size.
 
-What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a `Vector2`, and a `Vector2` consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". So a `Vector2` is actually just two `f32` values tucked into a single thing called a `Vector2`.
-
-Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
+What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a `Vector2`, and a `Vector2` consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". So a `Vector2` is actually just two `f32` values tucked into a single thing called a `Vector2`. Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
 
 If you now play the game again, you can walk around with the arrow keys and press space to jump:
 
@@ -276,7 +280,7 @@ If you now play the game again, you can walk around with the arrow keys and pres
 <figcaption>There's now a floor and you can jump around ...</figcaption>
 </figure>
 
-If you play your lil game for more than 10 seconds you'll probably notice something funny: You can jump while still in the air...
+If you play your lil' game for more than 10 seconds you'll probably notice something funny: You can jump while in the air...
 
 <figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib2/flying_around.mp4"></video>
@@ -284,6 +288,8 @@ If you play your lil game for more than 10 seconds you'll probably notice someth
 </figure>
 
 That's hardly realistic! Unless you wanna make flappy bird or something. But we wanna make 2D platformer mechanics, so let's fix it.
+
+## Disallowing jumping while in the air
 
 There are several different ways to fix things like this. We're gonna add a variable called `player_grounded` and use that to make sure you can only jump when you're standing on the ground.
 
@@ -333,7 +339,7 @@ Firstly, there is now a `player_grounded &&` thingy before the `rl.IsKeyPressed`
 IsKeyPressed :: proc(key: KeyboardKey) -> bool
 ```
 
-The `-> bool` thingy at the end is telling us what type of value this proc returns.
+The `-> bool` at the end is telling us what type of value this proc returns.
 
 The second change is that we now set `player_grounded = false` when you press space, so that you can't jump again until you've hit ground, at which point the `player_grounded` will become `true` again.
 
@@ -346,7 +352,7 @@ Now, if you run the game again, you'll finally have a jumping mechanic that work
 
 ## That's it for today!
 
-Thanks for reading! The next part of this series is not out yet. But it _will_ be about replacing the green box with an animation of a running cat! If you wanna know when it comes out, then follow me on Twitter, Threads or YouTube.
+Thanks for reading! The next part of this series is not out yet. But it _will_ be about replacing the green box an animated sprite! If you wanna know when it comes out, then follow me on [Twitter](https://twitter.com/karl_zylinski), [Threads](https://www.threads.net/@karl_zylinski) or [YouTube](https://www.youtube.com/@karl_zylinski).
 
 Please leave any questions as comments on the [video version](LINK) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
 

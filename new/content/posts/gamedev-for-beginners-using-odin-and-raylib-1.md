@@ -2,6 +2,9 @@
 title: "Make games using Odin and Raylib #1: Setup + First Program"
 date: 2024-02-09T15:47:11+02:00
 
+
+draft: true
+
 cover:
   image: "/odinraylib1/cover.png"
 ---
@@ -10,14 +13,11 @@ cover:
 
 **This series is aimed at people with little to no programming experience**. Being a bit technical and having an interest in games will help. Also, people who do know programming but have never done video games programming before may find this interesting.
 
-This post has a **companion YouTube video** that says pretty much the same stuff:
-
+Here's the **companion video** for this post. If you get confused by this post, then chances are that the companion video can help you understand:
 <figure>
 {{<youtube PUTIDHERE>}}
 <figcaption>The companion video for this post. It contains mostly the same information. It can be helpful if you get confused by anything.</figcaption>
 </figure>
-
-If you get confused by anything in this post, then perhaps the companion video can help. Or you can just watch both. One often learns better when getting the same information in more than one format.
 
 I'll begin by describing what Odin and Raylib is, after that we'll download and setup the Odin compiler, setup a code editor and finally we'll make our first tiny Odin + Raylib program. As a bonus at the end I'll also show you how you can compile directly from inside the code editor.
 
