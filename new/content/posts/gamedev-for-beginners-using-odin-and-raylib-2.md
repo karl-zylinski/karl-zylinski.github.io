@@ -2,8 +2,6 @@
 title: "Make games using Odin and Raylib #2: A controllable player"
 date: 2024-02-11T15:47:11+02:00
 
-draft: true
-
 cover:
   image: "/odinraylib2/cover.png"
 ---

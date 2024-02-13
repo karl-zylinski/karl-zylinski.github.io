@@ -2,7 +2,6 @@
 title: "Make games using Odin and Raylib #1: Setup + First Program"
 date: 2024-02-09T15:47:11+02:00
 
-draft: true
 
 cover:
   image: "/odinraylib1/cover.png"
@@ -110,45 +109,39 @@ When you've typed it all in, go ahead and save it to `c:\code\my_first_game\my_f
 
 ## Let's compile the code and run our game!
 
-In order to compile the code from within Sublime Text, we'll need to create a Build System.
+Let's turn that code into a program using the Odin compiler.
 
-> **IF YOU CHOSE TO NOT USE SUBLIME TEXT:** This section won't make much sense. In that case you can compile the game by opening the windows command-line `cmd` and go to the `c:\code\my_first_game` directory by typing `cd \code\my_first_game`  and from there compile and run the game by typing `c:\odin\odin run .`
+For our first compile, we'll use the Command Prompt, which lets us write by writing text. But at the end of this post I will go through how to set things up so you can build from within Sublime.
 
-A Build System is small file that instructs Sublime how to compile our game. We do this now so you can quickly build and run your game from within sublime for the rest of this series. In Sublime, click the menu button and go to Tools -> Build System -> New Build System...
+![Using the commandline to compile the program. Shows two commands being executed: cd \\code\\my_first_game followed by c:\\odin\\odin run .](/odinraylib1/cmd_compile.png "Running Odin compiler from the Command Prompt on Windows")
 
-![Adding a new Build System in Sublime Text](/odinraylib1/sublime.png "Adding a new build system in Sublime Text: Press the menu button in the top left corner and go to Tools -> Build System -> New Build System...")
+> **WINDOWS**: Open start menu and type "Command Prompt". Launch that app. In there type:
+> ```none
+> cd \code\my_first_game
+> c:\odin\odin run .
+> ```
 
-Sublime will pop up a new build system file, in it type this:
-```
-{
-    "working_dir": "c:/code/my_first_game",
-    "shell_cmd": "c:/odin/odin run ."
-}
-```
+> **MAC / LINUX**: Find an application called 'terminal' or similar. In it, write this:
+> ```none
+> cd code/my_first_game
+> ~/odin/odin run .
+> ```
 
-and then save it. Name it something like `my_first_game.sublime-build`. Make sure to save it in the folder Sublime suggests (on Windows it probably wants you to save it in `%appdata%\Sublime Text 3\Packages\User`). Make sure you use the `.sublime-build` ending, otherwise Sublime will not find it.
-
-This file tells Sublime to compile our game using the command `c:/odin/odin run .` (note the period at the end). The `working_dir` part tells sublime to run the command from within the directory where we saved our code. You do not need to tell the Odin compiler exactly which files we wish to compile, the period `.` at the end of the command denotes the 'current directory', which means that it takes all the files in the `working_dir` and compiles them into a package. However, we only have one file (`main.odin`), but if we add more odin files later then they will get picked up as well.
-
-> **NOTE:** We use the absolute `c:/odin/odin` path. You could also add `c:/odin` to the PATH environment variable in order to make `odin` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`. This is due to `\` being a special character.
-
-> **MAC / LINUX:** A good place to put the code is `~/code/my_first_game`, where `~` denotes your home directory. The odin compiler you can put at `~/odin`, or where ever you like really. If you installed Odin using a package manager then it might be available system-wide by just typing `odin` in a terminal.
-
-Return to `main.odin` and go to the top left menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system to build and run your game. It should compile and run your first Odin program:
+When you hit enter on that second command, then the Odin compiler should run and launch your game, and you should see this:
 
 ![SublimeText](/odinraylib1/my_first_game.png "Our first Odin + Raylib program: It's just a blue background for now, but soon we'll have gameplay in there!")
 
-You should now see a window with a blue background! It's not much, but soon we'll add things moving around in there!
+It's not much, but soon we'll add things moving around in there!
 
 > **NOTE:** `odin run .` will compile and run your game. You can also have the build system execute `odin build .` in which case it does not execute your game after a successful compilation. In both cases `my_first_game.exe` is outputted next to your odin code, so you can run the game later without needing to involve the odin compiler.
 
 ## Did anything go wrong?
 
-If your program did not compile, chances are you mistyped something in the code. When you compile and there is an error, you'll see information in the console at the bottom of your sublime window:
+If your program did not compile, chances are you mistyped something in the code. When you run the compiler from the command prompt and there is an error, then you should see some error messages:
 
-![Compilation Error](/odinraylib1/error.png "If you mistyped anything, then the errors from the compilation will be visible in the console")
+![Compilation Error](/odinraylib1/error.png "If you mistyped anything in the code, then the Odin compiler will try to be helpful.")
 
-As you can see in this image, I accidentally typed `BegunDrawing` instead of `BeginDrawing`. The error message is in this case helpful and suggests what I might have meant instead.
+In this case, I had accidentally typed `BegunDrawing` instead of `BeginDrawing`. The error message is in this case helpful and suggests what I might have meant instead.
 
 ## So what does that code we typed in really do?
 
@@ -199,6 +192,42 @@ Finally, I'll just say something about the first two lines of our program:
 > **INTERESTING ODIN THING:** There are numerous other vendor packages, you can see them all by looking into `c:\odin\vendor`. You'll find stuff like DirectX, OpenGL and SDL in there.
 
 What about the first line: `package game`? All odin files within a directory are said to be part of the same package. And all those files must start with the same `package NAME` line. The name you put there is a technicality only used if you export your code as library, for an executable like our game it does not matter, so we'll just put `game` there.
+
+## Compiling directly from within Sublime Text
+
+As a final thing in this blog, we'll look at making it possible to compile and run your game from within Sublime Text, at the press of a button. This will save you a lot of time during the rest of this series! In order to do this, we'll need to create a Sublime Build System.
+
+A Build System is small file that instructs Sublime how to compile our game. In Sublime, click the top left menu button and go to Tools -> Build System -> New Build System...
+
+![Adding a new Build System in Sublime Text](/odinraylib1/sublime.png "Adding a new build system in Sublime Text: Press the menu button in the top left corner and go to Tools -> Build System -> New Build System...")
+
+Sublime will pop up a new build system file, in it type this:
+
+> **WINDOWS:**
+> ```
+> {
+>     "working_dir": "c:/code/my_first_game",
+>     "shell_cmd": "c:/odin/odin run ."
+> }
+> ```
+
+> **MAC/LINUX:**
+> ```
+> {
+>     "working_dir": "~/code/my_first_game",
+>     "shell_cmd": "~/odin/odin run ."
+> }
+> ```
+
+and then save it. Name it something like `my_first_game.sublime-build`. Make sure to save it in the folder Sublime suggests (on Windows it probably wants you to save it in `%appdata%\Sublime Text 3\Packages\User`). Make sure you use the `.sublime-build` ending, otherwise Sublime will not find it.
+
+This file tells Sublime to compile our game using the command `c:/odin/odin run .` (note the period at the end). The `working_dir` part tells sublime to run the command from within the directory where we saved our code. You do not need to tell the Odin compiler exactly which files we wish to compile, the period `.` at the end of the command denotes the 'current directory', which means that it takes all the files in the `working_dir` and compiles them into a package. However, we only have one file (`main.odin`), but if we add more odin files later then they will get picked up as well.
+
+> **NOTE:** We use the absolute `c:/odin/odin` path. You could also add `c:/odin` to the PATH environment variable in order to make `odin` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`. This is due to `\` being a special character.
+
+> **MAC / LINUX:** A good place to put the code is `~/code/my_first_game`, where `~` denotes your home directory. The odin compiler you can put at `~/odin`, or where ever you like really. If you installed Odin using a package manager then it might be available system-wide by just typing `odin` in a terminal.
+
+Return to `main.odin` and go to the top left menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system to build and run your game. It should compile and run your first Odin program:
 
 ## That's it!
 
