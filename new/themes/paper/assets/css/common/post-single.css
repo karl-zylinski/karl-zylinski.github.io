@@ -246,7 +246,7 @@
     text-align: center;
 }
 
-.post-content figure:has(iframe) {
+.post-content figure:has(.youtube) {
     width: 100%;
 }
 
