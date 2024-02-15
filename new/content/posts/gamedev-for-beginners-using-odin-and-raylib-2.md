@@ -2,8 +2,6 @@
 title: "Make games using Odin and Raylib #2: A controllable player"
 date: 2024-02-11T15:47:11+02:00
 
-draft: true
-
 cover:
   image: "/odinraylib2/cover.png"
 ---
@@ -12,7 +10,7 @@ In this second post about making games using Odin and Raylib we shall look at ho
 
 Here's the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:
 <figure>
-{{<youtube PUTIDHERE>}}
+{{<youtube _Ga-XcrSk_I>}}
 <figcaption>The companion video for this post. It contains mostly the same information. It can be helpful if you get confused by anything.</figcaption>
 </figure>
 
@@ -109,7 +107,7 @@ Those lines starting with `if` will run the code inbetween the curly braces if t
 
 ![if the condition is true, then run the code between the curly braces](/odinraylib2/if_left.png "The anatomy an if-statement. The stuff between the `if` and the `{` is the condition for running the code between the two curly braces `{}`")
 
-In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the `for !rl.WindowShouldClose() {` looping once, and your computer will try to run that loop as fast as it possibly can. It will continously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: `player_pos.x -= 400*rl.GetFrameTime()`. This line says to decrease the x component of `player_pos` by `400*rl.GetFrameTime()`. Note the `-=`, writing it like that is a shorter way of writing `player_pos.x = player_pos.x - 400*rl.GetFrameTime()`.
+In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the `for !rl.WindowShouldClose() {` looping once, and your computer will try to run that loop as fast as it possibly can. It will continuously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: `player_pos.x -= 400*rl.GetFrameTime()`. This line says to decrease the x component of `player_pos` by `400*rl.GetFrameTime()`. Note the `-=`, writing it like that is a shorter way of writing `player_pos.x = player_pos.x - 400*rl.GetFrameTime()`.
 
 Now, what about the `400*rl.GetFrameTime()` part? My intent is to move the player _400 pixels per second_. I can achieve this by multiplying 400 by `rl.GetFrameTime()`. This works because `rl.GetFrameTime()` reports how many seconds the previous frame took.
 
@@ -350,11 +348,60 @@ Now, if you run the game again, you'll finally have a jumping mechanic that work
 <figcaption>At last: A floor to stand on, the ability to jump and no in-air jumping!</figcaption>
 </figure>
 
+## Final code
+
+We are at the end of today's post, the code should now look like this:
+
+```C
+package game
+
+import rl "vendor:raylib"
+
+main :: proc() {
+    rl.InitWindow(1280, 720, "My First Game")
+    player_pos := rl.Vector2 { 640, 320 }
+    player_vel: rl.Vector2
+    player_grounded: bool
+
+    for !rl.WindowShouldClose() {
+        rl.BeginDrawing()
+        rl.ClearBackground(rl.BLUE)
+
+        if rl.IsKeyDown(.LEFT) {
+            player_vel.x = -400
+        } else if rl.IsKeyDown(.RIGHT) {
+            player_vel.x = 400
+        } else {
+            player_vel.x = 0
+        }
+
+        player_vel.y += 2000 * rl.GetFrameTime()
+
+        if player_grounded && rl.IsKeyPressed(.SPACE) {
+            player_vel.y = -600
+            player_grounded = false
+        }
+
+        player_pos += player_vel * rl.GetFrameTime()
+
+        if player_pos.y > f32(rl.GetScreenHeight()) - 64 {
+            player_pos.y = f32(rl.GetScreenHeight()) - 64
+            player_grounded = true
+        }
+
+        rl.DrawRectangleV(player_pos, {64, 64}, rl.GREEN)
+        rl.EndDrawing()
+    }
+
+    rl.CloseWindow()
+}
+```
+
 ## That's it for today!
 
 Thanks for reading! The next part of this series is not out yet. But it _will_ be about replacing the green box an animated sprite! If you wanna know when it comes out, then follow me on [Twitter](https://twitter.com/karl_zylinski), [Threads](https://www.threads.net/@karl_zylinski) or [YouTube](https://www.youtube.com/@karl_zylinski).
 
-Please leave any questions as comments on the [video version](LINK) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
+Please leave any questions as comments on the [video version](https://www.youtube.com/watch?v=_Ga-XcrSk_I) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
 
 Also, if you've enjoyed this series so far and want to support me, then please consider buying my game CAT & ONION on [itch.io](https://zylinski.itch.io/cat-and-onion) or [wishlist it on Steam](https://store.steampowered.com/app/2781210/CAT__ONION/). When you buy on itch.io you also get the full Odin + Raylib source of the game.
 

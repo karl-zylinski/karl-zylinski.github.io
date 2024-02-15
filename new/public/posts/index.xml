@@ -6,7 +6,27 @@
     <description>Recent content in Posts on Karl Zylinski</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 15 Sep 2023 15:47:11 +0200</lastBuildDate><atom:link href="http://zylinski.se/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Feb 2024 15:47:11 +0200</lastBuildDate><atom:link href="http://zylinski.se/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Make games using Odin and Raylib #2: A controllable player</title>
+      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</link>
+      <pubDate>Sun, 11 Feb 2024 15:47:11 +0200</pubDate>
+      
+      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</guid>
+      <description>In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
+Here&amp;rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:</description>
+    </item>
+    
+    <item>
+      <title>Make games using Odin and Raylib #1: Setup &#43; First Program</title>
+      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</link>
+      <pubDate>Fri, 09 Feb 2024 15:47:11 +0200</pubDate>
+      
+      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</guid>
+      <description>Hello and welcome to the first post in this blog series on making games using Odin and Raylib. Throughout this series we will create a small 2D game with simple platforming mechanics. When we are done you&amp;rsquo;ll be able to extend the game, or take the knowledge you&amp;rsquo;ve learnt and make other, more complex games!
+This series is aimed at people with little to no programming experience. Being a bit technical and having an interest in games will help.</description>
+    </item>
+    
     <item>
       <title>Hot Reload Gameplay Code: What, why, limitations and examples!</title>
       <link>http://zylinski.se/posts/hot-reload-gameplay-code/</link>
