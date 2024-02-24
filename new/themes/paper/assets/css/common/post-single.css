@@ -238,8 +238,14 @@
     margin: 1rem auto;
 }
 
+.post-content .small-image figure {
+    display: table;
+    width: inherit;
+}
+
 .post-content figure {
     display: table;
+    width: 100%;
 }
 
 .post-content figure.align-center {

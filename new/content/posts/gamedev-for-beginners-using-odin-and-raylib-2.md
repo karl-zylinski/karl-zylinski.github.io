@@ -111,7 +111,12 @@ In this case the condition is `rl.IsKeyDown(.LEFT)`. This check is run every fra
 
 Now, what about the `400*rl.GetFrameTime()` part? My intent is to move the player _400 pixels per second_. I can achieve this by multiplying 400 by `rl.GetFrameTime()`. This works because `rl.GetFrameTime()` reports how many seconds the previous frame took.
 
+
+<div class="small-image">
+
 ![Green box moving 400 pixels in 1 second](/odinraylib2/400_pixels.gif "A 400 pixels wide ruler showing that the player moves 400 pixels in 1 second when we offset it by `400*rl.GetFrameTime()` each frame.")
+
+</div>
 
 If that doesn't make sense, then think of it like this: If your game would suddenly get _terrible_ frame rate and only draw 2 frames per second, then `rl.GetFrameTime()` would report 0.5 s per frame. So the first frame the box would move `400*0.5=200` pixels and then `400*0.5=200` pixels more the next frame, totaling 400 pixels in one second.
 

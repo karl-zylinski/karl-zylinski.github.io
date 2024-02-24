@@ -72,7 +72,11 @@ Here are my recommended ways for setting up the Odin compiler:
 **Step 1:** Download compiler from here https://github.com/odin-lang/Odin/releases/latest. Scroll to the bottom and download the file called `
 odin-windows-amd64-dev-<year>-<month>.zip`. When the download has finished, extract the contents to the folder `c:\odin`. You should end up with something that looks like this:
 
+<div class="small-image">
+
 ![Odin unzipped into c:\\odin](/odinraylib1/odin_folder.png "Odin compiler unzipped into c:\odin")
+
+</div>
 
 **Step 2:** The Odin compiler needs some additional software to run on Windows (the MSVC Linker and the Windows SDK). One way to get hold of them is, as the official installation instructions say, to install Visual Studio. Instead, I propose you download 'PortableBuildTools'. It is a tool that downloads the things that Odin needs, without having to install the giant Visual Studio code editor. Go here https://github.com/Data-Oriented-House/PortableBuildTools and download the latest release. Run the program you downloaded. 
 
@@ -80,7 +84,11 @@ odin-windows-amd64-dev-<year>-<month>.zip`. When the download has finished, extr
 
 When you run it you'll see this:
 
+<div class="small-image">
+
 ![PortableBuildTools](/odinraylib1/portable_build_tools.png "Install the additional software the Odin compiler needs by clicking 1, 2 and then 3")
+
+</div>
 
 Click the *(1) Add to Environment* checkbox, so that the Odin compiler can find the installed software. Thereafter you need to *(2) accept a license agreement* and then click *(3) Install*. When it's all done the installer might tell you to log out and in again, in which case you should do that.
 
@@ -188,7 +196,13 @@ When the closing curly brace `}` of the main proc is reached, then the game has 
 Looking inside the `main` proc we see a bunch of lines that all start with `rl`. All those lines are _calls_ to procs within Raylib, i.e. code that is instructing Raylib to do stuff. By _proc call_ I mean that you use the name of a proc in order to run the code inside that proc. As mentioned before, Raylib can draw graphics, create windows and much more. The line `rl.InitWindow(1280, 720, "My First Game")` creates a window of size 1280x720 pixels and gives the window the title "My First Game".
 
 The line `for !rl.WindowShouldClose() {` makes a loop that runs for as long as the window created by Raylib wants to stay open. `rl.WindowShouldClose()` is a proc in Raylib that essentially tells us if the user pressed the close button of the window. But we want to know if the user _didn't_ press it, which is why we put the `!` in front to negate the answer from Raylib. The stuff between the two curly braces `{}` is the code that the loop will run, over and over again, until the user tries to close the window.
+
+
+<div class="small-image">
+
 ![Image saying that the code inbetween the two curly braces of the for loop will run over and over as long as the window isn't closed](/odinraylib1/main_loop.png "This loop will run as long as the window wants to stay open. The code between the curly braces will run over and over again.")
+
+</div>
 
 This loop will be the 'main loop' of our video game. Video games consist of constantly updating images on the screen, called frames. Gamers often talk about how many 'FPS' or Frames Per Second their game runs at, which essentially means how many times per second our `for` manages to loop. The more stuff you add in there, the lower the FPS.
 

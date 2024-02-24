@@ -248,7 +248,7 @@ main :: proc() {
 
 Currently our game is drawing the whole `cat_run.png` image, which contains four frames, but we want to only draw one of those frames at a time. Let's start by making it display the first frame, i.e. the one furthest to the left, and then later we'll worry about making it switch to the other frames.
 
-![](/odinraylib3/draw_first_square.png "")
+![In order to draw only one animation frame at a time we'll need to create a rectangle in code that tells us what part of the texture to draw.](/odinraylib3/draw_first_square.png "In order to draw only one animation frame at a time we'll need to create a rectangle in code that tells us what part of the texture to draw.")
 
 We know that our animation contains four frames. Let's put that knowledge in a variable we can use. Under the line `player_run_texture := rl.LoadTexture("cat_run.png")`, add this line:
 ```C
@@ -277,7 +277,7 @@ Now about the `draw_player_source := rl.Rectangle {...` stuff: A rectangle is a 
 
 The `width = player_run_width / f32(player_run_num_frames)` part means that this rectangle will be `64 / 4 = 16` pixels wide. We could of course have written just 16 and not used the the variables `player_run_width` and `play_run_num_frames` here, but by doing it this way we could modify `cat_run.png` to become wider without our game breaking.
 
-![](/odinraylib3/16pixels.png "")
+![The whole width of the running cat texture is 64 pixels. It contains 4 animation frames, so the width of each frame is 16. The height is also 16, so each frame is 16x16 pixels.](/odinraylib3/16pixels.png "The whole width of the running cat texture is 64 pixels. It contains 4 animation frames, so the width of each frame is 16. The height is also 16, so each frame is 16x16 pixels.")
 
 The height of the rectangle is simply `player_run_height`, in this case 16 pixels. This matches up with what we expect from the image above.
 
@@ -377,7 +377,7 @@ draw_player_dest := rl.Rectangle {
 }
 ```
 
-![](/odinraylib3/dest_rectangle.png "")
+![The dest (destination) rectangle tells us where on the screen to draw. Since it is a rectangle, we can use it to both move and also scale our graphics.](/odinraylib3/dest_rectangle.png "The dest (destination) rectangle tells us where on the screen to draw. Since it is a rectangle, we can use it to both move and also scale our graphics.")
 
 This `draw_player_dest` rectangle is named `dest` because it is short for `destination`: We can use it to specify an area of the screen within which to draw. The bigger we make the area, the bigger our cat will get!
 
@@ -399,7 +399,7 @@ Now, if you run the game you'll see this:
 
 <figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib3/one_frame.mp4"></video>
-<figcaption>meow</figcaption>
+<figcaption>We are now drawing the first frame of the animation at a reasonable scale. Next thing is to make the animation switch frame, so that it looks like our cat is running.</figcaption>
 </figure>
 
 Now we are getting somewhere: We are displaying the first frame of the animation and the frame is shown at a reasonable scale. Now we just need to make the our code switch animation frame every now and then, and then our cat will run!
@@ -476,7 +476,7 @@ main :: proc() {
 
 ## Making the animation switch frame
 
-![](/odinraylib3/frame_timer.png "")
+![In order to switch from one frame to the next we can use a timer. When the timer is 'up' we'll go to the next frame and reset the timer.](/odinraylib3/frame_timer.png "In order to switch from one frame to the next we can use a timer. When the timer is 'up' we'll go to the next frame and reset the timer.")
 
 The way we will make the animation switch frame is by having a timer that counts how long the current animation frame has been visible. When it reaches a certain limit, then we will go to the next frame and restart the timer. We will use the limit 0.1 s per frame, as shown in the illustration above.
 
@@ -525,7 +525,7 @@ Now we just need to use `player_run_current_frame` when creating `draw_player_so
 x = f32(player_run_current_frame) * player_run_width / f32(player_run_num_frames),
 ```
 
-![](/odinraylib3/x_value.png "")
+![](/odinraylib3/x_value.png "An illustration of how `x = f32(player_run_current_frame) * player_run_width / f32(player_run_num_frames)` is used to calculate the x position of the source rectangle, for different values of `player_run_current_frame`.")
 
 This will use the knowledge of which frame we are on to set the horizontal position of the source rectangle. If `player_run_current_frame` is equal to `0`, then our program will calculate `x` to be:
 
@@ -539,11 +539,10 @@ If you now compile and run the game, then you'll see this happy running cat!
 
 <figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib3/animating.mp4"></video>
-<figcaption>meow</figcaption>
+<figcaption>Now the cat is running! We are using the timer to switch animation frame every 0.1 s. However, the cat runs backwards when we go to left.</figcaption>
 </figure>
 
 Only problem now is that the cat walks backwards when you go the left. Let's finish today's post by fixing that.
-
 
 <details>
 <summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
@@ -667,9 +666,8 @@ If we run the game now, then we finally have an animating player character than 
 
 <figure>
 <video autoplay loop muted width="100%"><source src="/odinraylib3/animating_with_flip.mp4"></video>
-<figcaption>meow</figcaption>
+<figcaption>The final result for today: A cat that is running, properly scaled and it is flipping correctly when we run to the left.</figcaption>
 </figure>
-
 
 
 <details>

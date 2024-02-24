@@ -333,12 +333,14 @@ Here&rsquo;s the companion video for this post. If you get confused by this post
 </p>
 <p>In this case the condition is <code>rl.IsKeyDown(.LEFT)</code>. This check is run every frame of the game, which means many times per second. Remember: Each frame is equivalent to the <code>for !rl.WindowShouldClose() {</code> looping once, and your computer will try to run that loop as fast as it possibly can. It will continuously check if you are holding the left arrow key. And for each frame it is held down, then this will happen: <code>player_pos.x -= 400*rl.GetFrameTime()</code>. This line says to decrease the x component of <code>player_pos</code> by <code>400*rl.GetFrameTime()</code>. Note the <code>-=</code>, writing it like that is a shorter way of writing <code>player_pos.x = player_pos.x - 400*rl.GetFrameTime()</code>.</p>
 <p>Now, what about the <code>400*rl.GetFrameTime()</code> part? My intent is to move the player <em>400 pixels per second</em>. I can achieve this by multiplying 400 by <code>rl.GetFrameTime()</code>. This works because <code>rl.GetFrameTime()</code> reports how many seconds the previous frame took.</p>
+<div class="small-image">
 <p>
   <figure>
     <img loading="lazy" src="/odinraylib2/400_pixels.gif" alt="Green box moving 400 pixels in 1 second">
     <figcaption>A 400 pixels wide ruler showing that the player moves 400 pixels in 1 second when we offset it by <code>400*rl.GetFrameTime()</code> each frame.</figcaption>
   </figure>
 </p>
+</div>
 <p>If that doesn&rsquo;t make sense, then think of it like this: If your game would suddenly get <em>terrible</em> frame rate and only draw 2 frames per second, then <code>rl.GetFrameTime()</code> would report 0.5 s per frame. So the first frame the box would move <code>400*0.5=200</code> pixels and then <code>400*0.5=200</code> pixels more the next frame, totaling 400 pixels in one second.</p>
 <p>How short can a frame be? If your game runs at 60 frames per second then <code>rl.GetFrameTime()</code> reports something like <code>0.016</code> seconds. However, we haven&rsquo;t put in any kind of limit to our <em>frame rate</em> yet, so <code>rl.GetFrameTime()</code> could very well be reporting tiny values such as <code>0.00001</code> s.</p>
 <p>As for the second if statement:</p>
