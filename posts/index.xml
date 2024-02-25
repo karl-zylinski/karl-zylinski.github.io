@@ -6,7 +6,18 @@
     <description>Recent content in Posts on Karl Zylinski</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 11 Feb 2024 15:47:11 +0200</lastBuildDate><atom:link href="http://zylinski.se/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 20 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://zylinski.se/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Make games using Odin and Raylib #3: An animated player</title>
+      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</link>
+      <pubDate>Tue, 20 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</guid>
+      <description>Today we will make our game look less dull by adding a run animation to the player character.
+We will download an image containing an animation, draw it in game and then make the animation play properly. A theme throughout today&amp;rsquo;s post is that we will try the different procs for drawing graphics on the screen that Raylib provides, and see how they can be used in different circumstances.
+A new thing in this post is that each section ends with a &amp;ldquo;Full code + what changed in this section&amp;rdquo; expandable item.</description>
+    </item>
+    
     <item>
       <title>Make games using Odin and Raylib #2: A controllable player</title>
       <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</link>

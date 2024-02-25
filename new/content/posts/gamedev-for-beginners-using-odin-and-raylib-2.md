@@ -404,7 +404,7 @@ main :: proc() {
 
 ## That's it for today!
 
-Thanks for reading! The next part of this series is not out yet. But it _will_ be about replacing the green box an animated sprite! If you wanna know when it comes out, then follow me on [Twitter](https://twitter.com/karl_zylinski), [Threads](https://www.threads.net/@karl_zylinski) or [YouTube](https://www.youtube.com/@karl_zylinski).
+Thanks for reading! I hope to see you in [part 3]({{< ref "/posts/gamedev-for-beginners-using-odin-and-raylib-3" >}} "Go to next part"), where we replace the green box with an animation.
 
 Please leave any questions as comments on the [video version](https://www.youtube.com/watch?v=MC5C4SF2Cds) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
 
