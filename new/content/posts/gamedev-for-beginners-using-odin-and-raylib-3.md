@@ -2,8 +2,6 @@
 title: "Make games using Odin and Raylib #3: An animated player"
 date: 2024-02-20
 
-draft: true
-
 cover:
   image: "/odinraylib3/cover.png"
 ---
@@ -11,6 +9,8 @@ cover:
 Today we will make our game look less dull by adding a run animation to the player character.
 
 We will download an image containing an animation, draw it in game and then make the animation play properly. A theme throughout today's post is that we will try the different procs for drawing graphics on the screen that Raylib provides, and see how they can be used in different circumstances.
+
+A new thing in this post is that each section ends with a "Full code + what changed in this section" expandable item. You can click that if you need to see exactly how the code should look after each sections, with comments about what lines that were changed.
 
 As usual, this post has a companion video, it says mostly the same stuff, but in video form. This series is targeted at beginners, who are encouraged to both watch and read, as it will make everything easier to understand.
 
@@ -122,7 +122,7 @@ The green rectangle sure has been replaced, but currently there are two problems
 Also, before we continue, you might want to change you background color, that blue is a bit jarring in contrast to the color of the cat. Change this line `rl.ClearBackground(rl.BLUE)` and replace `rl.BLUE` with `{110, 184, 168, 255}` in order to give your game a calmer blue background.
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game
@@ -194,7 +194,7 @@ Running the game now you'll see both the new background color and also that the 
 </figure>
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game
@@ -299,7 +299,7 @@ If you now run the game, you'll see this:
 It is now only drawing the first frame of the cat animation. But the cat has become tiny again! Unfortunately `DrawTextureRec` has no scale parameter. So we have to fix this issue in another way.
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game
@@ -393,7 +393,7 @@ Now we just need to use this dest rectangle. Replace the line `rl.DrawTextureRec
 rl.DrawTexturePro(player_run_texture, draw_player_source, draw_player_dest, 0, 0, rl.WHITE)
 ```
 
-Just like in `DrawTextureRec` we supply the texture and then the source rect. With this info our program knows what texture to draw and what portion of it to draw. However, now we are now supplying `draw_player_dest` instead of `player_pos`, using this rectangle we can tell Raylib both where to draw and how big area to draw on. The two zeroes after the dest rectangle is the `rotation` and then the `origin`. We will probably return to the `origin` later in this series, but for now I'll just say that the origin makes it possible to shift the position relative to the dest rectangle.
+Just like in `DrawTextureRec` we supply the texture and then the source rect. With this info our program knows what texture to draw + what portion of it to draw. However, now we are now supplying `draw_player_dest` instead of `player_pos`, using this rectangle we can tell Raylib both where to draw and how big area to draw on. The two zeroes after the dest rectangle is the `rotation` and then the `origin`. We will probably return to the `origin` later in this series, but for now I'll just say that the origin makes it possible to shift the position relative to the dest rectangle.
 
 Now, if you run the game you'll see this:
 
@@ -405,7 +405,7 @@ Now, if you run the game you'll see this:
 Now we are getting somewhere: We are displaying the first frame of the animation and the frame is shown at a reasonable scale. Now we just need to make the our code switch animation frame every now and then, and then our cat will run!
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game
@@ -542,10 +542,12 @@ If you now compile and run the game, then you'll see this happy running cat!
 <figcaption>Now the cat is running! We are using the timer to switch animation frame every 0.1 s. However, the cat runs backwards when we go to left.</figcaption>
 </figure>
 
+> **EXPERT THINGS: IF YOU WANT EXTRA PRECISE ANIMATION TIMING** In the code above we wrote `if player_run_frame_timer > player_run_frame_length {`. However, if you have very low frame rate, then `player_run_frame_timer` might be bigger than `2*player_run_frame_length`, in which case it would be good to jump two frames forward. In order to fix that, replace the `if` in `if player_run_frame_timer > player_run_frame_length {` with a `for` and also replace the line `player_run_frame_timer = 0` with `player_run_frame_timer -= player_run_frame_length`. This way you're creating a loop that runs until `player_run_frame_timer` is smaller than a frame length, and it will decrease the timer by one frame length each lap of the loop. Another benefit of this is that you don't "loose time" when you set `player_run_frame_timer = 0`, as the timer could still contain something. I won't include this is in the code, but you're welcome to do so. It could be useful if your game runs at low framerate or if you have very fast animations.
+
 Only problem now is that the cat walks backwards when you go the left. Let's finish today's post by fixing that.
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game
@@ -671,7 +673,7 @@ If we run the game now, then we finally have an animating player character than 
 
 
 <details>
-<summary><strong>Full code and what changed in this section (click to expand)</strong></summary>
+<summary><strong>Full code + what changed in this section (click to expand)</strong></summary>
 
 ```C
 package game

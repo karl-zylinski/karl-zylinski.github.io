@@ -282,6 +282,12 @@
     background: var(--code-bg);
 }
 
+
+.post-content blockquote code {
+    background: var(--entry);
+}
+
+
 .post-content blockquote strong:first-child {
     display: block;
     font-weight: bold;
