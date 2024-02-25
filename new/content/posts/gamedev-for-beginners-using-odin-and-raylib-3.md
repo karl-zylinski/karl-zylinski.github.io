@@ -15,7 +15,7 @@ A new thing in this post is that each section ends with a "Full code + what chan
 As usual, this post has a companion video, it says mostly the same stuff, but in video form. This series is targeted at beginners, who are encouraged to both watch and read, as it will make everything easier to understand.
 
 <figure>
-{{<youtube PUT HERE>}}
+{{<youtube qJA7laC3q18>}}
 <figcaption>The companion video for this post. It contains mostly the same information. It can be helpful if you get confused by anything.</figcaption>
 </figure>
 
@@ -770,7 +770,7 @@ main :: proc() {
 
 Thanks a lot for reading! The next part is not out yet. If you wanna know when it comes out, then follow me on [Twitter](https://twitter.com/karl_zylinski), [Threads](https://www.threads.net/@karl_zylinski) or [YouTube](https://www.youtube.com/@karl_zylinski).
 
-Please leave any questions as comments on the [video version LINK](asdf) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
+Please leave any questions as comments on the [video version](https://www.youtube.com/watch?v=qJA7laC3q18) of this post. I will reply to some of them in text, but I will also every now and then do a live stream where I reply to questions and take additional questions from the viewers.
 
 Also, if you've enjoyed this series so far and want to support me, then please consider buying my game CAT & ONION on [itch.io](https://zylinski.itch.io/cat-and-onion) or [wishlist it on Steam](https://store.steampowered.com/app/2781210/CAT__ONION/). When you buy on itch.io you also get the full Odin + Raylib source of the game.
 
