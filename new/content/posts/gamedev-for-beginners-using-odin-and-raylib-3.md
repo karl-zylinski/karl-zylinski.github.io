@@ -10,7 +10,7 @@ Today we will make our game look less dull by adding a run animation to the play
 
 We will download an image containing an animation, draw it in game and then make the animation play properly. A theme throughout today's post is that we will try the different procs for drawing graphics on the screen that Raylib provides, and see how they can be used in different circumstances.
 
-A new thing in this post is that each section ends with a "Full code + what changed in this section" expandable item. You can click that if you need to see exactly how the code should look after each sections, with comments about what lines that were changed.
+A new thing in this post is that each section ends with a "Full code + what changed in this section" expandable item. You can click that if you need to see exactly how the code should look after each section, with comments about what lines that were changed.
 
 As usual, this post has a companion video, it says mostly the same stuff, but in video form. This series is targeted at beginners, who are encouraged to both watch and read, as it will make everything easier to understand.
 
