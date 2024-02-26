@@ -60,9 +60,9 @@ Finally the last parameter is of type `Color`. Raylib comes with a few predefine
 
 ![About colors in raylib](/odinraylib2/color.png "What the different parts of a Raylib color mean.")
 
-> **NOTE:** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code. This kind of interface to a library written in another language is called a _binding_.
+> **RAYLIB.ODIN IS JUST BINDINGS** There's no actual code inside `raylib.odin`, this file simply tells us what procs exist in Raylib and what parameters they need, but not what those procs do internally. This is because Raylib is written in the language C. The Odin code in `raylib.odin` is only there to instruct our Odin code on how it can talk to Raylib's C code. This kind of interface to a library written in another language is called a _binding_.
 
-> **SUBLIME TIP:** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words. You can also drag n drop the whole `vendor/raylib` directory into Sublime and also drag n drop the whole `my_first_game` directory into Sublime, to make all files in those two directories available to the F12 command and the `Ctrl + Shift + R` command.
+> **FINDING THINGS IN RAYLIB QUICKLY** If you have both your `main.odin` file and `raylib.odin` open in Sublime you can also click on `DrawRectangleV` in your code and then press the F12 key on your keyboard. Sublime will then try to find where this proc is defined in all your open files. It should jump to the correct line in `raylib.odin`. You can also press `Ctrl + Shift + R` and type `DrawRectangle` and get suggestions for all the procs in all your open files that contain those words. You can also drag n drop the whole `vendor/raylib` directory into Sublime and also drag n drop the whole `my_first_game` directory into Sublime, to make all files in those two directories available to the F12 command and the `Ctrl + Shift + R` command.
 
 ## Let's make the little box controllable!
 
@@ -76,7 +76,7 @@ player_pos := rl.Vector2 { 640, 320 }
 
 You may recognize the `Vector2` thingy from when we looked inside `raylib.odin`. What we are saying here is that we want to make a new `Vector2` and give it the initial value `{ 640, 320 }`. We give this `Vector2` a name: `player_pos`. This `player_pos` is now a variable that we can use and modify.
 
-> **INTERESTING ODIN THING:** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl` prefix, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`. That makes it possible to write `Vec2` instead of `rl.Vector2`.
+> **EVERYTHING FROM RAYLIB ENDS UP UNDER .rl PREFIX** When you looked at the code inside `raylib.odin` then it just said `Vector2`, but in your program you must say `rl.Vector2` to use that type. This is because everything that comes out of Raylib ends up under the `rl` prefix, as prescribed by the line `import rl "vendor:raylib"`. If you want to, you could add a line just before the `main` proc that says `Vec2 :: rl.Vector2`. That makes it possible to write `Vec2` instead of `rl.Vector2`.
 
 Change the line that draws the player rectangle so it now says:
 
@@ -163,7 +163,7 @@ main :: proc() {
 
 Let's make it so that the player can jump by pressing the space key! Jumping usually involves giving the player a speed upwards and then having gravity pull them down again. In order to represent this we need to add a new variable that can hold the player's _velocity_.
 
-> **PHYSICS LINGO:** The word speed just means a single number that represents how fast you are going, without indicating in which direction you are going. The word velocity both specifies how fast you are going, but also in what direction. In a 2D game it is therefore suitable to use a `Vector2` to represent the velocity.
+> **PHYSICS LINGO: SPEED VS VELOCITY** The word speed just means a single number that represents how fast you are going, without indicating in which direction you are going. The word velocity both specifies how fast you are going, but also in what direction. In a 2D game it is therefore suitable to use a `Vector2` to represent the velocity.
 
 Just after the line `player_pos := rl.Vector2 { 640, 320 }`, add this line:
 
@@ -272,7 +272,7 @@ Remember that the player's height is 64 pixels. The position of the player is ac
 
 If this is the case, then we snap `player_pos.y` to a value that makes the player sit so that the bottom of the player touches the bottom of the screen.
 
-> **NOTE:** Raylib provides the height of the screen using `rl.GetScreenHeight()`. This proc will return `720`, i.e. the value we initially fed into `rl.InitWindow`. It's a good idea to ask raylib instead of just writing `720`, as the window might have changed size.
+> **WHY USE rl.GetScreenHeight()?** Raylib provides the height of the screen using `rl.GetScreenHeight()`. This proc will return `720`, i.e. the value we initially fed into `rl.InitWindow`. It's a good idea to ask raylib instead of just writing `720`, as the window might have changed size.
 
 What's up with that `f32(` thing in `if player_pos.y > f32(rl.GetScreenHeight()) - 64 {`? As I've said before the player's position is a `Vector2`, and a `Vector2` consists of decimal numbers. The type of those decimal numbers is actually called `f32`, which stands for "32 bit floating point number". So a `Vector2` is actually just two `f32` values tucked into a single thing called a `Vector2`. Now, `rl.GetScreenHeight()` gives you a value of type `i32`, which stands for "32 bit integer number". Odin doesn't automatically convert integers to decimal numbers etc, you have to do that yourself. So in order to be able to compare the decimals numbers in the player's position to the screen height, we must convert the screen height to a decimal number too. The `f32()` thingy that surrounds the `rl.GetScreenHeight()` does just that, it is called a _cast_ and it's a way to convert one type to another type.
 

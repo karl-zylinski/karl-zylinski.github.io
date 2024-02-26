@@ -40,7 +40,7 @@ If you come from a high level language such as Javascript, C# or Python, then pl
 
 Note that Raylib is not a game engine. What we will do here is write Odin code that uses Raylib and from that code output a stand-alone executable game that you can run. It is a straight-to-the-point and fun way to make games.
 
-> **GAMEDEV LINGO:** The method of making games without a game enigne is often called 'making games from scratch'.
+> **GAMEDEV LINGO** The method of making games without a game enigne is often called 'making games from scratch'.
 
 Odin comes with built in support for Raylib, you do not need to install anything extra after we've gotten Odin up and running.
 
@@ -61,9 +61,9 @@ In order to turn the Odin code we are about to write into a program you can run,
 
 Here are my recommended ways for setting up the Odin compiler:
 
-> **WINDOWS**: Follow my instructions below.
+> **WINDOWS** Follow my instructions below.
 
-> **MAC / LINUX**: Follow the official instructions at https://odin-lang.org/docs/install/. Do not download the pre-compiled Odin compiler, follow the instructions on building the Odin compiler from source.
+> **MAC / LINUX** Follow the official instructions at https://odin-lang.org/docs/install/. Do not download the pre-compiled Odin compiler, follow the instructions on building the Odin compiler from source.
 
 ### Simple Odin compiler setup for Windows
 
@@ -80,7 +80,7 @@ odin-windows-amd64-dev-<year>-<month>.zip`. When the download has finished, extr
 
 **Step 2:** The Odin compiler needs some additional software to run on Windows (the MSVC Linker and the Windows SDK). One way to get hold of them is, as the official installation instructions say, to install Visual Studio. Instead, I propose you download 'PortableBuildTools'. It is a tool that downloads the things that Odin needs, without having to install the giant Visual Studio code editor. Go here https://github.com/Data-Oriented-House/PortableBuildTools and download the latest release. Run the program you downloaded. 
 
-> **NOTE:** You might get a Windows security warning when starting the PortableBuildTools setup because PortableBuildTools isn't from a certified developer. In that case you have to click 'more info' and 'run anyway'. It is safe application used by many, so nothing to worry about.
+> **WINDOWS SECURITY WARNING** You might get a Windows security warning when starting the PortableBuildTools setup because PortableBuildTools isn't from a certified developer. In that case you have to click 'more info' and 'run anyway'. It is safe application used by many, so nothing to worry about.
 
 When you run it you'll see this:
 
@@ -125,7 +125,7 @@ main :: proc() {
 ```
 When you've typed it all in, go ahead and save it to `c:\code\my_first_game\my_first_game.odin`. You'll have to create those `code` and `my_first_game` directories.
 
-> **MAC / LINUX**: Save the code to a folder such as `~/code/my_first_game`, where `~` denotes your home directory.
+> **MAC / LINUX** Save the code to a folder such as `~/code/my_first_game`, where `~` denotes your home directory.
 
 ## Let's compile the code and run our game!
 
@@ -135,13 +135,13 @@ For our first compile, we'll use the Command Prompt, which lets us execute progr
 
 ![Using the commandline to compile the program. Shows two commands being executed: cd \\code\\my_first_game followed by c:\\odin\\odin run .](/odinraylib1/cmd_compile.png "Running Odin compiler from the Command Prompt on Windows")
 
-> **WINDOWS**: Open start menu and type "Command Prompt". Launch that app. In it, write this:
+> **WINDOWS** Open start menu and type "Command Prompt". Launch that app. In it, write this:
 > ```none
 > cd \code\my_first_game
 > c:\odin\odin run .
 > ```
 
-> **MAC / LINUX**: Find an application called 'terminal' or similar. In it, write this:
+> **MAC / LINUX** Find an application called 'terminal' or similar. In it, write this:
 > ```none
 > cd code/my_first_game
 > odin run .
@@ -155,7 +155,7 @@ When you hit enter on that second command, then the Odin compiler should compile
 
 It's not much, but soon we'll add things moving around in there!
 
-> **NOTE:** `odin run .` will compile and run your game. You can also use `odin build .` in which case it does not run your game after a successful compilation. In both cases `my_first_game.exe` is outputted next to your Odin code, so you can run the game later without needing to involve the Odin compiler.
+> **WANNA BUILD, BUT NOT RUN?** `odin run .` will compile and run your game. You can also use `odin build .` in which case it does not run your game after a successful compilation. In both cases `my_first_game.exe` is outputted next to your Odin code, so you can run the game later without needing to involve the Odin compiler.
 
 ## Did anything go wrong?
 
@@ -191,7 +191,7 @@ Let's start by looking at the line `main :: proc() {`. This line defines a new _
 
 When the closing curly brace `}` of the main proc is reached, then the game has finished running and will shut down. In essence your whole game goes in-between those two curly braces of the main proc.
 
-> **INTERESTING ODIN THING:** Those who have programmed before might recognize procedures by the word function. Those two words mostly mean the same thing, but the word procedure has a bit of a wider defintion.
+> **PROCEDURES? FUNCTIONS?** Those who have programmed before might recognize procedures by the word function. Those two words mostly mean the same thing, but the word procedure has a bit of a wider defintion.
 
 Looking inside the `main` proc we see a bunch of lines that all start with `rl`. All those lines are _calls_ to procs within Raylib, i.e. code that is instructing Raylib to do stuff. By _proc call_ I mean that you use the name of a proc in order to run the code inside that proc. As mentioned before, Raylib can draw graphics, create windows and much more. The line `rl.InitWindow(1280, 720, "My First Game")` creates a window of size 1280x720 pixels and gives the window the title "My First Game".
 
@@ -206,18 +206,18 @@ The line `for !rl.WindowShouldClose() {` makes a loop that runs for as long as t
 
 This loop will be the 'main loop' of our video game. Video games consist of constantly updating images on the screen, called frames. Gamers often talk about how many 'FPS' or Frames Per Second their game runs at, which essentially means how many times per second our `for` manages to loop. The more stuff you add in there, the lower the FPS.
 
-> **NOTE:** You may have seen `while` and `for` loops before. In Odin there are only `for` loops. If you make a `for` loop in Odin that has only one condition, such as asking Raylib if the Window should stay open, then it works the same way as `while` loops in other languages.
+> **WHERE'S THE WHILE LOOP?** You may have seen `while` and `for` loops before. In Odin there are only `for` loops. If you make a `for` loop in Odin that has only one condition, such as asking Raylib if the Window should stay open, then it works the same way as `while` loops in other languages.
 
 The line `rl.BeginDrawing()` instructs Raylib to start a new frame and `rl.EndDrawing()` instructs Raylib to end the frame. In-between those two lines there's a line that clears the whole screen with a color, which is what makes our game look blue.
 
-> **WARNING:** You can't skip the BeginDrawing/EndDrawing calls. Internally, the `rl.EndDrawing()` proc does lots of housekeeping stuff such as making it possible to move and close the window. It is also responsible for asking the operating system if any keys or gamepad button were pressed. It is also in there that it actually sends off the things we want to draw to the graphics card.
+> **DON'T SKIP EndDrawing()!** You can't skip the BeginDrawing/EndDrawing calls. Internally, the `rl.EndDrawing()` proc does lots of housekeeping stuff such as making it possible to move and close the window. It is also responsible for asking the operating system if any keys or gamepad button were pressed. It is also in there that it actually sends off the things we want to draw to the graphics card.
 
 Our loop will terminate if the user presses the close button on the window, in which case it will leave the loop and then run the final line of `main`: `rl.CloseWindow()`, after that our game shuts down because the `main` proc is done.
 
 Finally, I'll just say something about the first two lines of our program:
 `import rl "vendor:raylib"` tells the Odin compiler that we want to use Raylib in our program. The Odin compiler comes with built in support for Raylib, as part of the "vendor" collection of libraries. We say that we are importing the Raylib _package_. All those things in Raylib will end up under the `rl` prefix, which is why those procs we used in our program all started with `rl`
 
-> **INTERESTING ODIN THING:** There are numerous other vendor packages, you can see them all by looking into `c:\odin\vendor` (or similar path if you're on Mac / Linux). You'll find stuff like DirectX, OpenGL and SDL in there.
+> **MORE VENDOR PACKAGES** There are numerous other vendor packages, you can see them all by looking into `c:\odin\vendor` (or similar path if you're on Mac / Linux). You'll find stuff like DirectX, OpenGL and SDL in there.
 
 What about the first line: `package game`? All odin files within a directory are said to be part of the same package. And all those files must start with the same `package NAME` line. The name you put there is a technicality only used if you export your code as library, for an executable like our game it does not matter, so we'll just put `game` there.
 
@@ -253,7 +253,7 @@ and then save it. Name it something like `my_first_game.sublime-build`. Make sur
 
 This file tells Sublime to compile our game using the command `odin run .`. The `working_dir` part tells sublime to run the command from within the directory where we saved our code. You do not need to tell the Odin compiler exactly which files we wish to compile, the period `.` at the end of the command denotes the 'current directory', which means that it takes all the files in the `working_dir` and compiles them into a package. However, we only have one file (`main.odin`), but if we add more odin files later then they will get picked up as well.
 
-> **NOTE:** On Windows I've use the absolute `c:/odin/odin` path. You could also add `c:/odin` to the PATH environment variable in order to make `odin` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`. This is due to `\` being a special character.
+> **NOTE ON PATHS** On Windows I've use the absolute `c:/odin/odin` path. You could also add `c:/odin` to the PATH environment variable in order to make `odin` available from anywhere on the system. But it doesn't really matter. Also please note that I use `/` in the path, instead of `\`. If you use `\` then be aware that you have to type two of them, i.e. `\\`. This is due to `\` being a special character.
 
 Return to `main.odin` and go to the top left menu -> Tools -> Build System -> my_first_game. If you now press F7 or Ctrl+B, then Sublime will use your shiny new build system to build and run your game. Any compilation errors will end up in the Console.
 
