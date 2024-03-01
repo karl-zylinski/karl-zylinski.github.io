@@ -8,7 +8,7 @@ ShowToc: false
 
 ## Description
 
-A warm and whimsical cat adventure where you climb, talk, fly and smack your way to places where no cat has ever gone before! Go on a short yet cosmic journey packed with curious characters, imaginative environments and good vibes.
+A warm and whimsical cat adventure game where you climb, talk, fly and smack your way to places where no cat has ever gone before! Go on a short yet cosmic journey packed with curious characters, imaginative environments and good vibes.
 
 ## Release dates and platforms
 
