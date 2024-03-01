@@ -36,6 +36,7 @@
   {{- partial "anchored_headings.html" .Content -}}
   {{- else }}{{ .Content }}{{ end }}
 </div>
+
 {{- end }}
 
 {{- $pages := union .RegularPages .Sections }}
@@ -50,6 +51,9 @@
 {{- if and .IsHome site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
 {{- partial "home_info.html" . }}
 {{- end }}
+
+<h1 style="text-align:center; margin-top: 60px; display: block;">Blog</h2>
+<br>
 
 {{- $term := .Data.Term }}
 {{- range $index, $page := $paginator.Pages }}
