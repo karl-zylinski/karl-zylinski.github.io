@@ -13,6 +13,19 @@
     margin-bottom: 5px;
 }
 
+.post-content img.screenshot {
+    width: 45%;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+
+.post-content a:has(img.screenshot) {
+    text-decoration: none;
+    box-shadow: none;
+}
+
 .post-meta,
 .breadcrumbs {
     color: var(--secondary);
