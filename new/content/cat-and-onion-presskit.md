@@ -8,13 +8,14 @@ ShowToc: false
 
 ## Description
 
-A warm and whimsical cat adventure game where you climb, talk, fly and smack your way to places where no cat has ever gone before! Go on a short yet cosmic journey packed with curious characters, imaginative environments and good vibes.
+CAT &amp; ONION is a short cat adventure packed with curious characters, strange environments and good vibes. Climb, talk, fly and smack your way to places where no cat has ever gone before! 
 
 ## Release dates and platforms
 
-### March 12, 2024 on Steam
+<p>January 28, 2024 - <a href="https://zylinski.itch.io/cat-and-onion">Itch.io</a> - Windows, Mac and Linux</p>
 
-Windows, Mac, Steam Deck and Linux https://store.steampowered.com/app/2781210/CAT__ONION/
+<p>March 12, 2024 - <a href="https://store.steampowered.com/app/2781210/CAT__ONION/">Steam</a> - Windows, Mac, Steam Deck and Linux</p>
+
 
 ## Price
 
@@ -26,17 +27,19 @@ Windows, Mac, Steam Deck and Linux https://store.steampowered.com/app/2781210/CA
 
 English
 
-## Developed by
+## Developer
 
-**Zylinski Games**. Solo indie game developer Karl Zylinski. Has made all the code, graphics, music, sound and marketing for CAT & ONION. Based in Sweden.
+Developed by **Zylinski Games**. Solo indie game developer Karl Zylinski. Karl has made all the code, graphics, music and sound for CAT &amp; ONION. Based in Sweden.
+
+Marketing by Karl Zylinski and Geraldine Lee.
 
 ## Trailer
 
-{{<youtube -x0wj4AGOIk>}}
+{{<youtube xVmVRtJUSOY>}}
 
 <br>
 
-[Download the trailer (mp4, 35 MB)](https://drive.google.com/file/d/1l99fgjTZ0Iv6kYdPabnYISJVcmpYf1cM/view?usp=sharing )
+[Download the trailer (mp4, 29.3 MB)](https://drive.google.com/file/d/11XVcoJ99oMJD-F2dz3MF9FuYCFmqq5OJ/view?usp=sharing)
 
 ## Screenshots
 
@@ -61,11 +64,14 @@ English
 
 <a href="/cat-and-onion-presskit/logos/cat-and-onion-logos-and-gifs.zip">Download all logos, gifs and other material (zip, 10 MB)</a>
 
-## Contact
+## Contact &amp; links
 
-- E-mail: karl@zylinski.se
-- Steam page: https://store.steampowered.com/app/2781210/CAT__ONION/
+- Business inquiries: karl@zylinski.se
+- CAT &amp; ONION customer support: cat@zylinski.se
+- Steam store page: https://store.steampowered.com/app/2781210/CAT__ONION/
+- Itch store page: https://zylinski.itch.io/cat-and-onion
 - YouTube: https://www.youtube.com/@karl_zylinski
 - Twitter: https://twitter.com/karl_zylinski
 - Threads: https://www.threads.net/@karl_zylinski
-
+- Instagram: https://www.instagram.com/zylinski_games/
+- Facebook: https://www.facebook.com/ZylinskiGames/
