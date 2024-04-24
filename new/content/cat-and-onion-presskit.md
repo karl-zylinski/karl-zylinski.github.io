@@ -29,7 +29,7 @@ English
 
 ## Developer
 
-Developed by **Zylinski Games**. Solo indie game developer Karl Zylinski. Karl has made all the code, graphics, music and sound for CAT &amp; ONION. Based in Sweden.
+Solo indie game developer Karl Zylinski. Karl has made all the code, graphics, music and sound for CAT &amp; ONION. Based in Sweden.
 
 Marketing by Karl Zylinski and Geraldine Lee.
 
