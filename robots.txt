@@ -1,3 +1,3 @@
 User-agent: *
 Disallow:
-Sitemap: http://zylinski.se/sitemap.xml
+Sitemap: https://zylinski.se/sitemap.xml

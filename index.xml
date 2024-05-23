@@ -2,27 +2,27 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Karl Zylinski</title>
-    <link>http://zylinski.se/</link>
+    <link>https://zylinski.se/</link>
     <description>Recent content on Karl Zylinski</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 23 May 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 May 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Solodevs and the trap of the game engine</title>
-      <link>http://zylinski.se/posts/solodevs-and-the-trap-of-the-game-engine/</link>
+      <link>https://zylinski.se/posts/solodevs-and-the-trap-of-the-game-engine/</link>
       <pubDate>Thu, 23 May 2024 00:00:00 +0000</pubDate>
       
-      <guid>http://zylinski.se/posts/solodevs-and-the-trap-of-the-game-engine/</guid>
+      <guid>https://zylinski.se/posts/solodevs-and-the-trap-of-the-game-engine/</guid>
       <description>Since I was 19 I&amp;rsquo;ve wanted to make my own video games, as in creating everything in the game myself, often referred to as being a solo developer, or solodev. But I was bad at committing to anything and I always thought that I lacked some specific skill such as music making, game design skills and art skills.
 Now I&amp;rsquo;m 35 and just released my own game (see trailer below). I&amp;rsquo;ve made everything in it myself.</description>
     </item>
     
     <item>
       <title>Make games using Odin and Raylib #3: An animated player</title>
-      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</link>
+      <link>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</link>
       <pubDate>Tue, 20 Feb 2024 00:00:00 +0000</pubDate>
       
-      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</guid>
+      <guid>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</guid>
       <description>Today we will make our game look less dull by adding a run animation to the player character.
 We will download an image containing an animation, draw it in game and then make the animation play properly. A theme throughout today&amp;rsquo;s post is that we will try the different procs for drawing graphics on the screen that Raylib provides, and see how they can be used in different circumstances.
 A new thing in this post is that each section ends with a &amp;ldquo;Full code + what changed in this section&amp;rdquo; expandable item.</description>
@@ -30,40 +30,40 @@ A new thing in this post is that each section ends with a &amp;ldquo;Full code +
     
     <item>
       <title>Make games using Odin and Raylib #2: A controllable player</title>
-      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</link>
+      <link>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</link>
       <pubDate>Sun, 11 Feb 2024 15:47:11 +0200</pubDate>
       
-      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</guid>
+      <guid>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-2/</guid>
       <description>In this second post about making games using Odin and Raylib we shall look at how to add a simple player character and make it moveable. We will first introduce some simple left to right movement, and after that add gravity and the ability to jump.
 Here&amp;rsquo;s the companion video for this post. If you get confused by this post, then chances are that the companion video can help you understand:</description>
     </item>
     
     <item>
       <title>Make games using Odin and Raylib #1: Setup &#43; First Program</title>
-      <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</link>
+      <link>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</link>
       <pubDate>Fri, 09 Feb 2024 15:47:11 +0200</pubDate>
       
-      <guid>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</guid>
+      <guid>https://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-1/</guid>
       <description>Hello and welcome to the first post in this blog series on making games using Odin and Raylib. Throughout this series we will create a small 2D game with simple platforming mechanics. When we are done you&amp;rsquo;ll be able to extend the game, or take the knowledge you&amp;rsquo;ve learnt and make other, more complex games!
 This series is aimed at people with little to no programming experience. Being a bit technical and having an interest in games will help.</description>
     </item>
     
     <item>
       <title>Hot Reload Gameplay Code: What, why, limitations and examples!</title>
-      <link>http://zylinski.se/posts/hot-reload-gameplay-code/</link>
+      <link>https://zylinski.se/posts/hot-reload-gameplay-code/</link>
       <pubDate>Fri, 15 Sep 2023 15:47:11 +0200</pubDate>
       
-      <guid>http://zylinski.se/posts/hot-reload-gameplay-code/</guid>
+      <guid>https://zylinski.se/posts/hot-reload-gameplay-code/</guid>
       <description>This post is about what hot reload for gameplay code is, why you would use it and what the limitations are. I&amp;rsquo;ll also present an example implementation in Odin Programming Language. The final section is on some caveats, improvements and how to use hot reload in Odin together with Raylib. The front parts are language agnostic while the further down you read the more Odin specific it gets.
 The methods I will outline here are for people who are writing their own game &amp;lsquo;from scratch&amp;rsquo;, meaning you don&amp;rsquo;t use any game engine.</description>
     </item>
     
     <item>
       <title>CAT &amp; ONION presskit</title>
-      <link>http://zylinski.se/cat-and-onion-presskit/</link>
+      <link>https://zylinski.se/cat-and-onion-presskit/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://zylinski.se/cat-and-onion-presskit/</guid>
+      <guid>https://zylinski.se/cat-and-onion-presskit/</guid>
       <description>Description CAT &amp;amp; ONION is a short cat adventure packed with curious characters, strange environments and good vibes. Climb, talk, fly and smack your way to places where no cat has ever gone before!
 Release dates and platforms January 28, 2024 - Itch.io - Windows, Mac and Linux
 March 12, 2024 - Steam - Windows, Mac, Steam Deck and Linux
