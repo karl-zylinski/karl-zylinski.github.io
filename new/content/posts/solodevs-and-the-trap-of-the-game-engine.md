@@ -65,6 +65,6 @@ Also Raylib is a bit simpler to use than SFML. All-in-all it just felt _fun_ to 
 
 ## Was working with creating game engines a mistake?
 
-No. I learned very good programming principles while professionally making game engines and game engine tools. The mistake was that I starting thinking that in order to make a game from scratch, you must first create a general purpose game engine. Which is simply not a good idea.
+No. I learned very good programming principles while professionally making game engines and game engine tools. The mistake was that I started to think that in order to make a game from scratch, you must first create a general purpose game engine.
 
 For me, the rule is: Make games, not general purpose game engines.
