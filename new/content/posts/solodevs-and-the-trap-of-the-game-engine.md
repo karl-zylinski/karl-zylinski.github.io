@@ -69,6 +69,6 @@ For me, the rule is: Make games, not general purpose game engines.
 
 ## Thanks for reading!
 
-If you want to see some game development streams and tutorials, then maybe you'd enjoy my YouTube channel: https://www.youtube.com/@karl_zylinski
+If you want to see some game development streams and tutorials, then maybe you'll enjoy my YouTube channel: https://www.youtube.com/@karl_zylinski
 
 /Karl Zylinski
