@@ -6,7 +6,17 @@
     <description>Recent content on Karl Zylinski</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 20 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 May 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://zylinski.se/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Solo developing games: You can do it!</title>
+      <link>http://zylinski.se/posts/make-games-not-engines/</link>
+      <pubDate>Thu, 23 May 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://zylinski.se/posts/make-games-not-engines/</guid>
+      <description>Since I was 19 I&amp;rsquo;ve wanted to make my own video games, as in creating everything in the game myself, often referred to as being a solo developer, or solodev. But I was bad at committing to anything and I always thought that I lacked some specific skill such as music making, game design skills and art skills.
+Now I&amp;rsquo;m 35 and just released my own game (see trailer below). I&amp;rsquo;ve made everything in it myself.</description>
+    </item>
+    
     <item>
       <title>Make games using Odin and Raylib #3: An animated player</title>
       <link>http://zylinski.se/posts/gamedev-for-beginners-using-odin-and-raylib-3/</link>
