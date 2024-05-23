@@ -1,9 +1,9 @@
 ---
-title: "Solo developing games: You can do it!"
+title: "Solodevs and the trap of the game engine"
 date: 2024-05-23
 
 cover:
-  image: "/back_to_basics.png"
+  image: "/winding_path.png"
 ---
 
 Since I was 19 I've wanted to make my own video games, as in creating everything in the game myself, often referred to as being a solo developer, or solodev. But I was bad at committing to anything and I always thought that I lacked some specific skill such as music making, game design skills and art skills.
