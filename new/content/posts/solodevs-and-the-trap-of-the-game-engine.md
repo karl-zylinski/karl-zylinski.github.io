@@ -21,7 +21,7 @@ The funny thing is: My approach to making games at 35 is more similar to the one
 
 ## The approach when I was around 19
 
-When I was somewhere between 19 and 22 I used to make games using C++ and the library known as SFML. This just meant creating a C++ program that used SFML to open a window, check for some input and draw some graphics. There was no big game engine, just a C++ program that used SFML in a very ad-hoc way to get things done.
+When I was somewhere between 19 and 22 I used to make games using C++ and the library known as [SFML](https://www.sfml-dev.org/). This just meant creating a C++ program that used SFML to open a window, check for some input and draw some graphics. There was no big game engine, just a C++ program that used SFML in a very ad-hoc way to get things done.
 
 At the time, I never actually finished any game using this method, other than some group projects in school. But some of my prototypes got pretty far!
 
@@ -47,7 +47,7 @@ Having those kinds of tools are good for empowering non-technical game designers
 
 ## Odin + Raylib: Back to basics
 
-A few years ago I ended up trying the Odin Programming Language along with Raylib. Raylib is a library similar to SFML, but written in C. Odin comes with built in bindings for Raylib.
+A few years ago I ended up trying the [Odin Programming Language](https://odin-lang.org/) along with [Raylib](https://www.raylib.com/). Raylib is a library similar to SFML, but written in C. Odin comes with built in bindings for Raylib.
 
 When I played around with this combo I had a flashback: This feels like the good fun days when I made games using C++ and SFML. Not because of any similarity between the languages and libraries, but because my game was just a program that used a lib to show some graphics.
 
@@ -56,8 +56,6 @@ I could quickly get some stuff to display on the screen, but in contrast to usin
 I have had to create some tools for editing levels and some other data that is too hard to describe in code. But I only had to do so out of necessity. Sometimes I even scrapped a tool I made when I realized I could describe the same stuff using code. My idea these days is this: I am a solo developer, I don't need to put stuff into friendly data formats or tools unless the tool really aids my creation process. Put as much in the code as possible. A procedure with some parameters for creating certain types of game objects is often better than an editor.
 
 If you work on a team you must make sure to provide tools to empower the team, but for a solo developer, creating tools that you actually don't need, might just have the opposite effect.
-
-## Shipping a game
 
 Again, comparing my 35 year old self to my 19 year old self, I found an advantage to using Odin over C++. My C++ projects usually didn't leave the prototype stage. Perhaps it was due to inexperience. But also, there is a certain feeling of dread sometimes when you have a big C++ code base and want to implement a new mechanic, because C++ is a bit too chatty. There is just slightly too much friction in C++. In Odin the code is both more compact and simpler, making it possible for me to (just barely) clear the mental hill of having to add new features when I need to.
 
@@ -68,3 +66,9 @@ Also Raylib is a bit simpler to use than SFML. All-in-all it just felt _fun_ to 
 No. I learned very good programming principles while professionally making game engines and game engine tools. The mistake was that I started to think that in order to make a game from scratch, you must first create a general purpose game engine.
 
 For me, the rule is: Make games, not general purpose game engines.
+
+## Thanks for reading!
+
+If you want to see some game development streams and tutorials, then maybe you'd enjoy my YouTube channel: https://www.youtube.com/@karl_zylinski
+
+/Karl Zylinski
