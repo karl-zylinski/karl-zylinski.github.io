@@ -67,6 +67,21 @@
     }
 }
 
+
+@media screen and (max-width: 430px) {
+    .logo {
+
+        display: table;
+    }
+    .logo a {
+        font-size: 12px;
+        text-align: center;
+        margin-top: 3px;
+        display: table-cell;
+        vertical-align: middle;
+    }
+}
+
 @media (prefers-reduced-motion) {
     /* terms; profile-mode; post-single; post-entry; post-entry; search; search */
     .terms-tags a:active,
