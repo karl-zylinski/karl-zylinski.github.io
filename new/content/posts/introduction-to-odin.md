@@ -600,13 +600,7 @@ do_work :: proc() {
 }
 ```
 
-`make` will allocate memory using `context.allocator`. If you look at the definition of `make` (see `<your_odin_compiler_dir>/base/runtime/core_builtin.odin`), it takes an allocator parameter that has the default value `context.allocator`:
-
-```C
-make_slice :: proc($T: typeid/[]$E, #any_int len: int, allocator := context.allocator, loc := #caller_location) -> (T, Allocator_Error) #optional_allocator_error {
-	return make_aligned(T, len, align_of(E), allocator, loc)
-}
-```
+`make` will allocate memory using `context.allocator`. If you look at the definition of `make` (see `<your_odin_compiler_dir>/base/runtime/core_builtin.odin`), you'll see that it takes an allocator parameter that has the default value `context.allocator`.
 
 This means that you can also force make to use a specific allocator: `ints := make([]int, 4096, my_allocator)`. Also, what we are doing here is creating a brand new slice of type `[]int` that is 4096 items long. So slices are not always "windows" into other arrays, they can be the original thing that owns its own memory, you can use them as dynamically allocated fixed size arrays.
 
@@ -681,7 +675,7 @@ my_slice := make_random_sized_slice(f32, 1000)
 
 `my_slice` will then be a slice of type `[]f32` with any size between 0 and 1000.
 
-The difference between these two examples is that in the second example I moved the `$T` to the name instead of having it on the type. We see in the second example that the type of `$T` is typeid, which is the "type of types". We can then use T in the code to refer to this type. Note that we cannot just type `T: typeid` in the parameter list, the `$` has to be there so that the compiler knows we intend to use this value as a compile-time constant. You can have procs that have a parameter `T: typeid`, but then T would not be possible to use at compile-time. We need T to be usable at compile-time because we write `[]T` further down, and `[]T` is itself a type, which must be known at compile-time.
+The difference between these two examples is that in the second example I moved the `$T` to the parameter name instead of having it on the type. We see in the second example that the type of `$T` is typeid, which is the "type of types". We can then use T in the code to refer to this type. Note that we cannot just type `T: typeid` in the parameter list, the `$` has to be there so that the compiler knows we intend to use this value as a compile-time constant. You can have procs that have a parameter `T: typeid`, but then T would not be possible to use at compile-time. We need T to be usable at compile-time because we write `[]T` further down, and `[]T` is itself a type, which must be known at compile-time.
 
 We can also see it like this: In the first example we made a proc that accepts a parameter of a generic type. We can in that proc then use both the value and the type. In the second example we only needed a type, there was no value to send in!
 
@@ -700,9 +694,9 @@ We can then use this generic struct definition like so:
 ```C
 array: Special_Array(f64, 128)
 ```
-array will then be a variable that is of the Special_Array type, where the items array has been specialized to contain `128` `f64` items.
+array will then be a variable that is of the `Special_Array` type, where the items array inside it will contain `128` items of type `f64`.
 
-Finally, we can make procedures that use these generic structs:
+We can make procedures that use these generic structs:
 ```C
 find_random_thing_in_special_array :: proc(arr: Special_Array($T, $N)) -> T {
 	return arr.items[rand.int31_max(arr.num_items_used)]
@@ -712,6 +706,14 @@ array: Special_Array(f64, 128)
 random_thing := find_random_thing_in_special_array(array)
 ```
 We see that this proc can figure out the type `T` it needs for the return value from the specialization of the struct we send into it.
+
+You can also limit, or specialize, what types that are allowed, here's [an example from the overview](https://odin-lang.org/docs/overview/#specialization):
+```C
+make_slice :: proc($T: typeid/[]$E, len: int) -> T {
+	return make(T, len)
+}
+```
+This proc makes slices of a certain type. But the `/` just after the typeid limits the possible types it accepts. In this case `T` must be a `typeid` that is a slice, but the item type of the slice is still generic.
 
 ## Getting comfy with manual memory management
 
@@ -923,30 +925,3 @@ If you have any questions or wanna discuss what I wrote, then you can [join my D
 
 Have a nice day!
 /Karl Zylinski
-
-
-
-
-<!-- My C++ programming was done mostly in a C-like way, I used C++ to get a "C with some sugar on top". This "back-to-C" style of programming C++ is quite popular among game developers.-->
-
-<!--
-- Zero initialization. Odin initializes all memory to zero by default unless you tell it to not do so. The language and the core library (Odin's standard library) also tries to use the zero value as a 'good default' as much as possible, which is known as zero-is-initialized. Zero-is-initialized and automatic zero initialization is a comfy combo.
-- Multiple return values. In C I often had to create new struct types just to do multiple returns, or use "out parameters". Odin supports multiple return values where the return values can be distributed into several variable on the calling side.
-- Generics and parametric polymorphism. In C you have to rely on macros to create generic behavior. In C++ you can use templates. Odin lets you 
-
-Some of these may seem insignificant, but the smart thing about Odin design lies in how carefully the design decisions have been done, it's all very consistent.-->
-
-
-<!-- 
-
-Imports can be renamed within the file by typing `import f "core:fmt"`, which makes it possible to write `f.println` instead of `fmt.println`.
-Odin has a p
-
-The `.` here needs some explaining, which leads me to say a few words about the package system.
-
-`odin run .` compiles all the files within the current directory as a single package, outputs it all as an executable and runs it. You could also type `odin build .`, which will create an executable that you can later run manually.
-
-Everything within a folder is considered to be part of the same package, the line at the top of the program that says `package hello_world` must also be the same for all the files within that package folder.
-
-
--->
