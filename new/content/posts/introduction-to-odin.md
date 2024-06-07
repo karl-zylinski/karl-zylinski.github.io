@@ -816,6 +816,14 @@ That said, there are some people who have successfully used packages to compartm
 
 Some may balk at the idea of using prefixes within a project, they want to use packages as some sort of namespace but still have cyclic dependencies. I would encourage you to just try using prefixed proc names etc, it is not that big of a deal. This is in line with Odin trying to be a better C while still keeping things very simple.
 
+## Where to find more Odin resources
+
+There's a great list of resources, libraries and software on [Jakub Tomšů's Awesome Odin page](https://github.com/jakubtomsu/awesome-odin) 
+
+If you like video content, then I made this 90 minute video where I create a little video game from start to finish:
+
+{{<youtube lfiQNCNUifI>}}
+
 ## Thanks for reading!
 
 If you liked this article and want to support me, then you can [become a patron](https://www.patreon.com/karl_zylinski).
