@@ -2,7 +2,7 @@
 title: "Introduction to the Odin Programming Language"
 date: 2024-06-07T00:01:00+02:00
 
-draft: true
+draft: false
 
 #cover:
 #  image: "/odinraylib2/cover.png"
@@ -132,7 +132,7 @@ The line `for counter < 20 {` makes a loop that runs until counter reaches the v
 - `for {}` is a loop that runs forever, equivalent to `while true {}` in C.
 - `for i < 10 {}` is a loop that runs for as long as i is less than 10, equivalent to `while i < 10 {}` in C.
 - `for i in 0..<10 {}` is a loop that creates a value i and sets it to 0 and then increases it by 1 until it reaches 10. Equivalent to `for int = 0; i < 10; i += 1 {}` in C.
-- `for item in array_of_items {}` is a "for each" loop that goes over an array and presents you with each item in the array. Similar to `for (auto& elem: v) {}` in C++
+- `for item in array_of_items {}` is a "for each" loop that goes over an array and presents you with each item in the array. Similar to `for (auto& item : array_of_items) {}` in C++
 - `for item, index in array_of_items {}` same as the previous one, but gives also gives you access to the index of the current item.
 - `for &item in array_of_items {}` similar to the previous one, but `item` will be possible to alter, changing that item in the array. 
 
@@ -293,7 +293,7 @@ player = {
 }
 ```
 
-### Arrays, swizzling and array programming
+### Array basics, swizzling and array programming
 
 Say that you want to represent a position in 3D space, then you can do so using three numbers:
 
@@ -315,7 +315,7 @@ You can add arrays that have matching item type and size, like so:
 
 This is known as 'array programming'. You can add arrays, subtract them and multiply them with scalars. Odin does not have operator overloading, but one of the most common use cases for operator overloading is doing vector maths, so I haven't missed operator overloading at all because of how great array programming works.
 
-
+### More about arrays: Arrays, slices, dynamic arrays
 
 
 If you want more syntax examples, then I recommend looking at the demo.odin file: https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin
