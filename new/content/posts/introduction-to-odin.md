@@ -3,7 +3,7 @@ title: "Introduction to the Odin Programming Language"
 date: 2024-06-07T21:16:00+02:00
 
 cover:
-  image: "/odin-introd.png"
+  image: "/odin-intro.png"
 ---
 
 ## Preface
