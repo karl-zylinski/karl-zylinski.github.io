@@ -456,7 +456,7 @@ cap:       int,
 allocator: Allocator,
 ```
 
-It also remembers what type the items of the dynamic array should be. So when you write `dyn_arr: [dynamic]int` then the `data`, `len`, `cap` and `allocator` will all be default initialized to zero. Then when `append` is run it sees that `data` is `0` (or nil, which is the zero value for pointers) and it will try to allocate memory for the array. If will check if the `allocator` field is set and use that allocator to allocate the memory, but in the `dyn_arr: [dynamic]int` example, the allocator will be zeroed, so it will instead fall back to using `context.allocator`. It will set `allocator = context.allocator` in this case.
+It also remembers what type the items of the dynamic array should be. So when you write `dyn_arr: [dynamic]int` then the `data`, `len`, `cap` and `allocator` will all be default initialized to zero. Later, when `append` is run, it sees that `data` is `0` (or `nil`, which is the zero value for pointers). It will therefore  try to allocate some initial memory for the array. It will check if the `allocator` field is set and use that allocator to allocate the memory, but in the `dyn_arr: [dynamic]int` example, the allocator will be zeroed, so it will instead fall back to using `context.allocator`. It will set `allocator = context.allocator` in this case.
 
 If you want to use some other allocator for your dynamic array, then you can create the dynamic array like this instead:
 
