@@ -107,7 +107,7 @@ a_decimal_number = 3.2
 Only having a `=`, like the last line, is only valid if there already exists a variable with that name. You can also force a variable to have specific type by writing `a_decimal_number: f32 = 2`, where `f32` is a 32 bit floating point number. If you had omitted the `f32` and typed `a_decimal_number := 2`, then the type of this variable would actually have been `int`. But `2` is a valid value for both `f32` and `int`, so you can use that `: f32 =` syntax to use `f32`. You can see the `:=` syntax as saying "I wanna create a variable and set it to the right-hand side value, but I don't wanna write the type, please infer it from the right-hand side value".
 
 Moreover, these two lines do the same thing:
-```
+```C
 a_decimal_number: f32 = 2
 a_decimal_number := f32(2)
 ```
