@@ -622,6 +622,97 @@ At the end of the scope the context will be re-set to whatever value it had befo
 
 Note that `delete()` is used to free the memory of slices and dynamic arrays alike. For slices it will use `context.allocator` (you can also send in a second parameter that to use a specific allocator). But for dynamic arrays the the dynamic array itself remembers which allocator is used (since it needs to be able to grow when you run `append()`), so for dynamic arrays it does not care about the value of `context.allocator` when running `delete`.
 
+## Parametric polymorphism: Reusable, generic procedures
+
+We've already seen how we can make arrays that contain items of any type. But how can we make code that can operate on _any_ type?
+
+In Odin we can do this using parametric polymorphism. This means that we can make parameters of procedures generic.
+
+Say that we have this procedure that implements clamp (Odin has clamp built in, this is just for the sake of an example):
+
+```C
+clamp :: proc(val, min, max: f32) -> f32 {
+	if val <= min {
+		return min
+	}
+
+	if val >= max {
+		return max
+	}
+
+	return val
+}
+```
+
+Now, we may want to clamp integers or 64 bit floats as well. We can make our clamp proc generic like this:
+
+```C
+clamp :: proc(val, min, max: $T) -> T {
+	if val <= min {
+		return min
+	}
+
+	if val >= max {
+		return max
+	}
+
+	return val
+}
+```
+
+The `f32` in the list of parameters has been replaced with a `$T`. This means that the type of `val`, `min` and `max` (they all have to be the same type) will be usable by typing `T`. As you can see we immediately use `T` as the type of the return value of the proc.
+
+This proc can now be used for any numeric type. The compiler will generate the different variations for you as you use clamp with different types of parameters. If it is not possible to generate the code, then you'll get a compilation error, which would happen if you tried to use this proc with a non-numeric type.
+
+Now, say that you want want to create an array of random size (again, silly thing to do perhaps, but it's a simple example):
+
+```C
+make_random_sized_slice :: proc($T: typeid, max_size: int) -> []T {
+	random_size := rand.int31_max(max_size)
+	return make([]T, random_size)
+}
+```
+
+We could now use this proc like so:
+
+```C
+my_slice := make_random_sized_slice(f32, 1000)
+```
+
+`my_slice` will then be a slice of type `[]f32` with any size between 0 and 1000.
+
+The difference between these two examples is that in the second example I moved the `$T` to the name instead of having it on the type. We see in the second example that the type of `$T` is typeid, which is the "type of types". We can then use T in the code to refer to this type. Note that we cannot just type `T: typeid` in the parameter list, the `$` has to be there so that the compiler knows we intend to use this value as a compile-time constant. You can have procs that have a parameter `T: typeid`, but then T would not be possible to use at compile-time. We need T to be usable at compile-time because we write `[]T` further down, and `[]T` is itself a type, which must be known at compile-time.
+
+We can also see it like this: In the first example we made a proc that accepts a parameter of a generic type. We can in that proc then use both the value and the type. In the second example we only needed a type, there was no value to send in!
+
+Finally, we can use similar things to create generic structs:
+
+```C
+Special_Array :: struct($T: typeid, $N: int) {
+	items: [N]T,
+	num_items_used: int,
+}
+```
+
+We see that this generic struct accepts a typeid that is used to choose the type of the `items` array. Similarly, we also put in `$N: int`, which gives us a compile-time value to use for the size of the `items` array.
+
+We can then use this generic struct definition like so:
+```C
+array: Special_Array(f64, 128)
+```
+array will then be a variable that is of the Special_Array type, where the items array has been specialized to contain `128` `f64` items.
+
+Finally, we can make procedures that use these generic structs:
+```C
+find_random_thing_in_special_array :: proc(arr: Special_Array($T, $N)) -> T {
+	return arr.items[rand.int31_max(arr.num_items_used)]
+}
+
+array: Special_Array(f64, 128)
+random_thing := find_random_thing_in_special_array(array)
+```
+We see that this proc can figure out the type `T` it needs for the return value from the specialization of the struct we send into it.
+
 ## Getting comfy with manual memory management
 
 We've already seen how you can switch out `context.allocator` and how you can `delete` memory you've allocated previously.
