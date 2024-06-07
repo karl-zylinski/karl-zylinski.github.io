@@ -211,6 +211,7 @@
     line-height: 1.5;
     background: var(--code-bg);
     border-radius: 2px;
+    tab-size: 4;
 }
 
 .post-content pre code {

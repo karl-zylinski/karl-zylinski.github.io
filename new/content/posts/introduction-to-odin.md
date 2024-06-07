@@ -2,13 +2,13 @@
 title: "Introduction to the Odin Programming Language"
 date: 2024-06-07T21:16:00+02:00
 
-#cover:
-#  image: "/odinraylib2/cover.png"
+cover:
+  image: "/odin-introd.png"
 ---
 
-## Introduction
+## Preface
 
-This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is laid to be read from start to finish, it is not a reference guide. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C.
+This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is meant to be read from start to finish. It is not a reference guide, but will rather give you a feeling for what the language does differently and what you can expect as you venture forth. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C. If you enjoy this article and want to support me, then you can do so by [becoming a patron](https://www.patreon.com/karl_zylinski).
 
 In the recent years most of my programming has been done using the Odin Programming Language, sometimes referred to as Odinlang. Since a year back I create my own video games using Odinlang, you can find my game [CAT & ONION](https://store.steampowered.com/app/2781210/CAT__ONION/) on Steam, it is completely created in Odin.
 
@@ -25,7 +25,7 @@ Many new languages fail on one of these points, so I end up not liking them. How
 
 ## A note on learning Odin
 
-While Odin is a great language, the area it is perhaps most lacking in currently is documentation. There is lots of documentation, but it is scattered and incomplete. This article tries to address that by giving a holistic introduction. This article aside, here is my recommendation of where to look if you are stuck on trying to figure out how to do something specific in Odin. I recommend you check these resources in the order stated:
+While Odin is a great language, the area it is currently most lacking in is documentation. There is lots of documentation, but it is scattered and incomplete. I tried to address that by writing this article, which I hope gives a holistic introduction to Odin. This article aside, here is my recommendation of where to look if you are stuck on trying to figure out how to do something specific in Odin. I recommend you check these resources in the order stated:
 
 1. Check the [overview](https://odin-lang.org/docs/overview/). The overview is not complete, but searching around in there will answer many beginner questions.
 2. Look inside [demo.odin](https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin). It is an example that comes with the compiler that tries to showcase many different features of the language.
@@ -41,7 +41,7 @@ I will not go over in detail how to install Odin. You can read about that on the
 ## Basic "Hello World"
 
 Here is a tiny Hello World program written in Odin:
-```
+```C
 package hello_world
 
 import "core:fmt"
@@ -53,7 +53,7 @@ main :: proc() {
 
 Functions are in Odin referred to as procedures. `main` is the default entry point for the program. We see that procedures are created by typing `procedure_name :: proc() {}`
 
-The line `import "core:fmt"` fetches the `fmt` package from the standard library, which contains procedures that can print to the console and also format strings. All those things inside the `fmt` package can then be used by typing `fmt.some_procedure_name()`. We see inside the `main` proc that we use the `fmt.println` proc to print "Hello World" to the console.
+The line `import "core:fmt"` fetches the `fmt` package from the standard library. `fmt` contains procedures that can print to the console and also format strings. All those things inside the `fmt` package can then be used by typing `fmt.some_procedure_name()`. Inside the `main` proc we use the `fmt.println` proc to print "Hello World" to the console.
 
 Semicolons are not needed, and I would encourage to simply not use them. Not using semicolons fits well with how Odin looks. You can still use them if you really want to! There is also a compiler flag to make it an error if you put in unnecessary semicolons (`-vet-semicolon`)
 
@@ -63,13 +63,13 @@ If you copy-paste the code above into a file and save that file inside a new fol
 
 I will say more about the package system later, but for now I just want to point out that the line `package hello_world` must be the same for all odin files within a folder.
 
-> The reason for saying procedure, or proc, instead of function is that the word function, if one wants to be nit-picky, is a bunch of code that has _no side effects_. This is why when we talk about "functional programming" we mean code that composes new functionality from combining functions, where those functions do not modify any global state. Now, functions can be seen as a special case of procedures. I.e. a procedure can take some parameters, return some values and also have side-effects on global variables. Functions can thus be seen as a sub-species of procedures.
+> The reason for saying procedure, or proc, instead of function is that the word function, if one wants to be nit-picky, is a bunch of code that has _no side effects_. This is why when we talk about "functional programming" we mean code that composes new functionality from combining functions, where those functions do not modify any global state. Now, functions can be seen as a special case of procedures. I.e. a procedure can take some parameters, return some values and also have side-effects on global variables, while functions can do the same except for that they have no side-effects. Some languages refer to side-effect free procedures as "pure functions".
 
 ## Variables and loops
 
 Let's add some variables and a loop to our Hello World program:
 
-```
+```C
 package hello_world
 
 import "core:fmt"
@@ -91,11 +91,11 @@ The line `a_string := "Hello World!"` declares and initializes a variable. Odin 
 
 The line `counter: int` also declares a variable, but this time it only says which type, but no value is given. Since no value is given, it will be initialized to zero. If you for some reason do not want to have it initialized, then you can write `counter: int = ---`. However, in almost all cases you will want zero initialization. In some performance sensitive algorithms you may want to skip it, but I have almost never had to do so.
 
-Odin initializes all memory to zero by default unless you tell it to not do so. The language and the core library (Odin's standard library) also tries to use the zero value as a 'good default' as much as possible, which is known as zero-is-initialized. Zero-is-initialized and automatic zero initialization is a comfy combo.
+The language and the core library (Odin's standard library) also tries to use the zero value as a 'good default' as much as possible, which is known as zero-is-initialized. Zero-is-initialized and automatic zero initialization is a comfy combo.
 
-> A_BETTER_C: In C and C++ if you write `int counter;` then the variable counter will not be initialized and can just contain garbage memory, which is almost never what you want.
+> In C and C++ if you write `int counter;` then the variable counter will not be initialized and can just contain garbage memory, which is almost never what you want.
 
-We can look closer that the how the usage of `:` and `=` varies when declaring and setting variable values:
+Let's look close at `:` and `=`, in particular how the usage of these characters vary when declaring and setting variables:
 
 ```C
 a_string := "Hello World!"
@@ -107,11 +107,8 @@ a_decimal_number = 3.2
 Only having a `=`, like the last line, is only valid if there already exists a variable with that name. You can also force a variable to have specific type by writing `a_decimal_number: f32 = 2`, where `f32` is a 32 bit floating point number. If you had omitted the `f32` and typed `a_decimal_number := 2`, then the type of this variable would actually have been `int`. But `2` is a valid value for both `f32` and `int`, so you can use that `: f32 =` syntax to use `f32`. You can see the `:=` syntax as saying "I wanna create a variable and set it to the right-hand side value, but I don't wanna write the type, please infer it from the right-hand side value".
 
 Moreover, these two lines do the same thing:
-```C
+```
 a_decimal_number: f32 = 2
-```
-
-```
 a_decimal_number := f32(2)
 ```
 
@@ -130,7 +127,7 @@ The line `for counter < 20 {` makes a loop that runs until the counter reaches t
 ## Procedure parameters and return values
 Procedures can have parameters and return multiple values:
 
-```
+```C
 my_proc :: proc(number: int, text: string) -> (int, bool) {
 	fmt.printfln("This is the number: %v, this is the text: %v", number, text)
 	return len(text), true
@@ -141,7 +138,7 @@ some_int, some_bool := my_proc(5, "Interesting text")
 
 We see here that `my_proc` is a procedure that takes 2 parameters and returns 2 values. The return values can be assigned to new variables.
 
-If you do not want one of the return values, then you can use `_` to say "I don't care about that one": `some_int, _ := my_proc(5, "More text")`
+If you do not want one of the returned values, then you can use `_` to say "I don't care about that one": `some_int, _ := my_proc(5, "More text")`
 
 ## If statements
 
@@ -193,11 +190,9 @@ You can create compile-time constants by typing
 MY_CONSTANT :: 123
 ```
 
-Constants can as the name hints, never be changed. They are useful because the compiler can act on their value during compile-time, since it can be certain of their value.
+Constants cannot be changed, as the name implies. They are useful because the compiler can act on their value during compile-time, since it can be certain of their value.
 
-A very nice things about Odin constants is that they are not typed in the same way as variables.
-
-For example, you can type
+A very nice things about Odin constants is that they are not typed in the same way as variables. For example, you can type:
 
 `my_variable: int = MY_CONSTANT`
 
@@ -205,7 +200,7 @@ or
 
 `my_variable: f32 = MY_CONSTANT`
 
-The compiler has not attached a specific type to this constant until you try to assign it, so it is possible to assign it several different types. In this case we say that MY_CONSTANT is an "untyped integer", since it's obviously an integer, but it can in practice fit into several different types.
+The compiler has not attached a specific type to this constant until you try to assign it, so it is possible to assign it to variables of different types. In this case we say that MY_CONSTANT is an "untyped integer", since it's obviously an integer, but it can in practice fit into several different types.
 
 However if you type
 
@@ -213,13 +208,7 @@ However if you type
 ANOTHER_CONSTANT :: 72.12
 ```
 
-then
-`my_variable: int = ANOTHER_CONSTANT`
-
-will not compile unless you force the constant into an int, which you can do by writing
-`my_variable := int(ANOTHER_CONSTANT)`.
-
-Note: Here we moved the `int` to the right hand side because we did a cast, so we didn't have to write the type.
+then `my_variable: int = ANOTHER_CONSTANT` will not compile unless you force the constant into an int, which you can do by writing `my_variable := int(ANOTHER_CONSTANT)`. In doing so the value `72.12` would be truncated into just `72`. Note: Here we moved the `int` to the right hand side because we did a cast, so we didn't have to write the type of the variable.
 
 In this case ANOTHER_CONSTANT is an "untyped floating point number", meaning that it cannot automatically be put into an integer, but it can be put into different kinds of floating point numbers, like so:
 
@@ -228,9 +217,9 @@ my_f32: f32 = ANOTHER_CONSTANT
 my_f64: f64 = ANOTHER_CONSTANT
 ```
 
-You can think of it as constants being possible to automatically put into any variable if that variable can accommodate the constant.
+You can think of it like this: Constants can be automatically put into a variable if that variable can accommodate the constant.
 
-> A_BETTER_C: In C constants have stricter types, which is why you have to type `0.5f` all the time to denote a 32 bit floating point constant. Typing `0.5` in C will get you a double precision (64 bit) floating point number. The constant system in Odin is a bit more comfy. In Odin the compiler will still emit an error if the constant won't fit into the type, such as trying to shove a giant integer into an 8 bit integer type, but you don't have to worry about the specific types of constants as much.
+> In C constants have stricter types, which is why you have to type `0.5f` all the time to denote a 32 bit floating point constant. Typing `0.5` in C will get you a double precision (64 bit) floating point number. Trying to assign `0.5` to a 32 bit float in C is a compilation error. The constant system in Odin is a bit more comfy. In Odin the compiler will still emit an error if the constant won't fit into the type, such as trying to shove a giant integer into an 8 bit integer type, but you don't have to worry about the specific types of constants as much.
 
 If you really want to, then you can give a constant a type, like so:
 ```C
@@ -246,18 +235,24 @@ In both cases you wedge in the type between the `::` or the `:=`
 
 ## Array basics, swizzling and array programming
 
-Say that you want to represent a position in 3D space (I make video games, so this example comes naturally to me), then you can do so using three numbers: `position: [3]f32`
+Say that you want to represent a position in 3D space (I make video games, so this example comes naturally to me), then you can do so using three numbers: 
+```C
+position: [3]f32
+```
 
 This creates a variable `position` that is an array of three `f32` numbers.
 
-You can fetch the different values from `position` like so: `position[0]`. However, when arrays have 4 or fewer items, then you can index then using `x`, `y`, `z` and `w` as well. So instead of `position[0]` you can write `position.x`.
+You can fetch the different values from `position` like so: `position[0]`. However, when arrays have 4 or fewer items, then you can index them using `x`, `y`, `z` and `w` as well. So instead of `position[0]` you can write `position.x`.
 
 You can also swizzle such arrays: `2d_pos := position.xy` will make `2d_pos` into a variable of type `[2]f32` that contains the x and y parts of the position. You can also do stuff like `position.xxyy` or `position.wyx`. Finally, because in some applications we use 4 dimensional numbers to represent colors, you can also swizzle using `.rgba`.
 
-If you don't wanna write `[3]f32` all the time then you can make an new type instead: `Vector3 :: [3]f32`.
+If you don't wanna write `[3]f32` all the time then you can make an new type instead: 
+```C
+Vector3 :: [3]f32
+```
 
 You can add arrays that have matching item type and size, like so:
-```
+```C
 Vector3 :: [3]f32
 position: Vector3
 velocity := Vector3 { 0, 0, 10 }
@@ -279,17 +274,20 @@ Player :: struct {
 }
 ```
 
-The struct is created by doing `Struct_Name :: struct {}`. Here we see the double colon again. So far we have seen three different things use the `::` syntax: procedures, constants and now struct definitions. All these three things are known at compile time, so you can see the `::` as something that creates things that are possible to reason about at compile-time.
+The struct is created by doing `Struct_Name :: struct {}`. Here we see the double colon (`::`) again. So far we have seen three different things use the `::` syntax: procedures, constants and now struct definitions. All these three things are known at compile time, so you can see the `::` as something that creates things that are possible to reason about at compile-time.
 
 The struct has a number of fields, each field looks like a variable declaration, but with a comma at the end.
 
-> A_BETTER_C: In C I used to have a coding standard to always put a comma even at the last field of a struct. That way, when adding a new field, you didn't forget the comma on the previous line, saving you that compile error. With this in mind, in Odin commas are enforced, even for the last line.
+> In C/C++ I used to have a coding standard to always put a comma even at the last field of a struct. That way, when adding a new field, you didn't forget the comma on the previous line, saving you that compile error. With this in mind, in Odin commas are enforced, even for the last line.
 
-We can create a variable using our struct type like so: `player: Player`
+We can create a variable using our struct type like so: 
+```C
+player: Player
+```
 
 The health and the position fields inside this player struct will be all default initialized to zero.
 
-There are no classes in Odin, only structs. Structs can only contain fields, there are no "methods". This is in line with Odin trying to be a better C, and just like in C there are no methods.
+There are no classes in Odin, only structs. Structs can only contain fields, there are no "methods". This is in line with Odin trying to be a better C, and just like in C there are no methods. You write your program using procedures, structs and arrays.
 
 If you want to initialize the player struct when you create it, then you can do like this:
 
@@ -301,11 +299,12 @@ player := Player {
 
 This player will then have the health field set to 100. Any field not mentioned will be zero-initialized. In this case the position will be all zeroes.
 
-> A_BETTER_C: These initializers where you mention fields by names are known in C as designated initializers. They are one of my favorite features in C due to it being possible to mention only some fields and the non-mentioned will be zeroed. Unfortunately, in C++ they have only recently been added. So it was always an annoying trade-off when writing C++ code, that you could not use the designated initializers.
+> These initializers where you mention fields by names are known in C as designated initializers. They are one of my favorite features in C due to it being possible to mention only some fields and the non-mentioned will be zeroed. Unfortunately, in C++ they have only recently been added. So it was always an annoying trade-off when writing C++ code, that you could not use the designated initializers.
 
 We could also have written
-`player: Player = { blabla`
-
+```C
+player: Player = { blabla
+```
 But doing `player := Player {` whenever possible is usually considered more idiomatic Odin.
 
 You can replace the value of a whole struct like so:
@@ -326,7 +325,7 @@ player = {
 
 Say that you have this code:
 
-```
+```C
 my_number := 7
 
 increase_number :: proc(n: ^int, amount: int) {
@@ -341,11 +340,11 @@ increase_number(&my_number, 3)
 
 Here we are passing a pointer to `my_number` into the proc `increase_number` so that the proc can alter it. The ^ in front of `^int` means that we want a "pointer to an integer". We get a pointer to something by taking the address of it, using the `&` operator.
 
-Within the proc you can add `amount` to the variable that the pointer points to by putting a ^ on the right side of n, as we see in the `n^ += amount` line.
+Within the proc you can add `amount` to the variable that the pointer points to by putting a ^ on the right side of n, as we see in the `n^ += amount` line. This can be compared to writing `*n += amount` in C.
 
-You can also use this to pass structs by pointer:
+You can also pass structs by pointer and modify its fields:
 
-```
+```C
 Player :: struct {
 	position: Vector3,
 	health: int,
@@ -365,11 +364,11 @@ damage_player(&player, 10)
 
 ```
 
-> A_BETTER_C: Here you can see a difference from C/C++: You do not need to use the -> to fetch fields of the pointer to the Player struct. You can just use . directly.
+> Here you can see a difference from C/C++: You do not need to use the -> to fetch fields of the pointed-to-struct. You can just use . directly.
 
 Now, say that we want to pass this player struct to a proc, but the proc won't modify the player, so we do not want to pass it by pointer. How would that look? Like this:
 
-```
+```C
 Player :: struct {
 	position: Vector3,
 	health: int,
@@ -393,7 +392,7 @@ player := Player {
 
 collider := player_collider(player)
 
-// use collider for
+// use collider for something
 
 ```
 
@@ -403,10 +402,10 @@ But now those who come from C/C++ might say: Hang on! Doesn't this copy the whol
 
 The answer is no, as long as the player struct is larger than pointer size (8 bytes on 64 bit machines), it will automatically be passed as an immutable reference. This means that from within `player_collider` the parameter `player` is the exact same memory as the `player` variable we passed in. But since it is immutable you cannot change it, trying to alter any of the fields of player is a compilation error.
 
-> A_BETTER_C: If you come from C++ you probably do a lot of `const Player& player` in order to pass things by immutable (const) reference. In Odin you simple pass by value/reference (depending on size), or by pointer (if you want the proc to be able to modify the parameter).
+> If you come from C++ you probably do a lot of `const Player& player` in order to pass things by immutable (const) reference. In Odin you simply pass by value/reference (depending on size), or by pointer (if you want the proc to be able to modify the parameter).
 
 Actually, all proc parameters in Odin are _always_ immutable:
-```
+```C
 wont_compile :: proc(number: int) -> int {
 	number += 5
 	return number
@@ -416,7 +415,7 @@ wont_compile :: proc(number: int) -> int {
 This proc won't compile. All proc parameters being immutable makes it possible for the compiler to do optimizations such as the pass-by-reference-automatically.
 
 If you want a local, mutable copy, then you can do:
-```
+```C
 wont_compile :: proc(number: int) -> int {
 	number := number
 	number += 5
@@ -429,15 +428,28 @@ As you see we define a _new variable_ called number, even though the proc parame
 ## Dynamic arrays
 If you want an array that can grow and shrink while your program runs, then you can use a dynamic array.
 
-Create it like so: `dyn_arr: [dynamic]int`
+Create it like so:
+```C
+dyn_arr: [dynamic]int
+```
 
-Add things to it like so: `append(&dyn_arr, 5)`
+Add things to it like so: 
+```C
+append(&dyn_arr, 5)
+```
 
-The line `dyn_arr: [dynamic]int` will not allocate any memory. However, when you append stuff to an empty dynamic array, then it will need to grow. The program will then use an allocator to allocate memory. By default, append will use the allocator `context.allocator`. If the dynamic array was empty, then it will record that it used this allocator.
+Remove things like so:
+```C
+unordered_remove(&dyn_arr, some_index)
+// or, if you care about the order of things (slower):
+ordered_remove(&dyn_arr, some_index) 
+```
+
+The line `dyn_arr: [dynamic]int` will not allocate any memory. However, when you append stuff to an empty dynamic array, then it will need to grow. The program will then use an allocator to allocate memory. More about that in a bit.
 
 What is a dynamic array internally? It's essentially a struct that stores these fields:
 
-```
+```C
 data:      rawptr,
 len:       int,
 cap:       int,
@@ -446,73 +458,69 @@ allocator: Allocator,
 
 It also remembers what type the items of the dynamic array should be. So when you write `dyn_arr: [dynamic]int` then the `data`, `len`, `cap` and `allocator` will all be default initialized to zero. Then when `append` is run it sees that `data` is `0` (or nil, which is the zero value for pointers) and it will try to allocate memory for the array. If will check if the `allocator` field is set and use that allocator to allocate the memory, but in the `dyn_arr: [dynamic]int` example, the allocator will be zeroed, so it will instead fall back to using `context.allocator`. It will set `allocator = context.allocator` in this case.
 
-If you want to use some other allocator for your dynamic array, then you have two options. The first, and recommended way is:
+If you want to use some other allocator for your dynamic array, then you can create the dynamic array like this instead:
 
-```
+```C
 dyn_arr := make([dynamic]int, my_allocator)
 ```
 
-This will create a dynamic array this all zeroed expect that the allocator field of it is set.
+This will create a dynamic array this all zeroed expect that the allocator field of it is set to the allocated you passed it.
 
-You could also do this:
+If you have some proc that creates and returns a dynamic array, then you could make that proc use a custom allocator for the dynamic array like this:
 
-```
-dyn_arr: [dynamic]int
-{
-	context.allocator = my_allocator
-	append(&dyn_arr, 5)
-}
-```
-
-But I don't recommend that. However if you have some proc that creates and return a dynamic array, thenm you could make that proc use a custom allocator for the dynamic array like this:
-
-```
+```C
 figure_out_stuff :: proc() -> [dynamic]int {
 	res: [dynamic]int
-
 	append(&res, 5)
-
-	// add more numbers
+	return res
 }
 
 context.allocator = my_allocator
 numbers := figure_out_stuff()
+
+// numbers will be allocated using my_allocator
 ```
 
+More about this `context` stuff soon, but for now we can just note that the `figure_out_stuff()` proc will use the allocator you set on the context.
+
 To free the memory of the dynamic array, write:
-`delete(dyn_arr)`
+```C
+delete(dyn_arr)
+```
 
 You can also clear it, which just sets the `len` inside the dynamic array to 0:
 
-`clear(&dyn_arr)`
+```C
+clear(&dyn_arr)
+```
 
 Note that delete takes a value and clear takes a pointer. This is because clear needs to modify a field, while delete will only tell the allocator to free memory, but it won't touch any of the fields, it just needs the `data: rawptr` field.
 
 ## Slices: A window into a part of an array
 
-A fixed array of integers is created like so:
-```
+Say that a fixed array of integers is created like so:
+```C
 my_numbers: [128]int
 ```
 
 Now, if you just want a part of `my_numbers`, say that you only want the first 20 items, then you can fetch those using a slice:
 
-```
+```C
 my_numbers: [128]int
 first_20 := my_numbers[0:20]
 last_20 := my_numbers[len(my_numbers)-20:]
 ```
-A slice is a 'window' that looks at a part of an array. Slices are essentially pointers plus a length, where the pointer says where the slice starts. Creating a slice does not allocate any memory, it uses the same memory as the thing you sliced, but looks into just a part of it. We create a slice using the `[:]` operator, the first index is to the left of the : and the last index is to the right of the `:`.
+A slice is a 'window' that looks at a part of an array. Slices are essentially pointers plus a length, where the pointer says where the slice starts. Creating a slice does not allocate any memory, it uses the same memory as the thing you sliced, but looks into just a part of it. We create a slice using the `[:]` operator, the first index is to the left of the : and the last index is to the right of the `:`
 
-Like you see above, we can skip indices on either side of the `:`, `last_20 := my_numbers[len(my_numbers)-20:]`. If you skip the index on the left side then the slice will start at index 0. If you skip the index on the right side then the slice will run until the last index. If you skip both indices then you get a slice that looks at the whole thing. This is useful when you have a proc that expects a slice, but you have a fixed size array or dynamic array.
+Like you see above, we can skip indices on either side of the colon: `last_20 := my_numbers[len(my_numbers)-20:]`. If you skip the index on the left side then the slice will start at index 0. If you skip the index on the right side then the slice will run until the last index. If you skip both indices then you get a slice that looks at the whole thing. This is useful when you have a proc that expects a slice, but you have a fixed size array or dynamic array.
 
-> A_BETTER_C: In C if you run out of bounds you program may continue outside it and start trashing memory. Odin has built in bounds checking of arrays, slices and dynamic arrays. So you get a nice assert immediately when you go out of bounds. This bounds checking does have a slight performance impact, so for for release/production builds you can choose to disable bounds checking using the compiler flag `-no-bounds-check`. I'd say disabling it in release builds is fine, because you'll probably catch most of those out-of-bounds errors while testing your development build anyways.
+> In C if you run out of bounds, i.e. using indices that are bigger than the length of the array, your program may continue outside it and start trashing memory. Odin has built in bounds checking of arrays, slices and dynamic arrays. So you get a nice assert immediately when you go out of bounds. This bounds checking does have a slight performance impact, so for for release/production builds you can choose to disable bounds checking using the compiler flag `-no-bounds-check`. I'd say disabling it in release builds is fine, because you'll probably catch most of those out-of-bounds errors while testing your development build anyways.
 
 If you want the slice to have its own memory, then you can import the package `"core:slice"` and run `slice.clone(some_slice)`, which will then be cloned using the allocator `context.allocator`. You can also write `slice.clone(some_slice, another_allocator)` to force the clone to happen with an allocator of your choice.
 
 As an example, say that you want to consider just a part of an array. Say that you only want to display 10 numbers at a time from a bigger list of numbers. You could do this using slices:
 
-```
+```C
 display_numbers :: proc(numbers: []int) {
 	// code to display the numbers
 }
@@ -528,15 +536,17 @@ Slices can be formed from different kinds from arrays, other slices and also dyn
 
 This means that you can do this:
 
-```
+```C
 my_numbers: [128]int
 first_20 := my_numbers[0:20]
 last_10_of_first_20 := first_20[10:]
 ```
 
+That is, I created a second slice from my first slice.
+
 You can slice dynamic arrays in the same way:
 
-```
+```C
 a_dynamic_array: [dynamic]int
 
 for i in 0..<100 {
@@ -546,14 +556,13 @@ for i in 0..<100 {
 first_50 := a_dynamic_array[:50]
 ```
 
-A good idea is to make all procedures that you want to be reusable take slices, since you can form a slice from all the other types of containers. There's no point in feeding a proc a dynamic array unless you actually want to modify the dynamic array. If you just wanna use the data in it, then feed it a slice, even if it as slice that looks at the whole dynamic array.
-
+A good idea is to make all procedures that you want to be reusable take slices, since you can form a slice from all the other types of containers basically for free (remember: making a slice does not allocate memory, it's just a pointer an a length). There's no point in feeding a proc a dynamic array unless you actually want to modify the dynamic array. If you just wanna use the data in it, then feed it a slice, even if it as slice that looks at the whole dynamic array.
 
 ## Implicit context and custom allocators
-All procedures in Odin get fed the current _context_. It is an extra parameter that is always passed along.
+So we've seen the word `context` in the code above. I wrote `context.allocator` a bunch of times. All procedures in Odin get fed the current _context_. It is an extra parameter that is always passed along.
 
 The context is a struct that looks like this (see `odin/base/runtime/core.odin`)
-```
+```C
 Context :: struct {
 	allocator:              Allocator,
 	temp_allocator:         Allocator,
@@ -570,11 +579,11 @@ Context :: struct {
 
 The two most used fields of it is `allocator` and `temp_allocator`
 
-So if you have a proc that allocates memory, then you can change the `allocator` field before calling it in order to change what allocator the proc will use (given that it uses context.allocator, but that is the default that is used in most cases).
+> If you don't want a proc to be fed the context you can write `some_proc :: proc "contextless" () {}`. For some super-often run procs it can be a slight optimization. But I would never worry about this unless you are writing low level maths code or similar.
 
-In code:
+So if you have a proc that allocates memory using `context.allocator` (which is the default when you don't specify an allocator), then you can change the `context.allocator` field before calling it in order to control what allocator it should use. In code:
 
-```
+```C
 do_work :: proc() {
 	make_lots_of_ints :: proc() -> []int {
 		ints := make([]int, 4096)
@@ -591,9 +600,15 @@ do_work :: proc() {
 }
 ```
 
-`make` will allocate memory using `context.allocator`. If you look at the definition of `make`, it takes an allocator parameter that has the default value `context.allocator`:
+`make` will allocate memory using `context.allocator`. If you look at the definition of `make` (see `<your_odin_compiler_dir>/base/runtime/core_builtin.odin`), it takes an allocator parameter that has the default value `context.allocator`:
 
-This means that you can also force make to use a specific allocator: `ints := make([4096]int, my_allocator)`
+```C
+make_slice :: proc($T: typeid/[]$E, #any_int len: int, allocator := context.allocator, loc := #caller_location) -> (T, Allocator_Error) #optional_allocator_error {
+	return make_aligned(T, len, align_of(E), allocator, loc)
+}
+```
+
+This means that you can also force make to use a specific allocator: `ints := make([]int, 4096, my_allocator)`. Also, what we are doing here is creating a brand new slice of type `[]int` that is 4096 items long. So slices are not always "windows" into other arrays, they can be the original thing that owns its own memory, you can use them as dynamically allocated fixed size arrays.
 
 At the end of the scope the context will be re-set to whatever value it had before the scope started. Note that these scopes are not just the procedure's scopes, but can be any scope, like so:
 
@@ -605,8 +620,7 @@ At the end of the scope the context will be re-set to whatever value it had befo
 // context will now be the same as before the scope above started
 ```
 
-Note that `delete()` is used to free the memory of slices and dynamic arrays alike. For slices it will use context.allocator, but for dynamic arrays the the dynamic array itself remembers which allocator is used (since it needs to be able to grow when you run `append()`), so for dynamic arrays it does not care about the value of `context.allocator` when running `delete`.
-
+Note that `delete()` is used to free the memory of slices and dynamic arrays alike. For slices it will use `context.allocator` (you can also send in a second parameter that to use a specific allocator). But for dynamic arrays the the dynamic array itself remembers which allocator is used (since it needs to be able to grow when you run `append()`), so for dynamic arrays it does not care about the value of `context.allocator` when running `delete`.
 
 ## Getting comfy with manual memory management
 
@@ -618,10 +632,10 @@ When you don't want that memory anymore, then you call `delete(your_dynamically_
 
 ### Tracking memory leaks
 
-However, a common problem is that you might forget `delete`, which may lead to a memory leak. For something that is allocated at startup only once, a memory leak is of little concern. But if you allocate memory over and over and always forget to delete it, then your program's memory usage will continuously grow.
+However, a common problem is that you might forget `delete`, which may lead to a memory leak. For something that is allocated once at startup, a memory leak is of little concern. But if you allocate memory over and over and always forget to delete it, then your program's memory usage will continuously grow.
 
-To find memory leaks, I would advice that you use a tracking allocator. Here's how to do it (this example is from the [overview](https://odin-lang.org/docs/overview/#when-statements):
-```
+To find memory leaks, I would advice that you use a tracking allocator. Here's how to do it (this example is from the [overview](https://odin-lang.org/docs/overview/#when-statements)):
+```C
 package main
 
 import "core:fmt"
@@ -657,16 +671,18 @@ main :: proc() {
 
 What this code does is swap out `context.allocator` for a a tracking allocator. The tracking allocator "wraps" the original `context.allocator`, but it saves all allocations on a big list along with information of on what line the allocation happened etc.
 
-When your program shuts down, it will check if anything is still inside that tracking allocator, and if it is then it will print a warning about this. This makes manual memory management much less scary.
+When your program shuts down, it will check if anything is still inside that big list, and if it is then it will print a warning about this. This makes manual memory management much less scary. It will also write warning if you did any 'bad frees', which means trying to free memory that wasn't actually allocated.
 
 A bit about how the `defer` and `when` stuff above works:
 
-The `defer {` line tells the program to run the code inside that scope when the current scope ends, which will happen at the end of the `main` proc. Note that the tracking allocator setup happens inside a `when ODIN_DEBUG {` block. `when` is used to include and exclude code based on values of constants. `ODIN_DEBUG` is a constant that is only true when the `-debug` compiler flag is set, which is a good idea for 'development' builds.
+The `defer { /* the tracking allocator setup */ }` line tells the program to run the code between those curly braces when the current scope ends, which will happen at the end of the `main` proc. Note that the tracking allocator setup happens inside a `when ODIN_DEBUG {` block. `when` is used to include and exclude code based on values of constants. `ODIN_DEBUG` is a constant that is only true when the `-debug` compiler flag is set, which is a good idea for 'development' builds (it also makes the program generate debug info, so that you can use a debugger such as VSCode, RemedyBG or RAD Debugger).
+
+This means that the setup and checking of the tracking allocator will only happen if you compile with `-debug`.
 
 Note that the scopes associated with `when` do not work like normal scopes. The `defer` statement will wait until the end of the `main` proc before it runs the 'deferred' code, it will not run it at the end of the scope associated with the `when`.
 
 This does not mean that `defer` waits until the end of the proc, it will wait until the end of the current scope. So if the program looked like this:
-```
+```C
 main :: proc() {
 	// note: anonymous scope starts here
 	{
@@ -686,18 +702,18 @@ main :: proc() {
 }
 ```
 
-This example shows that the scope associated with `when` does not work like a normal scope, it is only there to group code that should be included when the condition is true, but it does not create a real scope.
+This example shows that the scope associated with `when` does not work like a normal scope, it is only there to group code that should be included when the condition is true, but it does not create a real scope. Therefore I tend to avoid calling them scopes, instead perhaps we should call them "when blocks".
 
 You can also watch this video I made on the tracking allocator:
 {{<youtube dg6qogN8kIE>}}
 
 ### Temp allocator
 
-Many times you need to allocate some dynamic memory, but you do not need it later. Many algorithms may require a bit list of things but they are not required after the algorithm ends.
+Many times you need to allocate some dynamic memory, but you do not need it later. Some algorithms may require a dynamic array to do some processing, but the dynamic array is not needed when the algorithm finishes.
 
 So if you have code like this:
 
-```
+```C
 great_algorithm :: proc() -> int {
 	numbers: [dynamic]int
 
@@ -705,18 +721,18 @@ great_algorithm :: proc() -> int {
 		append(&numbers, i)
 	}
 
-	slice.shuffle(numbers[:])
+	rand.shuffle(numbers[:])
 	n := numbers[0]
 	delete(numbers)
 	return n
 }
 ```
 
-It's a silly example, but it's simple to talk about. `append()` will need to grow the dynamic array. As you see we shuffle (randomize) the array and then pick the first thing in it and then return it. Before we return we delete the dynamic array.
+It's a silly example, but it's simple to talk about. `append()` will need to grow the dynamic array. As you see we shuffle (randomize) the array and then pick the first thing in it and then return it. Before we return we delete the dynamic array, avoiding a memory leak.
 
 In this kind of situation, I would instead use the temp allocator:
 
-```
+```C
 great_algorithm :: proc() -> int {
 	numbers: make([dynamic]int, context.temp_allocator)
 
@@ -729,23 +745,23 @@ great_algorithm :: proc() -> int {
 }
 ```
 
-We see that we tell the dynamic array to use the `context.temp_allocator`, which means that we do not 'care' about this memory in the long run.
+I.e. we tell the dynamic array to use the `context.temp_allocator` to allocate memory. This means that we do not 'care' about this memory in the long run.
 
-For how long is the memory allocated using the temp allocator valid? Until you run `free_all(context.temp_allocator)`. It is up to you to put this line at some place in your program. It will free all the memory in the temp allocator. I make video games and such programs usually have a 'main loop', so for video games it is convenient to put the `free_all` as the last line of the main loop. This means that you can expect any temp allocated memory to be valid until the end of the current 'main loop lap' (i.e. the current frame).
+For how long is the memory allocated using the temp allocator valid? Until you run `free_all(context.temp_allocator)`. It is up to you to put this line at some place in your program. It will free all the memory in the temp allocator. I make video games and such programs usually have a 'main loop', so for video games it is convenient to put the `free_all` as the last line of the main loop. This means that you can expect all temp allocated memory to be valid until the end of the current 'main loop lap' (known as the current frame).
 
 Do not forget the `free_all` line, if you do and you use the temp allocator, then you will get memory leaks and see every increasing memory usage.
 
-> TECHNICALITY: I said that `free_all(context.temp_allocator)` frees all the memory on the temp allocator, but for the default temp allocator this is half-true. That allocator uses blocks to put your temp allocations in. If the current block is full, then it makes a new block. When `free_all` is run, then it frees all the blocks except for the first one, since it can reuse that one next frame. This is just an optimization, since memory allocations can be slow it is a good idea to just reuse the first block of the temp allocator.
+> TECHNICALITY: I said that `free_all(context.temp_allocator)` frees all the memory on the temp allocator, but for the default temp allocator this is half-true. That allocator uses blocks to put your temp allocations in. If the current block is full, then it makes a new block. When `free_all` is run, then it frees all the blocks except for the first one, since it can reuse that. This is just an optimization, since memory allocations can be slow it is a good idea to just reuse the first block of the temp allocator.
 
-The combination of non-temp allocation tracked and then also using the temp allocator whenever needed makes manual memory management quite comfy.
+The combination tracking long-term allocations and using temp allocator for short term things makes manual memory management very comfy.
 
 ## Strings
 
-Strings in Odin use UTF8. This is different from using ASCII, where characters are always a byte. In UTF8 a character can be of varying memory size. English characters still just use single byte, but characters from other languages can use be bigger in memory. If you want a quick overview of this, then you can read [this entertaining article](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/)
+Strings in Odin use UTF8. This is different from using ASCII, where characters are always a byte. In UTF8 a character can be of varying memory size. English characters still just use single byte, but characters from other languages can use be bigger in memory. If you want a quick overview of this, then you can read [this entertaining article](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/).
 
 You can create and loop over a string:
 
-```
+```C
 my_string := "Hi, hello. How are you?"
 
 for r in my_string {
@@ -759,11 +775,19 @@ This loop will loop over the string UTF8 character by character, not byte-by-byt
 
 When you compile and run your program using `odin run .` then it takes all files in the current directory (`.`) and compiles them as a single package.
 
-When you do: `import "core:fmt"` you are importing a package from the standard library. This means that all the stuff in the folder `<your_odin_compiler_dir>/core/fmt` will be available under the name `fmt`.
+When you do
+```C
+import "core:fmt"
+```
+then you are importing the package `fmt` from the standard library. This means that all the stuff in the folder `<your_odin_compiler_dir>/core/fmt` will be available under the name `fmt`.
 
-If you want to have some different name for an import, then you can rename them when importing. This is common when importing the raylib bindings (a library for creating videos games): `import rl "vendor:raylib"`. Now all those things from the folder `<your_odin_compiler_dir>/vendor/raylib` are available under the name `rl`
+If you want to have some different name for an import, then you can rename them when importing. This is common when importing the raylib bindings (a library for creating videos games):
+```C
+import rl "vendor:raylib"
+```
+Now all those things from the folder `<your_odin_compiler_dir>/vendor/raylib` are available under the name `rl`
 
-Because of this name conflicts between packages can never happen. If two packages use the same folder name like so:
+Because of this unfixable name conflicts between packages can never happen. If two packages use the same folder name like so:
 ```
 import "core:fmt"
 import "my_localization_system/fmt"
@@ -774,9 +798,9 @@ import "core:fmt"
 import lfmt "my_localization_system/fmt"
 ```
 
-In Odin the program that uses packages can never end up in a state where the packages themselves pollute a global namespace with names that collide.
+In Odin the program that uses packages can never end up in a state where the packages themselves pollute a global namespace with names that collide, since everything inside them end up under these prefixes such as `fmt.` and `rl.`
 
-> A_BETTER_C: Those who have programmed C a lot can testify that name collisions between libraries do happen. Because of this C libs often have prefixes on all the stuff they expose. In Odin the prefix is instead chosen at the import site, which is more robust.
+> Those who have programmed C a lot can testify that name collisions between libraries do happen. Because of this C libs often have prefixes on all the stuff they expose. In Odin the prefix is instead chosen at the import site, which is more robust.
 
 You can create local packages within your project by just creating a folder and importing it:
 ```
@@ -784,9 +808,9 @@ import xp "xml_parser"
 ```
 
 ### Use packages for libraries, not as namespaces
-I would encourage you to only use packages within your project if those things absolutely are independent from your project. So for example a generic XML parser could be such a package. But if you just want to compartmentalize some code then I recommend to keep that code within your main program package and instead add prefixes to proc names etc, just like in C.
+I would encourage you to only split things out to separate packages if those  things are absolutely independent of your project. So for example a generic XML parser could be such a package. But if you just want to compartmentalize some code then I recommend to keep that code within your main program package and instead add prefixes to proc names etc, just like in C.
 
-The Odin package system does not allow cyclic dependencies, so package A can import package B only if package B does not import package A. With this in mind, I would say that the Odin package system is mainly for creating _libraries_ that are totally independent.
+The Odin package system does not allow cyclic dependencies, so package `A` can import package `B` only if package `B` does not import package `A`. With this in mind, I would say that the Odin package system is mainly for creating _libraries_ that are totally independent.
 
 That said, there are some people who have successfully used packages to compartmentalize their project. But in my experience it just leads to pain and suffering because you will suddenly need a cyclic dependency, and you can't have it.
 
@@ -804,7 +828,7 @@ Have a nice day!
 
 
 
-<!--> My C++ programming was done mostly in a C-like way, I used C++ to get a "C with some sugar on top". This "back-to-C" style of programming C++ is quite popular among game developers.-->
+<!-- My C++ programming was done mostly in a C-like way, I used C++ to get a "C with some sugar on top". This "back-to-C" style of programming C++ is quite popular among game developers.-->
 
 <!--
 - Zero initialization. Odin initializes all memory to zero by default unless you tell it to not do so. The language and the core library (Odin's standard library) also tries to use the zero value as a 'good default' as much as possible, which is known as zero-is-initialized. Zero-is-initialized and automatic zero initialization is a comfy combo.
