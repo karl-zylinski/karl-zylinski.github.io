@@ -113,9 +113,7 @@ Constants are things that only exist at compile-time. Since they only exist at c
 ```C
 CONSTANT_NUMBER :: 12
 ```
-Note here that we use `::`, you've already seen `::` before, when we made the main procedure: `main :: proc() {}`. The `::` means that we are declaring something that can be reasoned about at compile-time. In this case the thing to the right of the `::` is just a value, in that case we just say that `CONSTANT_NUMBER` is a constant.
-
-You can assign a constant to a variable like this:
+Note that we use `::` to declare constants. You can assign a constant to a variable like this:
 ```C
 CONSTANT_NUMBER :: 12
 number := CONSTANT_NUMBER
