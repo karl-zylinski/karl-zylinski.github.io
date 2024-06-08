@@ -1041,9 +1041,9 @@ b := strings.builder_make()
 for l, i in lines {
 	strings.write_string(&b, l)
 	if i != len(lines) - 1{
-		strings.write_string(&b, "cats.\n")
+		strings.write_string(&b, " cats.\n")
 	} else {
-		strings.write_string(&b, "cats?")
+		strings.write_string(&b, " cats?")
 	}
 }
 
