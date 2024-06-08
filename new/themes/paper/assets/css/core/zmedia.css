@@ -28,6 +28,10 @@
         padding: calc((var(--footer-height) - var(--gap) - 10px) / 2) var(--gap);
     }
 
+    .post-content code {
+        tab-size: 2;
+    }
+
     .post-content pre code {
         margin-left: -14px;
         margin-right: -14px;
