@@ -180,7 +180,7 @@ All `for` and `while` loops you find in C/C++ are possible using the `for` loops
 - `for i := 0; i < 10; i += 1 {}` is a standard for loop. Note that Odin does not support the ++ operator, so you have to write += 1.
 - `for item in array_of_items {}` is a "for each" loop that goes over an array and presents you with each item in the array. Similar to `for (auto& item : array_of_items) {}` in C++
 - `for item, index in array_of_items {}` same as the previous one, but gives also gives you access to the index of the current item.
-- `for &item in array_of_items {}` similar to the previous one, but `item` will be possible to alter, changing that item in the array. 
+- `for &item in array_of_items {}` similar to the previous one, but note the `&`. This ampersand makes `item` possible to modify. 
 
 ## Procedure parameters and return values
 Procedures can have parameters and return multiple values:
