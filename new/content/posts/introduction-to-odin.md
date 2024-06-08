@@ -429,7 +429,7 @@ switch &v in state {
 }
 ``` 
 
-What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has. From within each such switch-case you can use the data of the variant.
+What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has. From within each such switch-case you can access the data of the current variant using `v`.
 
 The `Player_State` type will only take as much memory as the biggest variant.
 
