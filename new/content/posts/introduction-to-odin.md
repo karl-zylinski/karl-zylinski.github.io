@@ -973,7 +973,7 @@ The combination tracking long-term allocations and using temp allocator for shor
 
 ## Strings
 
-Strings in Odin use UTF8. This is different from using ASCII, where characters are always a byte. In UTF8 a character can be of varying memory size. English characters still just use single byte, but characters from other languages can use be bigger in memory. If you want a quick overview of this, then you can read [this entertaining article](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/).
+Strings in Odin use UTF8. This is different from using ASCII, where characters are always a byte. In UTF8 a character can be of varying memory size. English characters still just use single byte, but characters from other languages can use more memory. If you want a quick overview of this, then you can read [this entertaining article](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/).
 
 You can create and loop over a string:
 
