@@ -200,7 +200,7 @@ or
 
 `my_variable: f32 = MY_CONSTANT`
 
-The compiler has not attached a specific type to this constant until you try to assign it, so it is possible to assign it to variables of different types. In this case we say that MY_CONSTANT is an "untyped integer", since it's obviously an integer, but it can in practice fit into several different types.
+The compiler has not attached a specific type to this constant, so it is possible to assign it to variables of different types. In this case we say that MY_CONSTANT is an "untyped integer", since it's obviously an integer, but it can in practice fit into several different types.
 
 However if you type
 
@@ -210,7 +210,7 @@ ANOTHER_CONSTANT :: 72.12
 
 then `my_variable: int = ANOTHER_CONSTANT` will not compile unless you force the constant into an int, which you can do by writing `my_variable := int(ANOTHER_CONSTANT)`. In doing so the value `72.12` would be truncated into just `72`. Note: Here we moved the `int` to the right hand side because we did a cast, so we didn't have to write the type of the variable.
 
-In this case ANOTHER_CONSTANT is an "untyped floating point number", meaning that it cannot automatically be put into an integer, but it can be put into different kinds of floating point numbers, like so:
+In this case ANOTHER_CONSTANT is an "untyped floating point number", meaning that it cannot automatically be put into an integer, but it can be put into different kinds of floating point numbers without the need for a cast, like so:
 
 ```C
 my_f32: f32 = ANOTHER_CONSTANT
