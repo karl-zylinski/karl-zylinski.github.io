@@ -65,56 +65,116 @@ I will say more about the package system later, but for now I just want to point
 
 > The reason for saying procedure, or proc, instead of function is that the word function, if one wants to be nit-picky, is a bunch of code that has _no side effects_. This is why when we talk about "functional programming" we mean code that composes new functionality from combining functions, where those functions do not modify any global state. Now, functions can be seen as a special case of procedures. I.e. a procedure can take some parameters, return some values and also have side-effects on global variables, while functions can do the same except for that they have no side-effects. Some languages refer to side-effect free procedures as "pure functions".
 
-## Variables and loops
+## Variables and constants
 
-Let's add some variables and a loop to our Hello World program:
+You can create a variable like this:
 
 ```C
-package hello_world
-
-import "core:fmt"
-
-main :: proc() {
-	a_string := "Hello World!"
-	fmt.println(a_string)
-
-	counter: int
-
-	for counter < 20 {
-		fmt.printfln("Counter value: %v", counter)
-		counter += 1
-	}
-} 
+number: int
 ```
 
-The line `a_string := "Hello World!"` declares and initializes a variable. Odin is a strongly typed language, meaning that all variables must have a specific type. But the type can be inferred from the right-hand side, which happens here. In this case `a_string` will be of type `string`.
+This creates a variable of type integer, but it does not give it any value. In Odin if you do not give it any value, then it will be initialized to zero.
 
-The line `counter: int` also declares a variable, but this time it only says which type, but no value is given. Since no value is given, it will be initialized to zero. If you for some reason do not want to have it initialized, then you can write `counter: int = ---`. However, in almost all cases you will want zero initialization. In some performance sensitive algorithms you may want to skip it, but I have almost never had to do so.
+> In C and C++ if you write `int number;` then the variable will not be initialized and can contain garbage memory, which is almost never what you want. In Odin, if you for some reason want to leave a variable completely uninitialized, then you can write `number: int = ---`. However, in almost all cases you will want zero initialization. In some performance sensitive algorithms you may want to skip it, but I have never had to do so.
 
-The language and the core library (Odin's standard library) also tries to use the zero value as a 'good default' as much as possible, which is known as zero-is-initialized. Zero-is-initialized and automatic zero initialization is a comfy combo.
-
-> In C and C++ if you write `int counter;` then the variable counter will not be initialized and can just contain garbage memory, which is almost never what you want.
-
-Let's look close at `:` and `=`, in particular how the usage of these characters vary when declaring and setting variables:
+You can assign a value to an already existing variable like this:
 
 ```C
-a_string := "Hello World!"
+number: int
+number = 7
+```
+
+> Note that trying to do `number = 7` when there is no pre-existing variable called `number` will fail to compile. `=` is for assignment, `:` is for creating new variables.
+
+Now, if you want to both create and assign a variable on one line, then you can combine the `:` and the `=`, like this:
+
+```C
+number := 7
+```
+
+In this case you also didn't have to say what type `number` should have. We say that the type was _inferred_ from the value on the right hand side. In this case it is inferred to `int`. You can still give it a specific type if you so wish:
+
+```C
+decimal_number: f32 = 7
+```
+
+Note how this looks like the first example `number: int`, but we've changed the type and added `= 7` at the end. The type this time is `f32`, which is a 32 bit decimal number. Since a decimal number can also be 7, this code works OK.
+
+Another way to write the previous example is like this:
+
+```C
+decimal_number := f32(7)
+```
+
+Here we cast the 7 to an `f32`, which means that the type of `decimal_number` will be inferred to `f32`. What is it that decides that 7 is inferred to `int` by default? To answer that, let's talk a bit about constants.
+
+Constants are things that only exist at compile-time. Since they only exist at compile-time, they cannot be changed. You create a new constant like this:
+
+```C
+CONSTANT_NUMBER :: 12
+```
+Note here that we use `::`, you've already seen `::` before, when we made the main procedure: `main :: proc() {}`. The `::` means that we are declaring something that can be reasoned about at compile-time. In this case the thing to the right of the `::` is just a value, in that case we just say that `CONSTANT_NUMBER` is a constant.
+
+You can assign a constant to a variable like this:
+```C
+CONSTANT_NUMBER :: 12
+number := CONSTANT_NUMBER
+```
+
+Just like before, the type of `number` will be inferred to `int`. The two lines above are actually identical to just typing `number := 12`. You can think of constants as just being "copy-pasted" into where-ever you type their name. This means that you can also think of `12` as just being a nameless constant.
+
+However, constants _have_ a kind of type associated with them, it's just not as strong a type as variables. In this case the type of `CONSTANT_NUMBER` is "untyped integer". An untyped integer can be assigned to any integer or floating point variable as long as that variable can "accommodate" it. Here's something that will _not_ compile:
+
+```C
+BIG_CONSTANT_NUMBER :: 123455678
+small_number: i8 = BIG_CONSTANT_NUMBER
+```
+This will not compile. `small_number` is an 8 bit integer, the biggest value it can hold is `127`. `BIG_CONSTANT_NUMBER` is a constant of type "untyped integer". So when the compiler tries to shove it into `small_number` it sees that the value of this constant is bigger than `127`, so it refuses to do so.
+
+Similarly, this will not compile:
+
+```C
+DECIMAL_CONSTANT :: 27.12
+my_integer: int = DECIMAL_CONSTANT
+```
+Here `DECIMAL_CONSTANT` has the type "untyped float", since it has some decimals. The compiler will refuse to set an integer to such a value. So as you've seen "untyped integers" can be put into float variables, but "untyped floats" cannot be put into integer variables, which hopefully makes sense.
+
+The previous example will work if we cast `DECIMAL_CONSTANT` to an `int`:
+
+```C
+DECIMAL_CONSTANT :: 27.12
+my_integer := int(DECIMAL_CONSTANT)
+```
+However, the value `27.12` will then be truncated to just `27`. The important part is that this didn't happen automatically for you, since it's a destructive thing to do. So the programmer has to do it manually.
+
+Finally, if you really want to, you can give constants a specific type:
+
+```C
+DECIMAL_CONSTANT : f32 : 7
+```
+So now whenever you try to assign this constant to a variable, you can only do so if that variable is of type `f32`. You can still cast the constant to other types.
+
+Compare the line above to that of creating and assign a variable:
+```C
+decimal_variable: f32 = 7
+```
+in both cases the type comes after the first `:`, and then you put a `:` or a `=` after the type depending on if you want a constant or a variable. And in most cases you can skip the type completely and let the compiler infer it for you.
+
+> In C you have to type `0.5f` all the time to denote a 32 bit floating point value (note the `f`). Typing `0.5` in C will get you a double precision (64 bit) floating point number. Trying to assign `0.5` to a 32 bit float in C is a compilation error. The constant system in Odin is a bit more comfy. In Odin the compiler will still emit an error if the constant won't fit into the type, such as trying to shove a giant integer into an 8 bit integer type, but you don't have to worry about the specific types of constants as much. In the case of `0.5`, it is a valid value to assign to both a `f32` and an `f64`.
+
+## Loops
+Here is some code that creates a variable `counter` and then loops until `counter` hits the value 20, printing its value each lap of the loop:
+
+```C
 counter: int
-a_decimal_number: f32 = 2
-a_decimal_number = 3.2
+
+for counter < 20 {
+	fmt.printfln("Counter value: %v", counter)
+	counter += 1
+}
 ```
 
-Only having a `=`, like the last line, is only valid if there already exists a variable with that name. You can also force a variable to have specific type by writing `a_decimal_number: f32 = 2`, where `f32` is a 32 bit floating point number. If you had omitted the `f32` and typed `a_decimal_number := 2`, then the type of this variable would actually have been `int`. But `2` is a valid value for both `f32` and `int`, so you can use that `: f32 =` syntax to use `f32`. You can see the `:=` syntax as saying "I wanna create a variable and set it to the right-hand side value, but I don't wanna write the type, please infer it from the right-hand side value".
-
-Moreover, these two lines do the same thing:
-```C
-a_decimal_number: f32 = 2
-a_decimal_number := f32(2)
-```
-
-In the second version we are casting the value 2 into an `f32`, which will then be the inferred type of the variable.
-
-The line `for counter < 20 {` makes a loop that runs until the counter reaches the value 20 or more. All `for` and `while` loops you find in C/C++ are possible using the `for` loops in Odin:
+All `for` and `while` loops you find in C/C++ are possible using the `for` loops in Odin:
 
 - `for {}` is a loop that runs forever, equivalent to `while true {}` in C.
 - `for i < 10 {}` is a loop that runs for as long as i is less than 10, equivalent to `while i < 10 {}` in C.
@@ -181,57 +241,6 @@ if some_variable == 7 {
 ```
 
 Some people like putting the `{` on a new line. If you do that then perhaps the `if X do stuff()` syntax is more useful. But I'm just gonna recommend keeping the `{` on the same line, because it plays nicer with Odin's lack of semicolons.
-
-## Constants
-
-You can create compile-time constants by typing
-
-```C
-MY_CONSTANT :: 123
-```
-
-Constants cannot be changed, as the name implies. They are useful because the compiler can act on their value during compile-time, since it can be certain of their value.
-
-A very nice things about Odin constants is that they are not typed in the same way as variables. For example, you can type:
-
-`my_variable: int = MY_CONSTANT`
-
-or
-
-`my_variable: f32 = MY_CONSTANT`
-
-The compiler has not attached a specific type to this constant, so it is possible to assign it to variables of different types. In this case we say that MY_CONSTANT is an "untyped integer", since it's obviously an integer, but it can in practice fit into several different types.
-
-However if you type
-
-```C
-ANOTHER_CONSTANT :: 72.12
-```
-
-then `my_variable: int = ANOTHER_CONSTANT` will not compile unless you force the constant into an int, which you can do by writing `my_variable := int(ANOTHER_CONSTANT)`. In doing so the value `72.12` would be truncated into just `72`. Note: Here we moved the `int` to the right hand side because we did a cast, so we didn't have to write the type of the variable.
-
-In this case ANOTHER_CONSTANT is an "untyped floating point number", meaning that it cannot automatically be put into an integer, but it can be put into different kinds of floating point numbers without the need for a cast, like so:
-
-```C
-my_f32: f32 = ANOTHER_CONSTANT
-my_f64: f64 = ANOTHER_CONSTANT
-```
-
-You can think of it like this: Constants can be automatically put into a variable if that variable can accommodate the constant.
-
-> In C constants have stricter types, which is why you have to type `0.5f` all the time to denote a 32 bit floating point constant. Typing `0.5` in C will get you a double precision (64 bit) floating point number. Trying to assign `0.5` to a 32 bit float in C is a compilation error. The constant system in Odin is a bit more comfy. In Odin the compiler will still emit an error if the constant won't fit into the type, such as trying to shove a giant integer into an 8 bit integer type, but you don't have to worry about the specific types of constants as much.
-
-If you really want to, then you can give a constant a type, like so:
-```C
-A_THIRD_CONSTANT : int : 7000
-```
-
-This can be compared to when we explicitly specify the type of a variable:
-```C
-some_variable: int = 7000
-```
-
-In both cases you wedge in the type between the `::` or the `:=`
 
 ## Array basics, swizzling and array programming
 
@@ -909,13 +918,227 @@ That said, there are some people who have successfully used packages to compartm
 
 Some may balk at the idea of using prefixes within a project, they want to use packages as some sort of namespace but still have cyclic dependencies. I would encourage you to just try using prefixed proc names etc, it is not that big of a deal. This is in line with Odin trying to be a better C while still keeping things very simple.
 
+## Finding your way around core (the standard library)
+
+Let's take a look at how to do some different things using the standard library that comes with Odin. The standard library is essentially a bunch different packages that you find in `<your_odin_compiler_dir>/core`
+
+Like I said earlier, I really recommend that you pull in `<your_odin_compiler_dir>/core` into your text editor so that you can search for words and symbols in there. The code in the standard library is very readable and you can learn a lot from it!
+
+### Reading and writing files (core:os)
+
+You can easily read and write files. Import the functionality like so:
+
+```C
+import "core:os"
+```
+
+Then you can read an entire file called my_file like this:
+
+```C
+if data, ok := os.read_entire_file("my_file"); ok {
+	// the file was successfully read and data is of type []byte, i.e. a slice containing the whole contents of the file in the form of bytes.
+}
+```
+
+This uses a special syntax of the if-statement that first assigns two variables `data` and `ok` from the return values of `read_entire_file`, at the end of the line you see `; ok`, that part is the actual condition of the if statement. If the condition is true, then the code inside the if-statement is run, where you'll have access to `data`
+
+`data` will be allocated using `context.allocator`. I often read files using the temp allocator since I will process the data into another format anyways:
+```C
+if data, ok := os.read_entire_file("my_file", context.temp_allocator); ok {
+}
+```
+
+You can write to a file "my_file" like this:
+
+```C
+if !os.write_entire_file("my_file", data) {
+	// something went wrong, you can for example print an error to the console
+}
+```
+
+Here `data` needs to be of type `[]byte`
+
+### Read and write structs as JSON (core:encoding/json)
+
+Odin comes with a JSON library that can convert structs into JSON (marshal) and then also convert that JSON back into structs (unmarshal).
+
+Import the functionality like so:
+```C
+import "core:encoding/json"
+```
+
+You can then convert a struct into JSON like this:
+```C
+Some_Struct :: struct {
+	some_field: int,
+}
+
+my_struct := Some_Struct {
+	some_field = 7,
+}
+
+if json_data, err := json.marshal(my_struct, context.temp_allocator); err == nil {
+	// json_data is of type []byte, so if you want to, you can write directly to a file:
+	if !os.write_entire_file("my_struct_file", json_data) {
+		fmt.println("Couldn't write file!")
+	}
+} else {
+	fmt.println("Couldn't marshal struct!")
+}
+```
+`json.marshal` will convert the struct into JSON. Note that second return value of `json.marshal` is a union. This union is `nil` if there was no error. I also included some code for writing out the JSON data to a file, using the `os` package.
+
+Note that I used `context.temp_allocator` for the marshalling because quite often one only needs the data around for writing the data out to a file or similar, which is what I do in this case. 
+
+You can read back your written file into your struct like this:
+
+```C
+if json_data, ok := os.read_entire_file("my_struct_file", context.temp_allocator); ok {
+	my_struct: Some_Struct
+
+	if json.unmarshal(json_data, &my_struct) == nil {
+		// if we got this far then my_struct is not setup to contain whatever JSON was written into the file "my_sturct_file"
+	}
+}
+```
+Note that `json.unmarshal` may allocate memory if your struct contains for example slices, dynamic arrays or strings. It is up to you to free this memory when you no longer need the struct around.
+
+<!-- TODO: Something about arena allocators -->
+
+### Working with strings (core:strings)
+
+The `core:strings` package has lots of nice procedures to work with strings.
+
+Import it using:
+```C
+import "core:strings"
+```
+
+One common operation you can do is clone strings:
+```C
+some_string := "A string"
+copied_string := strings.clone(some_string)
+```
+this copied string will be allocated using `context.allocator` or whichever allocator you send into `clone`.
+
+You can also create a string by cloning a series of bytes:
+
+```C
+from_bytes := strings.clone_from_bytes(some_bytes)
+```
+here `some_bytes` can for example be a slice of a file. You can also turn a whole byte slice into a string without an extra allocation: `my_string := string(some_bytes)`.
+
+Sometimes you need to build a string in several steps, you can then use a builder:
+
+```C
+lines := []string {
+	"I like",
+	"I look for",
+	"Where are the",
+}
+b := strings.builder_make()
+
+for l, i in lines {
+	strings.write_string(&b, l)
+	if i != len(lines) - 1{
+		strings.write_string(&b, "cats.\n")
+	} else {
+		strings.write_string(&b, "cats?")
+	}
+}
+
+str := strings.to_string(b)
+fmt.println(str)
+```
+
+This will print the following to the console:
+```txt
+I like cats.
+I look for cats
+Where are the cats?
+```
+
+### Start a new thread (core:thread)
+
+To start a thread, import the threads package:
+```C
+import "core:thread"
+```
+
+and then do something like:
+```C
+import "core:thread"
+
+Worker_Thread_Data :: struct {
+	// this is optional, it's only for if your thread needs to run in a loop until you tell it to stop. If it just needs to do a task and then return, then you can skip this bool and the code that uses it.
+	run: bool,
+
+	// add data your thread needs here
+	
+	thread: ^thread.Thread
+}
+
+worker_thread_proc :: proc(t: ^thread.Thread) {
+	d := (^Worker_Thread_Data)(t.data)
+	for d.run {
+		// let your thread do stuff
+
+		// you can make this thread run a little slower using a sleep (you'll need to import "core:time")
+		// time.sleep(10*time.Millisecond)
+	}
+}
+
+start_worker_thread :: proc(d: ^Worker_Thread_Data) {
+	d.run = true
+	if d.thread = thread.create(worker_thread_proc); d.thread != nil {
+		d.thread.init_context = context
+		d.thread.data = rawptr(d)
+		thread.start(d.thread)
+	}
+}
+
+stop_worker_thread :: proc(d: ^Worker_Thread_Data) {
+	d.run = false
+	thread.join(d.thread)
+	thread.destroy(d.thread)
+}
+```
+
+This will create a thread when you run `start_worker_thread`. It will run forever until you call `stop_worker_thread` with the same struct pointer.
+
+### Make a game using Raylib (vendor:raylib)
+
+Odin comes with bindings for Raylib, a library for creating video games. Raylib can open windows, draw graphics, play sound and process input. Here's how you open a window and start a game loop that constantly clears the screen with a blue color:
+
+```C
+package game
+
+import rl "vendor:raylib"
+
+main :: proc() {
+	rl.InitWindow(1280, 720, "Raylib Game")
+	
+	for !rl.WindowShouldClose() {
+		rl.BeginDrawing()
+		rl.ClearBackground(rl.BLUE)
+		rl.EndDrawing()
+	}
+	rl.CloseWindow()
+}
+```
+
+Going deep into Raylib is outside the scope of this article, but I encourage you to open `<your_odin_compiler_dir>/vendor/raylib/raylib.odin` and explore the available procedures.
+
+Raylib is written in C and requires a C library to work. But the compiler takes care of linking in that C library for you, you can see how that works if you look inside `raylib.odin`.
+
+I have a [series on making games using Odin + Raylib]({{< ref "/posts/gamedev-for-beginners-using-odin-and-raylib-1" >}}). I also have this 90 minute video tutorial where I create a little video game from start to finish:
+
+{{<youtube lfiQNCNUifI>}}
+
+
 ## Where to find more Odin resources
 
 There's a great list of resources, libraries and software on [Jakub Tomšů's Awesome Odin page](https://github.com/jakubtomsu/awesome-odin) 
-
-If you like video content, then I made this 90 minute video where I create a little video game from start to finish:
-
-{{<youtube lfiQNCNUifI>}}
 
 ## Thanks for reading!
 
