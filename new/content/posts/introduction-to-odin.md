@@ -378,9 +378,9 @@ A switch must list all the variants. If you want to skip some variants then put 
 
 ## Unions: Associate varying data with a name
 
-Many times you want to associate some data with a specific state. In C you would do this by having an enum plus a union.
+Many times you want to associate some data with a specific state. Say that you have a video game where the player can be in three states: `Default`, `Dashing` and `Jumping`. In C you could do this by having an enum with those three names plus a union to hold the data of three states.
 
-In Odin the unions are a bit more powerful, so you don't need the enum to do that:
+In Odin the unions are a bit more powerful, so you don't need the extra enum. You just need a `union` and some union variants:
 
 ```C
 Player_State_Default :: struct {
@@ -435,7 +435,7 @@ What we see here is that the type `Player_State` can hold one of its three varia
 
 The `Player_State` type will only take as much memory as the biggest variant.
 
-This type of union you combine the idea of an enum with an old school C-style union is known as "Tagged Union" or "Discriminated Union".
+This type of union, where you both have an indentifier for each variant, plus the data for each variant, is known as a "Tagged Union" or a "Discriminated Union".
 
 Note: If you still want old-school C-style unions, then you can create them like this:
 ```C
