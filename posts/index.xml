@@ -13,7 +13,7 @@
       <pubDate>Fri, 07 Jun 2024 21:16:00 +0200</pubDate>
       
       <guid>https://zylinski.se/posts/introduction-to-odin/</guid>
-      <description>Preface This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is meant to be read from start to finish. It is not a reference guide, but will rather give you a feeling for what the language does differently and what you can expect as you venture forth. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C.</description>
+      <description>Preface This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is not a reference guide, rather I try to keep things informal and talk about what I think are important aspects of the language. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C. If you enjoy this article and want to support me, then you can do so by becoming a patron.</description>
     </item>
     
     <item>

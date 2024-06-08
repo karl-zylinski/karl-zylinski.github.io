@@ -8,7 +8,7 @@ cover:
 
 ## Preface
 
-This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is meant to be read from start to finish. It is not a reference guide, but will rather give you a feeling for what the language does differently and what you can expect as you venture forth. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C. If you enjoy this article and want to support me, then you can do so by [becoming a patron](https://www.patreon.com/karl_zylinski).
+This article is an introduction the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is not a reference guide, rather I try to keep things informal and talk about what I think are important aspects of the language. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C. If you enjoy this article and want to support me, then you can do so by [becoming a patron](https://www.patreon.com/karl_zylinski).
 
 In the recent years most of my programming has been done using the Odin Programming Language, sometimes referred to as Odinlang. Since a year back I create my own video games using Odinlang, you can find my game [CAT & ONION](https://store.steampowered.com/app/2781210/CAT__ONION/) on Steam, it is completely created in Odin.
 
@@ -327,6 +327,122 @@ player := Player {
 
 player = {
 	health = 7000
+}
+```
+
+## Enums and switch
+
+Enums stand for "enumeration" and are used to attach names to a series of increasing numbers.
+
+Create an enum like so:
+
+```C
+Computer_Type :: enum {
+	Laptop,
+	Desktop,
+	Mainframe,
+}
+```
+
+You can then create a variable of this enum type:
+
+```C
+ct: Computer_Type
+```
+
+The first item in the enum will be associated with the zero value. Since we are not giving this variable any value it will be zero initialized. So it will have the value 0, or the enum value `Laptop`.
+
+You can modify the value of the enum like this:
+
+```C
+ct = .Mainframe
+```
+
+You can also write the full `Computer_Type.Mainframe` if you want to, but since the compiler knows the type of `ct`, you just have to write the name of the variant you want with a period in front.
+
+You can use a switch statement to branch on the type of the enum:
+
+```C
+switch ct {
+	case .Laptop:
+
+	case .Desktop:
+
+	case .Mainframe:
+}
+``` 
+
+> In C you have to write `break;` after each case in a switch. In Odin you do not need to do that. Instead, if you want a case to fallthrough to the next case, then you write `fallthrough`
+
+A switch must list all the variants. If you want to skip some variants then put `#partial` in front of `switch`.
+
+## Unions: Associate varying data with a name
+
+Many times you want to associate some data with a specific state. In C you would do this by having an enum plus a union.
+
+In Odin the unions are a bit more powerful, so you don't need the enum to do that:
+
+```C
+Player_State_Default :: struct {
+
+}
+
+Player_State_Dashing :: struct {
+	start_pos: Vector3,
+	direction: Vector3,
+}
+
+Player_State_Jumping :: struct {
+	start_height: f32,
+}
+
+// note the #no_nil, if you skip this then the default value of the union is "nil", meaning that no variant is set. If you have #no_nil then the first variant listed will be the default
+Player_State :: union #no_nil {
+	Player_State_Default,
+	Player_State_Dashing,
+	Player_State_Jumping,
+}
+
+state: Player_State
+
+// &v means that you can modify the variant from within each switch-case, remove the & to make the variant immutable
+switch &v in state {
+	case Player_State_Default:
+		if jump_key_pressed {
+			state = Player_State_Jumping {
+				start_height = player_current_pos.y,
+			}
+		}
+
+		if dash_key_pressed {
+			state = Player_State_Dashing {
+				start_pos = player_current_pos,
+				direction = player_current_direction
+			}
+		}
+	case Player_State_Dashing:
+		// here you can use v.start_pos and v.direction
+
+		// figure out when dash is over and return to by writing state = Player_State_Default {}
+	case Player_State_Jumping:
+		// here you can use v.start_height
+
+		// figure out when jump is over and return to by writing state = Player_State_Default {}
+}
+``` 
+
+What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has. From within each such switch-case you can use the data of the variant.
+
+The `Player_State` type will only take as much memory as the biggest variant.
+
+This type of union you combine the idea of an enum with an old school C-style union is known as "Tagged Union" or "Discriminated Union".
+
+Note: If you still want old-school C-style unions, then you can create them like this:
+```C
+Player_State :: struct #raw_union {
+	def: Player_State_Default,
+	jumping: Player_State_Jumping,
+	dashing: Player_State_Dashing,
 }
 ```
 
@@ -908,6 +1024,16 @@ You can create local packages within your project by just creating a folder and 
 ```
 import xp "xml_parser"
 ```
+
+### The package line at the top of files
+At the top of each file you must have a line like
+```C
+package my_video_game
+```
+
+As you've seen, the name of the package just seems to be the name of the directory, or whatever alias you give the package when you import it. So what is the use of that `package` line?
+
+Most Odin libraries come as source, where you just import them. Then this package line does not matter. It only matters for if you compile your package into for example a library and try to include that precompiled library into another program, then the package name is used for identifying your library.
 
 ### Use packages for libraries, not as namespaces
 I would encourage you to only split things out to separate packages if those  things are absolutely independent of your project. So for example a generic XML parser could be such a package. But if you just want to compartmentalize some code then I recommend to keep that code within your main program package and instead add prefixes to proc names etc, just like in C.
