@@ -81,7 +81,7 @@ main :: proc() {
 	counter: int
 
 	for counter < 20 {
-		fmt.fprint("Counter value: %v", counter)
+		fmt.printfln("Counter value: %v", counter)
 		counter += 1
 	}
 } 
