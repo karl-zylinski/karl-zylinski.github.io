@@ -494,7 +494,7 @@ You can also clear it, which just sets the `len` inside the dynamic array to 0:
 clear(&dyn_arr)
 ```
 
-Note that delete takes a value and clear takes a pointer. This is because clear needs to modify a field, while delete will only tell the allocator to free memory, but it won't touch any of the fields, it just needs the `data: rawptr` field.
+Note that delete takes a value and clear takes a pointer. This is because clear needs to modify a field (it sets `len` to `0`), while delete will only tell the allocator to free memory, but it won't touch any of the fields, it just needs the value of the `data: rawptr` field.
 
 ## Slices: A window into a part of an array
 
