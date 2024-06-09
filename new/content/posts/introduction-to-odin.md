@@ -1034,7 +1034,7 @@ clamp :: proc(val, min, max: $T) -> T where intrinsics.type_is_numeric(T) {
 
 Here we demand that T be a numeric type. This uses `core:instrinsics`, which you'll have to import. The condition of the `where` is required to be possible to evaluate at compile-time. The code in `intrinsics` contains special 'intrinsic procedures' that are defined by the compiler and thus available at compile-time.
 
-Now, say that you want want to create an array of random size (again, silly thing to do perhaps, but it's a simple example):
+Now, say that you want to create an array of random size (again, silly thing to do perhaps, but it's a simple example):
 
 ```C
 make_random_sized_slice :: proc($T: typeid, max_size: int) -> []T {
@@ -1251,7 +1251,7 @@ import "core:fmt"
 ```
 then you are importing the package `fmt` from the standard library. This means that all the stuff in the folder `<odin_compiler_dir>/core/fmt` will be available under the name `fmt`.
 
-If you want to have some different name for an import, then you can rename them when importing. This is common when importing the raylib bindings (a library for creating videos games):
+If you want to have some different name for an import, then you can rename them when importing. This is common when importing the raylib bindings (a library for creating video games):
 ```C
 import rl "vendor:raylib"
 ```
@@ -1300,7 +1300,7 @@ Some may balk at the idea of using prefixes within a project, they want to use p
 
 ## Finding your way around core (the standard library)
 
-Let's take a look at how to do some different things using the standard library that comes with Odin. The standard library is essentially a bunch different packages that you find in `<odin_compiler_dir>/core`
+Let's take a look at how to do some different things using the standard library that comes with Odin. The standard library is essentially a bunch of different packages that you find in `<odin_compiler_dir>/core`
 
 Like I said earlier, I really recommend that you pull in `<odin_compiler_dir>/core` into your text editor so that you can search for words and symbols in there. The code in the standard library is very readable and you can learn a lot from it!
 
