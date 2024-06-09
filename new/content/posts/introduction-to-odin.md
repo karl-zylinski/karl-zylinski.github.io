@@ -57,11 +57,11 @@ The line `import "core:fmt"` fetches the `fmt` package from the standard library
 
 Semicolons are not needed, and I would encourage to simply not use them. Not using semicolons fits well with how Odin looks. You can still use them if you really want to! There is also a compiler flag to make it an error if you put in unnecessary semicolons (`-vet-semicolon`)
 
-If you copy-paste the code above into a file and save that file inside a new folder, then you can run the program by navigating to that folder and running: `odin run .`
+If you copy-paste the code above into a file and save that file inside a new folder, then you can run the program by navigating to that folder using the command prompt and running: `odin run .`
 
 `.` refers to the current directory. This means that it will take all the things in the current directory and compile them as a single package, output an executable and run it.
 
-I will say more about the package system later, but for now I just want to point out that the line `package hello_world` must be the same for all odin files within a folder.
+I will say more about the package system [later](#package-system-and-code-organization), but for now I just want to point out that the line `package hello_world` must be the same for all odin files within a folder.
 
 > The reason for saying procedure, or proc, instead of function is that the word function, if one wants to be nit-picky, is a bunch of code that has _no side effects_. This is why when we talk about "functional programming" we mean code that composes new functionality from combining functions, where those functions do not modify any global state. Now, functions can be seen as a special case of procedures. I.e. a procedure can take some parameters, return some values and also have side-effects on global variables, while functions can do the same except for that they have no side-effects. Some languages refer to side-effect free procedures as "pure functions".
 
