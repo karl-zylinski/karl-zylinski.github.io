@@ -386,11 +386,57 @@ switch ct {
 
 A switch must list all the variants. If you want to skip some variants then put `#partial` in front of `switch`.
 
-## Unions: Associate varying data with a name
+## Unions
 
-Many times you want to associate some data with a specific state. Say that you have a video game where the player can be in three states: `Default`, `Dashing` and `Jumping`. In C you could do this by having an enum with those three names plus a union to hold the data of three states.
+A union can hold one value at a time, but it those values can be of different types:
 
-In Odin the unions are a bit more powerful, so you don't need the extra enum. You just need a `union` and some union variants:
+```C
+Value :: union {
+	int,
+	f32,
+	Person_Data,
+}
+
+Person_Data :: struct {
+	name: string,
+	age: int,
+}
+
+val: Value = f32(12)
+```
+
+`val` will now be holding a f32, but it could just as well be an int or a struct object of type `Person_Data`. We call these different values the _variants_ of the union. The `Value` type will only take as much memory as the biggest variant.
+
+You can check if it holds a variant of a specific type like so:
+
+```C
+if f32_val, ok := val.(f32); ok {
+	// use f32_val
+}
+```
+
+You can also just do `f32_val := val.(f32)`, but if it isn't currently an `f32` then your program will assert (crash with error).
+
+You can also use a special switch statement to check the current type:
+
+```
+switch v in val {
+	case int:
+		// you can use v, it is of type int
+
+	case f32:
+		// you can use v, it is of type f32
+
+	case Person_Data:
+		// you can use v, it is of type Person_Data
+}
+```
+
+### Using unions for state machines
+
+I sometimes use unions in video games to create 'state machines'. For example, you might have a game where the player can be in three states: `Default`, `Dashing` and `Jumping`. In C you could do this by having an enum with those three names plus a union to hold the data of three states.
+
+In Odin I could this using unions like so:
 
 ```C
 Player_State_Default :: struct {
@@ -441,20 +487,9 @@ switch &v in state {
 }
 ``` 
 
-What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has. From within each such switch-case you can access the data of the current variant using `v`.
+What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has, because we added a `&` we can modify `v` if we so wish. From within each such switch-case you can access the data of the current state variant using `v`.
 
 The `Player_State` type will only take as much memory as the biggest variant.
-
-This type of union, where you both have an indentifier for each variant, plus the data for each variant, is known as a "Tagged Union" or a "Discriminated Union".
-
-Note: If you still want old-school C-style unions, then you can create them like this:
-```C
-Player_State :: struct #raw_union {
-	def: Player_State_Default,
-	jumping: Player_State_Jumping,
-	dashing: Player_State_Dashing,
-}
-```
 
 ## Pointers and passing proc parameters by pointer/value/reference
 
@@ -652,6 +687,12 @@ Like you see above, we can skip indices on either side of the colon: `last_20 :=
 > In C if you run out of bounds, i.e. using indices that are bigger than the length of the array, your program may continue outside it and start trashing memory. Odin has built in bounds checking of arrays, slices and dynamic arrays. So you get a nice assert immediately when you go out of bounds. This bounds checking does have a slight performance impact, so for for release/production builds you can choose to disable bounds checking using the compiler flag `-no-bounds-check`. I'd say disabling it in release builds is fine, because you'll probably catch most of those out-of-bounds errors while testing your development build anyways.
 
 If you want the slice to have its own memory, then you can import the package `"core:slice"` and run `slice.clone(some_slice)`, which will then be cloned using the allocator `context.allocator`. You can also write `slice.clone(some_slice, another_allocator)` to force the clone to happen with an allocator of your choice.
+
+It is also possible to create a slice from scratch and make it have it's own memory:
+```
+ints := make([]int, 4096)
+```
+This will make a new slice and memory will be allocated for it especially.
 
 As an example, say that you want to consider just a part of an array. Say that you only want to display 10 numbers at a time from a bigger list of numbers. You could do this using slices:
 
@@ -1225,9 +1266,50 @@ if json_data, ok := os.read_entire_file("my_struct_file", context.temp_allocator
 	}
 }
 ```
-Note that `json.unmarshal` may allocate memory if your struct contains for example slices, dynamic arrays or strings. It is up to you to free this memory when you no longer need the struct around.
+Note that `json.unmarshal` may allocate memory if your struct contains for example slices, dynamic arrays or strings. It is up to you to free this memory when you no longer need the struct around. In the next section I show how you can manage this more easily using an arena allocator.
 
-<!-- TODO: Something about arena allocators -->
+### Virtual memory arena allocators
+
+Say that you use the JSON loader to load a complicated thing such as a video game level. The level might contain strings, arrays etc, all which the JSON loader will separately allocate memory for.
+
+In order to make the unloading of all this dynamically allocated data easier, you can use an arena allocator.
+
+There are a couple of different arena allocators in core, here we will use the virtual memory growing allocator, which is the most flexible:
+```C
+import vmem `core:mem/virtual`
+```
+
+```C
+Level :: struct {
+	name: string,
+	objects: []Game_Object,
+	tiles: []Tiles,
+}
+
+if json_data, ok := os.read_entire_file("level.json", context.temp_allocator); ok {
+	level: Level
+	level_arena: vmem.Arena
+	arena_allocator := vmem.arena_allocator(&level_arena)
+
+	if json.unmarshal(json_data, &level, allocator = arena_allocator) == nil {
+		// all the memory for the name, objects and tiles will be allocated on the arena
+
+
+		// Set some global variables for the current level
+		current_level = level
+		current_level_arena = level_arena
+	}
+}
+```
+Here we create an arena and feed an allocator that can allocate memory into it. This uses a virtual memory arena that will allocate new blocks of memory when it runs out of memory.
+
+Later, when we want to switch level we can unload the previous level like this:
+
+```C
+vmem.arena_destroy(&level_arena)
+```
+
+This will free all the memory that lives on that arena. So if you can 'group' memory using arenas like this, and free it all in one go!
 
 ### Working with strings (core:strings)
 
