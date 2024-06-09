@@ -496,7 +496,7 @@ The difference is that we must say `v in`, where `v` is the variable name we can
 
 I sometimes use unions in video games to create 'state machines'. For example, you might have a game where the player can be in three states: `Default`, `Dashing` and `Jumping`. In C you could do this by having an enum with those three names plus a union to hold the data of three states.
 
-In Odin I could this using unions like so:
+In Odin you can do this using unions, like this:
 
 ```C
 Player_State_Default :: struct {
