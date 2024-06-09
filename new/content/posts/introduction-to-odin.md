@@ -1300,7 +1300,7 @@ package my_video_game
 
 As you've seen, the name of the package just seems to be the name of the directory, or whatever alias you give the package when you import it. So what is the use of that `package` line?
 
-The package line is for identifying the package when it has been compiled as a library and subsequently been linked into some other library or program. This means, for an Odin program that just imports this package in the form of source code, the package line does not matter.
+The package line is for identifying the package when it has been compiled as a library and subsequently been linked into some other library or program. In other words it is for ABI linking, and should be unique. However, for an Odin program that just imports this package in the form of source code, the package line does not really matter. But if you ever intend to ship your package as a pre-compiled library, then please choose a unique package name.
 
 ### Opinion: Use packages for libraries, not as namespaces
 I would encourage you to only split things out to separate packages if those  things are absolutely independent. So for example a generic XML parser could be such a package. But if you just want to compartmentalize some code then I recommend to keep that code within your main program package and instead add prefixes to proc names etc, just like in C.
