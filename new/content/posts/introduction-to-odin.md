@@ -492,11 +492,17 @@ switch v in your_union {
 
 The difference is that we must say `v in`, where `v` is the variable name we can use to access the data the currently set variant holds.
 
+I also have a video on how to used Odin's unions to create state machines in my game:
+{{<youtube bGc7C3U89-I>}}
+
+<!--
 ### Using unions for state machines
 
 I sometimes use unions in video games to create 'state machines'. For example, you might have a game where the player can be in three states: `Default`, `Dashing` and `Jumping`. In C you could do this by having an enum with those three names plus a union to hold the data of three states.
 
-In Odin you can do this using unions, like this:
+In Odin you don't need both enums and unions, you can do it with unions alone:
+
+Setup some types plus a global variables to hold the current state:
 
 ```C
 Player_State_Default :: struct {
@@ -524,7 +530,11 @@ Player_State :: union #no_nil {
 }
 
 state: Player_State
+player_pos: [3]f32
+```
 
+Then in the code where you update the player of your game:
+```C
 // &v means that you can modify the variant
 // from within each switch-case, remove
 // the & to make the variant immutable.
@@ -532,18 +542,20 @@ switch &v in state {
 	case Player_State_Default:
 		if jump_key_pressed {
 			state = Player_State_Jumping {
-				start_height = player_current_pos.y,
+				start_height = player_pos.y,
 			}
 		}
 
 		if dash_key_pressed {
 			state = Player_State_Dashing {
-				start_pos = player_current_pos,
+				start_pos = player_pos,
 				direction = player_current_direction
 			}
 		}
 	case Player_State_Dashing:
 		// Here you can use v.start_pos and v.direction.
+
+		player_pos += v.start_pos + v.direction * 
 
 		// Add some code to figure out when the dash is
 		// over and return to the default state by
@@ -557,7 +569,7 @@ switch &v in state {
 }
 ``` 
 
-What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has, because we added a `&` we can modify `v` if we so wish. From within each such switch-case you can access the data of the current state variant using `v`.
+What we see here is that the type `Player_State` can hold one of its three variants. You can use the `switch &v in state` syntax to switch on which variant the union currently has, because we added a `&` we can modify `v` if we so wish. From within each such switch-case you can access the data of the current state variant using `v`.-->
 
 ## Pointers and passing proc parameters by pointer/value/reference
 
