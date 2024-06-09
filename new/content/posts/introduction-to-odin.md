@@ -1783,6 +1783,8 @@ I have a [series on making games using Odin + Raylib]({{< ref "/posts/gamedev-fo
 
 There's a great list of resources, libraries and software on [Jakub Tomšů's Awesome Odin page](https://github.com/jakubtomsu/awesome-odin) 
 
+If you're looking for reference material, then have a look at the [overview](https://odin-lang.org/docs/overview/) and also [demo.odin](https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin). This article, the overview and demo.odin each have unique things that the others don't cover.
+
 ## Thanks for reading!
 
 If you liked this article and want to support me, then you can [become a patron](https://www.patreon.com/karl_zylinski).
