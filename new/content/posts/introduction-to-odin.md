@@ -240,6 +240,16 @@ if some_variable == 7 {
 
 Some people like putting the `{` on a new line. If you do that then perhaps the `if X do stuff()` syntax is more useful. But I'm just gonna recommend keeping the `{` on the same line, because it plays nicer with Odin's lack of semicolons.
 
+There is also a slightly different, but very useful syntax for if statements. Say that you use `os.read_entire_file` (you'll find this proc in `core:os`). This proc returns two values, the data of the read file and also a bool if it was able actually read the file. What you can do is this:
+
+```C
+if data, ok := os.read_entire_file("my_file"); ok {
+	// do stuff using data
+}
+```
+
+Here we first initialize data and ok, but the stuff after the `;` is actually the code that checks the condition of the if. Then inside the if you can be sure that `data` is safe to use.
+
 ## Array basics, swizzling and array programming
 
 Say that you want to represent a position in 3D space (I make video games, so this example comes naturally to me), then you can do so using three numbers: 
@@ -1064,8 +1074,6 @@ if data, ok := os.read_entire_file("my_file"); ok {
 }
 ```
 
-This uses a special syntax of the if-statement that first assigns two variables `data` and `ok` from the return values of `read_entire_file`, at the end of the line you see `; ok`, that part is the actual condition of the if statement. If the condition is true, then the code inside the if-statement is run, where you'll have access to `data`
-
 `data` will be allocated using `context.allocator`. I often read files using the temp allocator since I will process the data into another format anyways:
 ```C
 if data, ok := os.read_entire_file("my_file", context.temp_allocator); ok {
@@ -1080,7 +1088,7 @@ if !os.write_entire_file("my_file", data) {
 }
 ```
 
-Here `data` needs to be of type `[]byte`
+`os.write_entire_file` returns false if it failed to write the file, which is what this if is checking for. `data` needs to be of type `[]byte`
 
 ### Read and write structs as JSON (core:encoding/json)
 
