@@ -1190,6 +1190,8 @@ I look for cats
 Where are the cats?
 ```
 
+You can pass `context.temp_allocator` to `builder_make` if you don't need the string in the long run.
+
 ### Start a new thread (core:thread)
 
 To start a thread, import the threads package:
