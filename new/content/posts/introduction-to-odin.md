@@ -512,7 +512,11 @@ Player_State_Jumping :: struct {
 	start_height: f32,
 }
 
-// note the #no_nil, if you skip this then the default value of the union is "nil", meaning that no variant is set. If you have #no_nil then the first variant listed will be the default
+// Note the #no_nil: if you skip this then
+// the default value of the union is "nil",
+// meaning that no variant is set. If you
+// have #no_nil then the first variant
+// listed will be the default.
 Player_State :: union #no_nil {
 	Player_State_Default,
 	Player_State_Dashing,
@@ -521,7 +525,9 @@ Player_State :: union #no_nil {
 
 state: Player_State
 
-// &v means that you can modify the variant from within each switch-case, remove the & to make the variant immutable
+// &v means that you can modify the variant
+// from within each switch-case, remove
+// the & to make the variant immutable.
 switch &v in state {
 	case Player_State_Default:
 		if jump_key_pressed {
@@ -537,13 +543,17 @@ switch &v in state {
 			}
 		}
 	case Player_State_Dashing:
-		// here you can use v.start_pos and v.direction
+		// Here you can use v.start_pos and v.direction.
 
-		// figure out when dash is over and return to by writing state = Player_State_Default {}
+		// Add some code to figure out when the dash is
+		// over and return to the default state by
+		// writing `state = Player_State_Default {}`
 	case Player_State_Jumping:
-		// here you can use v.start_height
+		// Here you can use v.start_height.
 
-		// figure out when jump is over and return to by writing state = Player_State_Default {}
+		// Add some code to figure out when jump is
+		// over and return to the default state by
+		// writing `state = Player_State_Default {}`
 }
 ``` 
 
@@ -668,7 +678,7 @@ append(&dyn_arr, 5)
 Remove things like so:
 ```C
 unordered_remove(&dyn_arr, some_index)
-// or, if you care about the order of things (slower):
+// if you care about the order of things (slower):
 ordered_remove(&dyn_arr, some_index) 
 ```
 
@@ -765,9 +775,11 @@ display_numbers :: proc(numbers: []int) {
 
 my_numbers: [128]int
 
-// add some code here to fill my_numbers with interesting numbers
+// Add some code here to fill my_numbers
+// with interesting numbers.
 
-// process 10 numbers at a time and send them off to display_numbers using slicing.
+// Process 10 numbers at a time and send
+// them off to display_numbers using slicing.
 for i := 0; i < len(my_numbers); i += 10 {
 	display_numbers(my_numbers[i:min(i+10, len(my_numbers))])
 }
@@ -846,11 +858,12 @@ process_image :: proc(filename: string) -> rl.Image {
 
 	result: rl.Image
 	/*
-		here goes some code that creates the 'result' image based on to_process
+		Here goes some code that creates the 'result'
+		image based on to_process.
 	*/
 
 	return result
-} // <-- rl.UnloadImage(to_process) happens around here
+} // <-- rl.UnloadImage(to_process) happens here.
 ```
 
 Here `rl.LoadImage` load the image to process from disk. Immediately after that line we see `defer rl.UnloadImage(to_process)`. The defer will make this line run at the end of the current scope, in this case at the end of the `process_image` procedure. This way we can group the code for loading and unloading the image. This can be useful in cases where there is _a lot_ of code between the line where you load the image and the line where you unload it.
@@ -978,7 +991,8 @@ some_proc :: proc() {
 		my_ints := make_lots_of_ints()
 	}
 
-	// context will now be the same as before the scope above started
+	// context will now be the same as
+	// before the scope above started.
 }
 ```
 
@@ -1038,7 +1052,8 @@ Now, say that you want to create an array of random size (again, silly thing to 
 
 ```C
 make_random_sized_slice :: proc($T: typeid, max_size: int) -> []T {
-	random_size := rand.int31_max(max_size) // this proc is part of `core:math/rand`
+	// this proc is part of `core:math/rand`
+	random_size := rand.int31_max(max_size)
 	return make([]T, random_size)
 }
 ```
@@ -1360,7 +1375,8 @@ my_struct := Some_Struct {
 }
 
 if json_data, err := json.marshal(my_struct, context.temp_allocator); err == nil {
-	// json_data is of type []byte, so can write it directly to a file:
+	// json_data is of type []byte,
+	// so can write it directly to a file:
 	if !os.write_entire_file("my_struct_file", json_data) {
 		fmt.println("Couldn't write file!")
 	}
@@ -1379,7 +1395,8 @@ if json_data, ok := os.read_entire_file("my_struct_file", context.temp_allocator
 	my_struct: Some_Struct
 
 	if json.unmarshal(json_data, &my_struct) == nil {
-		// my_struct now contains the data from my_struct_file
+		// my_struct now contains
+		// the data from my_struct_file.
 	} else {
 		fmt.println("Failed to unmarshal JSON")
 	}
@@ -1416,9 +1433,12 @@ if json_data, ok := os.read_entire_file("level.json", context.temp_allocator); o
 	arena_allocator := vmem.arena_allocator(&level_arena)
 
 	if json.unmarshal(json_data, &level, allocator = arena_allocator) == nil {
-		// all the memory for the name, objects and tiles fields inside `Level` will be allocated on the arena
+		// All the memory for the name, objects
+		// and tiles fields inside `Level` will
+		// be allocated on the arena.
 
-		// Set some global variables for the current level
+		// Set some global variables
+		// for the current level.
 		current_level = level
 		current_level_arena = level_arena
 	}
@@ -1588,13 +1608,14 @@ To start a thread, you can do something like this:
 import "core:thread"
 
 Worker_Thread_Data :: struct {
-	// run is optional, it's useful if your thread needs
-	// to run in a loop until you tell it to stop.
-	// If the thread just needs to do a task and then stop,
-	// then you can skip this bool and the code that uses it.
+	// run is optional, it's useful if your thread
+	// needs to run in a loop until you tell it to
+	// stop. If the thread just needs to do a task
+	// and then stop, then you can skip this bool
+	// and the code that uses it.
 	run: bool,
 
-	// add data your thread needs here
+	// Add data your thread needs here.
 	
 	thread: ^thread.Thread
 }
@@ -1605,7 +1626,8 @@ worker_thread_proc :: proc(t: ^thread.Thread) {
 		// let your thread do stuff
 
 		// you can make this thread run a little
-		// slower using a sleep (you'll need to import "core:time")
+		// slower using a sleep
+		// (you'll need to import "core:time")
 		// time.sleep(10*time.Millisecond)
 	}
 }
