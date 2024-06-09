@@ -808,9 +808,9 @@ my_slice := make_random_sized_slice(f32, 1000)
 
 `my_slice` will then be a slice of type `[]f32` with any size between 0 and 1000.
 
-The difference between these two examples is that in the second example I moved the `$T` to the parameter name instead of having it on the type. We see in the second example that the type of `$T` is typeid, which is the "type of types". We can then use T in the code to refer to this type. Note that we cannot just type `T: typeid` in the parameter list, the `$` has to be there so that the compiler knows we intend to use this value as a compile-time constant. You can have procs that have a parameter `T: typeid`, but then T would not be possible to use at compile-time. We need T to be usable at compile-time because we write `[]T` further down, and `[]T` is itself a type, which must be known at compile-time.
+The difference between this and the 'clamp' example is that in this one I moved the `$T` to the parameter name instead of having it on the type. I.e. I wrote `$T: typeid` where as the clamp proc did `val, min, max: $T`. What is this `typeid` thing we use here? It is the "type of types", or rather, the unique identifier for each type. We can then use T in the code to refer to this type. Note that we cannot just type `T: typeid` in the parameter list, the `$` has to be there so that the compiler knows we intend to use this value as a compile-time constant. You can have procs that have a parameter `T: typeid`, but then T would not be possible to use at compile-time. We need T to be usable at compile-time because we write `[]T` further down, and `[]T` is itself a type, which must be known at compile-time.
 
-We can also see it like this: In the first example we made a proc that accepts a parameter of a generic type. We can in that proc then use both the value and the type. In the second example we only needed a type, there was no value to send in!
+We can also see it like this: In the clamp example we made a proc that accepts a parameter of a generic type. We can in that proc then use both the value and the type. In the 'make_random_sized_slice' example we only needed a type, there was no value to send in!
 
 Finally, we can use similar things to create generic structs:
 
