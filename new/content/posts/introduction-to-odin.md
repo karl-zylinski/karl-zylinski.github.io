@@ -1186,7 +1186,7 @@ fmt.println(str)
 This will print the following to the console:
 ```txt
 I like cats.
-I look for cats
+I look for cats.
 Where are the cats?
 ```
 
