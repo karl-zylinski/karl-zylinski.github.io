@@ -1751,7 +1751,7 @@ main :: proc() {
 
 Going deep into Raylib is outside the scope of this article, but I encourage you to open `<odin_compiler_dir>/vendor/raylib/raylib.odin` and explore the available procedures.
 
-Raylib is written in C and requires a C library to work. But the compiler takes care of linking in that C library for you, you can see how that works if you look inside `raylib.odin`, search for the `foreign import lib` stuff.
+Raylib is written in C and requires a C library to work. But the compiler takes care of linking in that C library for you. You can see how that works if you look inside `raylib.odin` and search for the `foreign import lib` stuff.
 
 I have a [series on making games using Odin + Raylib]({{< ref "/posts/gamedev-for-beginners-using-odin-and-raylib-1" >}}). I also have this 90 minute video tutorial where I create a little video game from start to finish:
 
