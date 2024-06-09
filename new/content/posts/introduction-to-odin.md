@@ -248,7 +248,7 @@ if data, ok := os.read_entire_file("my_file"); ok {
 }
 ```
 
-Here we first initialize data and ok, but the stuff after the `;` is actually the code that checks the condition of the if. Then inside the if you can be sure that `data` is safe to use.
+Here we first initialize data and ok, but the stuff after the `;` is the actual condition that the if statement should check. So if `ok` is true, then you can be sure that `data` is safe to use within the scope of the if statement.
 
 ## Array basics, swizzling and array programming
 
@@ -1194,12 +1194,8 @@ You can pass `context.temp_allocator` to `builder_make` if you don't need the st
 
 ### Start a new thread (core:thread)
 
-To start a thread, import the threads package:
-```C
-import "core:thread"
-```
+To start a thread, you can do something like this:
 
-and then do something like:
 ```C
 import "core:thread"
 
