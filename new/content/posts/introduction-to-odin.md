@@ -261,7 +261,7 @@ This creates a variable `position` that is an array of three `f32` numbers.
 
 You can fetch the different values from `position` like so: `position[0]`. However, when arrays have 4 or fewer items, then you can index them using `x`, `y`, `z` and `w` as well. So instead of `position[0]` you can write `position.x`.
 
-You can also swizzle such arrays: `2d_pos := position.xy` will make `2d_pos` into a variable of type `[2]f32` that contains the x and y parts of the position. You can also do stuff like `position.xxyy` or `position.wyx`. Finally, because in some applications we use 4 dimensional numbers to represent colors, you can also swizzle using `.rgba`.
+You can also swizzle such arrays: `2d_pos := position.xy` will make `2d_pos` into a variable of type `[2]f32` that contains the x and y parts of the position. You can also do stuff like `position.xxyy` or `position.zyx`. Finally, because in some applications we use 4 dimensional numbers to represent colors, you can also swizzle using `.rgba`.
 
 If you don't wanna write `[3]f32` all the time then you can make an new type instead: 
 ```C
@@ -279,6 +279,8 @@ position += velocity
 This is known as 'array programming'. You can add arrays, subtract them and multiply them with scalars. Odin does not have operator overloading, but one of the most common use cases for operator overloading is doing vector maths. So I haven't missed operator overloading at all because of how great array programming works.
 
 Things like this is a great example of why I enjoy Odin so much for video games programming.
+
+You can of course create bigger arrays. Also, later I will talk about two concepts closely related to arrays: [dynamic arrays](#dynamic-arrays) and [slices](#slices-a-window-into-a-part-of-an-array).
 
 ## Structs
 
@@ -456,7 +458,7 @@ Player_State :: struct #raw_union {
 
 ## Pointers and passing proc parameters by pointer/value/reference
 
-Say that you have this code:
+Sometimes you want to make procedures modify a value for you. You can do that by passing a pointer to a value to the procedure:
 
 ```C
 my_number := 7
@@ -497,7 +499,7 @@ damage_player(&player, 10)
 
 ```
 
-> Here you can see a difference from C/C++: You do not need to use the -> to fetch fields of the pointed-to-struct. You can just use . directly.
+> Unlike C/C++, you do not need to use the -> to fetch fields of the pointed-to-struct. You can just use . directly.
 
 Now, say that we want to pass this player struct to a proc, but the proc won't modify the player, so we do not want to pass it by pointer. How would that look? Like this:
 
@@ -691,6 +693,91 @@ first_50 := a_dynamic_array[:50]
 
 A good idea is to make all procedures that you want to be reusable take slices, since you can form a slice from all the other types of containers basically for free (remember: making a slice does not allocate memory, it's just a pointer an a length). There's no point in feeding a proc a dynamic array unless you actually want to modify the dynamic array. If you just wanna use the data in it, then feed it a slice, even if it as slice that looks at the whole dynamic array.
 
+## defer: Making things happen at end of scope
+
+Sometimes you want code to be run at the end of the current scope. For example, perahps you have a proc that loads an image, does some processing of it and outputs a new image based on that:
+
+```C
+import rl "vendor:raylib"
+
+process_image :: proc(filename: string) -> rl.Image {
+	to_process := rl.LoadImage(filename)
+	defer rl.UnloadImage(to_process)
+
+	result: rl.Image
+	/*
+		here goes some code that creates the 'result' image based on to_process
+	*/
+
+	return result
+} // <-- rl.UnloadImage(to_process) happens around here
+```
+
+Here `rl.LoadImage` load the image to process from disk. Immediately after that line we see `defer rl.UnloadImage(to_process)`. The defer will make this line run at the end of the current scope, in this case at the end of the `process_image` procedure. This way we can group the code for loading and unloading the image. This can be useful in cases where there is _a lot_ of code between the line where you load the image and the line where you unload it.
+
+Another good example, from the [overview](https://odin-lang.org/docs/overview/#defer-statement), is to defer the closing of a file handle.
+
+```C
+f, err := os.open("my_file.txt")
+if err != os.ERROR_NONE {
+	// handle error
+}
+defer os.close(f)
+// rest of code
+```
+
+A few words on the the word 'scope': The current scope does _not_ always end at the end of the current procedure. You can for example make scopes within a proc like this:
+
+```C
+print_with_defer :: proc() {
+	{
+		defer fmt.println("this prints at next }")
+		fmt.println("this prints first")
+	}
+
+	fmt.println("this prints last")
+}
+```
+
+This program outputs:
+```txt
+this prints first
+this prints at next }
+this prints last
+```
+
+So in this case, the defer happened within the scope defined by the pair of `{}`, not at the end of the proc.
+
+## when: Compile-time check to enable/disable code
+
+Sometimes you don't want some code to compile at all unless a certain constant is set. For example maybe you have a game with a "level editor" that should only be included in some cases.
+
+```C
+HAS_LEVEL_EDITOR :: true
+
+update_game :: proc() {
+	when HAS_LEVEL_EDITOR {
+		if editing {
+			update_level_editor()
+		} else {
+			update_game()
+		}
+	} else {
+		update_game()
+	}
+}
+```
+
+`when` can only act on compile-time values. In this case we are checking a constant. If the constant is false then the code wouldn't even be part of the program.
+
+To make `when` more useful, you can combine it with configurable flags:
+
+```C
+HAS_LEVEL_EDITOR :: #config(EDITOR, true)
+```
+
+Now you can run the compiler like so: `odin run . -define:EDITOR=false` in order to set the value of this constant to true/false. Note that `#config` accepts a default value as second parameter.
+
 ## Implicit context and custom allocators
 So we've seen the word `context` in the code above. I wrote `context.allocator` a bunch of times. All procedures in Odin get fed the current _context_. It is an extra parameter that is always passed along.
 
@@ -791,16 +878,24 @@ The `f32` in the list of parameters has been replaced with a `$T`. This means th
 
 This proc can now be used for any numeric type. The compiler will generate the different variations for you as you use clamp with different types of parameters. If it is not possible to generate the code, then you'll get a compilation error, which would happen if you tried to use this proc with a non-numeric type.
 
+To completely disallow this proc to be used for non-numeric values, you can alter the declaration of `clamp` this like:
+
+```C
+clamp :: proc(val, min, max: $T) -> T where intrinsics.type_is_numeric(T) {
+```
+
+Here we demand that T be a numeric type. This uses `core:instrinsics`, which you'll have to import. `where` requires that the code is possible to evaluate at compile-time. The code in `intrinsics` contains special 'intrinsic procedures' that are defined by the compiler and thus available at compile-time.
+
 Now, say that you want want to create an array of random size (again, silly thing to do perhaps, but it's a simple example):
 
 ```C
 make_random_sized_slice :: proc($T: typeid, max_size: int) -> []T {
-	random_size := rand.int31_max(max_size)
+	random_size := rand.int31_max(max_size) // this proc is part of `core:math/rand`
 	return make([]T, random_size)
 }
 ```
 
-We could now use this proc like so:
+We can use this proc like this:
 
 ```C
 my_slice := make_random_sized_slice(f32, 1000)
@@ -899,18 +994,15 @@ What this code does is swap out `context.allocator` for a a tracking allocator. 
 
 When your program shuts down, it will check if anything is still inside that big list, and if it is then it will print a warning about this. This makes manual memory management much less scary. It will also write warning if you did any 'bad frees', which means trying to free memory that wasn't actually allocated.
 
-A bit about how the `defer` and `when` stuff above works:
+Note that we use [defer](#defer-making-things-happen-at-end-of-scope) here to make the printing of memory leaks and bad frees happen at the end of the `main` proc. Here we are making the whole block of code that follows the `defer` get deferred, rather than a single line.
 
-The `defer { /* the tracking allocator setup */ }` line tells the program to run the code between those curly braces when the current scope ends, which will happen at the end of the `main` proc. Note that the tracking allocator setup happens inside a `when ODIN_DEBUG {` block. `when` is used to include and exclude code based on values of constants. `ODIN_DEBUG` is a constant that is only true when the `-debug` compiler flag is set, which is a good idea for 'development' builds (it also makes the program generate debug info, so that you can use a debugger such as VSCode, RemedyBG or RAD Debugger).
+Please note that the `when ODIN_DEBUG {` line will make this code only run if the `-debug` compiler flag is set. I.e. the `-debug` compiler flag will setup this constant for you. This means that the setup and checking of the tracking allocator will only happen if you compile with `-debug`.
 
-This means that the setup and checking of the tracking allocator will only happen if you compile with `-debug`.
+As I've said before `defer` happens at the end of the current scope. However, `when` doesn't create a 'real scope', the defer stills happens at the end of the `main` scope. Here's a short example to further illustrate how this works:
 
-Note that the scopes associated with `when` do not work like normal scopes. The `defer` statement will wait until the end of the `main` proc before it runs the 'deferred' code, it will not run it at the end of the scope associated with the `when`.
-
-This does not mean that `defer` waits until the end of the proc, it will wait until the end of the current scope. So if the program looked like this:
 ```C
 main :: proc() {
-	// note: anonymous scope starts here
+	// note: nameless scope starts here
 	{
 		when ODIN_DEBUG {
 			number: int
@@ -928,7 +1020,7 @@ main :: proc() {
 }
 ```
 
-This example shows that the scope associated with `when` does not work like a normal scope, it is only there to group code that should be included when the condition is true, but it does not create a real scope. Therefore I tend to avoid calling them scopes, instead perhaps we should call them "when blocks".
+As you see variables created within that `when` block still exist after it, and the defer happens at the end of the surrounding scope. If it didn't work like this, then `when` wouldn't be very useful.
 
 You can also watch this video I made on the tracking allocator:
 {{<youtube dg6qogN8kIE>}}
