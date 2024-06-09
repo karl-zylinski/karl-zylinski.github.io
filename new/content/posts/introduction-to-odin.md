@@ -492,7 +492,7 @@ switch v in your_union {
 
 The difference is that we must say `v in`, where `v` is the variable name we can use to access the data the currently set variant holds.
 
-I also have a video on how to used Odin's unions to create state machines in my game:
+I have an old video on how I used Odin's unions to create state machines in my game:
 {{<youtube bGc7C3U89-I>}}
 
 <!--
