@@ -859,7 +859,7 @@ nice_rating := #partial [Nice_People]int {
 
 ## defer: Making things happen at end of scope
 
-Sometimes you want code to be run at the end of the current scope. For example, perhaps you have a proc that loads an image, does some processing of it and outputs a new image based on that (here I use some procs from raylib, but just image that they are any procs that load/unload images):
+Sometimes you want code to be run at the end of the current scope. For example, perhaps you have a proc that loads an image, does some processing of it and outputs a new image based on that (here I use some procs from raylib, but just imagine that they are any procs that load/unload images):
 
 ```C
 import rl "vendor:raylib"
@@ -919,17 +919,10 @@ Sometimes you don't want some code to be included in the program at all unless a
 
 ```C
 HAS_LEVEL_EDITOR :: true
-editing: bool
 
 update_game :: proc() {
 	when HAS_LEVEL_EDITOR {
-		if editing {
-			update_level_editor()
-		} else {
-			update_game()
-		}
-	} else {
-		update_game()
+		// add level editor specific code
 	}
 }
 ```
