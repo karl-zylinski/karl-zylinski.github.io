@@ -21,7 +21,7 @@ Another reason for "Why Odin?" is that I prefer programming languages that fulfi
 - Manual memory management
 - Statically typed
 
-Many new languages fail on one of these points, so I end up not liking them. However, the last few years there have been some popular languages that fit into this description, such as Rust and Zig. If you want to use one of Odin, Rust or Zig but don't know which one, then I recommend you to spend 1-2 weeks using each and make up your mind. Do not listen to fans of these languages, because a lot of it boils down to personal preference.
+Many new languages fail on one of these points, so I end up not liking them. However, the last few years there has emerged some languages that fit into this description, such as Odin and Zig. If you want to use one of Odin or Zig but don't know which one, then I recommend spending 1-2 weeks using each and then make up your own mind.
 
 ## A note on learning Odin
 
