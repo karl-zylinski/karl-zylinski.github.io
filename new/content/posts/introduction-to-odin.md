@@ -1432,31 +1432,36 @@ Level :: struct {
 	tiles: []Tiles,
 }
 
-if json_data, ok := os.read_entire_file("level.json", context.temp_allocator); ok {
-	level: Level
-	level_arena: vmem.Arena
-	arena_allocator := vmem.arena_allocator(&level_arena)
+current_level: Level
+current_level_arena: vmem.Arena
 
-	if json.unmarshal(json_data, &level, allocator = arena_allocator) == nil {
-		// All the memory for the name, objects
-		// and tiles fields inside `Level` will
-		// be allocated on the arena.
+load_level :: proc(filename: string) {
+	if json_data, ok := os.read_entire_file(filename, context.temp_allocator); ok {
+		level: Level
+		level_arena: vmem.Arena
+		arena_allocator := vmem.arena_allocator(&level_arena)
 
-		// Set some global variables
-		// for the current level.
-		current_level = level
-		current_level_arena = level_arena
+		if json.unmarshal(json_data, &level, allocator = arena_allocator) == nil {
+			// All the memory for the name, objects
+			// and tiles fields inside `Level` will
+			// be allocated on the arena.
+
+			// Set some global variables
+			// for the current level.
+			current_level = level
+			current_level_arena = level_arena
+		}
 	}
 }
-```
-Here we create an arena and feed `json.unmarshal` an allocator that can allocate memory into the arena. The virtual memory arena we're using here can grow. When it grows it will allocate new blocks of memory. Internally in the arena, those blocks form a linked list so that the arena can keep track of all of them.
 
-Later, when we want to switch level we can unload the previous level like this:
-
-```C
-vmem.arena_destroy(&level_arena)
+unload_level :: proc() {
+	vmem.arena_destroy(&current_level_arena)
+	current_level = {}
+}
 ```
-This will free all the memory that lives on that arena. So now everything related to that level was freed in one go!
+`load_level` creates an arena and feeds `json.unmarshal` an allocator that can allocate memory into the arena. The virtual memory arena we're using here can grow. When it grows it will allocate new blocks of memory. Internally in the arena, those blocks form a linked list so that the arena can keep track of all of them.
+
+Later, you can run `unload_level`. This proc runs `vmem.arena_destroy(&current_level_arena)`. This will free all the memory that was allocated while `json.unmarshal` ran, even though this memory is split into different fields of `Level`: `name`, `objects` and `tiles`. If you had used the default allocator you would have had to free all of them separately. This can be very useful in cases where you have a complicated tree of data with lots of lists and strings.
 
 ### Working with strings (core:strings)
 
