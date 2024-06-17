@@ -864,7 +864,7 @@ Sometimes you want code to be run at the end of the current scope. For example, 
 ```C
 import rl "vendor:raylib"
 
-process_image :: proc(filename: string) -> rl.Image {
+process_image :: proc(filename: cstring) -> rl.Image {
 	to_process := rl.LoadImage(filename)
 	defer rl.UnloadImage(to_process)
 
@@ -1228,7 +1228,7 @@ great_algorithm :: proc() -> int {
 		append(&numbers, i)
 	}
 
-	slice.shuffle(numbers[:])
+	rand.shuffle(numbers[:])
 	return numbers[0]
 }
 ```
@@ -1379,7 +1379,7 @@ my_struct := Some_Struct {
 	some_field = 7,
 }
 
-if json_data, err := json.marshal(my_struct, context.temp_allocator); err == nil {
+if json_data, err := json.marshal(my_struct, allocator = context.temp_allocator); err == nil {
 	// json_data is of type []byte,
 	// so can write it directly to a file:
 	if !os.write_entire_file("my_struct_file", json_data) {
@@ -1529,7 +1529,7 @@ package main
 import "core:log"
 
 main :: proc() {
-	logger := create_console_logger()
+	logger := log.create_console_logger()
 	context.logger = logger
 
 	// Rest of program goes here,
@@ -1753,11 +1753,15 @@ for i in 0..<len(arr) {
 rand.shuffle(arr[:])
 ```
 
-All the procs in `rand` take an optional `^Rand` value. If you want to use your own random seed then you can do so by doing:
+You can set the seed of the global random generator if you wish:
 
 ```C
-r := rand.create(my_seed)
-random_num := rand.uint32(&r)
+// Run this line at for example program start
+seed := time.time_to_unix(time.now())
+rand.reset(u64(seed))
+
+// Later when you use rand.uint32() it will use the seed
+random_num := rand.uint32()
 ```
 
 ### Make a game using Raylib (vendor:raylib)
