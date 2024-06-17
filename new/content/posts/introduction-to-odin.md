@@ -137,13 +137,21 @@ my_integer: int = DECIMAL_CONSTANT
 ```
 Here `DECIMAL_CONSTANT` has the type "untyped float", since it has some decimals. The compiler will refuse to set an integer to such a value. So as you've seen "untyped integers" can be put into float variables, but "untyped floats" cannot be put into integer variables, which hopefully makes sense.
 
-The previous example will work if we cast `DECIMAL_CONSTANT` to an `int`:
+Casting `DECIMAL_CONSTANT` to an `int` won't work either:
 
-```C
+```no_test
 DECIMAL_CONSTANT :: 27.12
 my_integer := int(DECIMAL_CONSTANT)
 ```
-However, the value `27.12` will then be truncated to just `27`. The important part is that this didn't happen automatically for you, since it's a destructive thing to do. So the programmer has to do it manually.
+
+This, however, will compile:
+```
+DECIMAL_CONSTANT :: 27.12
+my_float := DECIMAL_CONSTANT
+my_integer := int(my_float)
+```
+
+This works because the constant `27.12` can be put into a float variable, and a float variable can be cast to an int. However, when we do the final cast to int, then the value will be _truncated_ to just `27`. The reason you can't do `my_integer := int(DECIMAL_CONSTANT)` is because it is a _strange thing to do_. It's like saying `my_integer := int(27.12)`. Why would you want to do that?
 
 Finally, if you really want to, you can give constants a specific type:
 
