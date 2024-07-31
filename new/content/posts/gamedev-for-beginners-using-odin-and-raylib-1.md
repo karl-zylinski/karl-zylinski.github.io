@@ -55,6 +55,9 @@ Yes. I've recently made and shipped a whole game called CAT & ONION using Odin a
 
 ## Download and setup the Odin compiler
 
+**THESE COMPILER SET UP INSTRUCTIONS ARE SLIGHTLY OUTDATED. I have up-to-date instructions in this video. You can also follow the official instructions at https://odin-lang.org/docs/install/. If you follow the video or the official instructions, then you can skip to [Download Sublime Text, a code editor](#download-sublime-text-a-code-editor):**
+{{< youtube yq5VabsGz_4 >}}
+
 Before we get started with the code we'll have to download and setup some software. I urge you to push on through these perhaps boring setup steps, as things will get much more fun once we start writing code.
 
 In order to turn the Odin code we are about to write into a program you can run, you need to download the Odin _compiler_. Compilation is the process by which the computer takes code and outputs a program you can run.
@@ -101,6 +104,10 @@ Soon we'll write some Odin code. But first we need a program to write our code i
 I write Odin code using Sublime Text. It is a simple and snappy code editor. Download and install it from here: https://www.sublimetext.com/
 
 Throughout this series I'll sneak in some good Sublime tips every now and then, to accelerate your workflow.
+
+**Since posting this I have created a Sublime Text setup video that also includes how to get code completion working:**
+
+{{< youtube RF2MgVqfBV8 >}}
 
 ## Let's write some Odin code!
 
