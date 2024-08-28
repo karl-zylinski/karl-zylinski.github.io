@@ -6,6 +6,18 @@
     padding: var(--gap);
 }
 
+.odin-tutoring-link {
+    display: block;
+    margin: auto;
+    width: 300px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.odin-tutoring-link img {
+    border-radius: 5px;
+}
+
 .project {
     background: var(--entry);
     border-radius: 20px;
