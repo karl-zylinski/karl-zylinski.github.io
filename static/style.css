@@ -1,0 +1,6 @@
+
+
+img[src$='#floatleft']
+{
+    float: left;
+}
