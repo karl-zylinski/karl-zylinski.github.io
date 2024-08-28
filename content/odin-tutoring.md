@@ -7,7 +7,9 @@ cover:
 ShowToc: false
 ---
 
-I provide one-on-one video-call tutoring and consultations related to [The Odin Programming Language](https://odin-lang.org). If you're trying to learn Odin, but having issues understanding some concepts, then I'd be happy to help!
+I provide tutoring and consultation related to the [Odin Programming Language](https://odin-lang.org). If you're trying to learn Odin, but having issues understanding some concepts, then I'd be happy to help!
+
+The format is one-on-one video call with possibility of screen share.
 
 [Book here](https://calendly.com/karl-zylinski)
 
