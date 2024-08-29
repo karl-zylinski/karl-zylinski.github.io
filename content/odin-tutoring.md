@@ -11,7 +11,7 @@ I provide tutoring and consultation related to the [Odin Programming Language](h
 
 The format is one-on-one video call with possibility of screen share.
 
-[Book here](https://calendly.com/karl-zylinski)
+[Schedule appointment here](https://calendly.com/karl-zylinski)
 
 
 ## Offered services
@@ -42,4 +42,4 @@ I speak fluent English and Swedish
 
 ## Schedule an appointment
 
-[Book here](https://calendly.com/karl-zylinski)
+[Schedule appointment here](https://calendly.com/karl-zylinski)
