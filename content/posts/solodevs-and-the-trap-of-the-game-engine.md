@@ -33,9 +33,9 @@ Naturally I adopted lots of the mindsets of how to make games from this job. I.e
 
 ## Where things went a bit wrong
 
-It is very easy to look at a general purpose game engine such as Bitsquid, Unity or Godot and think that you should use such engines with such tools to create games.
+It is very easy to look at a general purpose game engine such as Unity or Godot and think that you should use such engines with such tools to create games. Now, using such engines is perfectly fine. But the problem is when you want to create your own games from scratch, then you might get the idea that you also need to build a general purpose game engine before you get started with the gameplay code.
 
-I still wanted to create my own games, as in solo developing them. So in my spare time I was tinkering away. But I got way too inspired by my day job! I was creating renderers, abstract level editing tools, file formats, data compilers. But I didn't write any gameplay code _at all_! That, I thought, came when the engine code was mature enough.
+I still wanted to create my own games, as in solo developing them. So in my spare time I was tinkering away. But I got way too inspired by my day job, where I was developing a general purpose game engine! I was creating renderers, abstract level editing tools, file formats, data compilers. But I didn't write any gameplay code _at all_! That, I thought, came when the engine code was mature enough.
 
 ## Using third-party game engines
 
