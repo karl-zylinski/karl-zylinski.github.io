@@ -15,7 +15,7 @@ The methods I will outline here are for people who are writing their own game 'f
 
 Hot reloading gameplay code means that you swap out the code that controls the behavior of your game while the game is running. Why? To improve and tweak your gameplay code without having to restart the game.
 
-For my current game (Unnamed Cat Game) I've had hot reload since the first week. It has been of great help. It has improved my programming flow a lot by keeping me in the zone while developing new gameplay and editor features. It has made game development more relaxing and fun.
+When making my game [CAT & ONION](https://store.steampowered.com/app/2781210/CAT__ONION/) I had hot reload since the first week. It was of great help. It improved my programming flow a lot by keeping me in the zone while developing new gameplay and editor features. It has made game development more relaxing and fun.
 
 Gameplay programming is one of the most creative types of programming, especially when you're figuring out and tweaking the design while implementing the gameplay, as may often happen for solo developers. Having hot reload helps you in this creative process by minimizing the interruptions to your creative flow.
 
@@ -37,6 +37,8 @@ In general, I would say that hot reload is extra helpful when tweaking fine deta
 ## Example implementation in Odin Programming Language
 
 Let's look at an example of how to do this. I will be using [Odin programming language](https://odin-lang.org/), but the general ideas are transferable to languages like C and C++.
+
+**UPDATE:** Since writing this article I've made a an [Odin + Raylib + Hot Reload template](https://github.com/karl-zylinski/odin-raylib-hot-reload-game-template). You can use that one as another example implementation.
 
 In case you prefer watching videos, then I've also made a YouTube video on this topic:
 
@@ -300,6 +302,8 @@ unload_game_api :: proc(api: GameAPI) {
 Save this code as `main.odin` and compile it using:
 `odin build main.odin -file`
 
+**UPDATE:** Instead of the manual `init = cast(proc())(dynlib.symbol_address(lib, "game_init") or_else nil)` API proc fetching, you can use `dynlib.initialize_symbols` to match struct members to symbols in the DLL. [See these lines in my hot reload template on GitHub for more info](https://github.com/karl-zylinski/odin-raylib-hot-reload-game-template/blob/24bd982f2e441a8c0e5be7409a393f56b2641885/main_hot_reload/main_hot_reload.odin#L66).
+
 ### Do the hot reload!
 
 Start the program by running `main.exe`. You'll see a console start up, it will be printing a constantly increasing number. As a first test of the hot reload, keep the main program running and open `game.odin` in your code editor. Within the `game_update` procedure change the `+=` to `-=`, so that the number will decrement each frame. Save the file and again compile the game DLL again using:
@@ -460,6 +464,8 @@ The Raylib DLL is automatically loaded when game.dll is loaded by the main progr
 ## That's it!
 
 Thanks for reading! Hot reload has improved the flow of my creative coding a lot. I hope it will help you too!
+
+If you liked this article and want to support me, then please consider becoming a patron: https://www.patreon.com/karl_zylinski
 
 Drop any comments or questions to me on:
 
