@@ -13,12 +13,11 @@ The format is one-on-one video call with possibility of screen share.
 
 [Schedule appointment here](https://calendly.com/karl-zylinski)
 
-
 ## Offered services
 
-- Private tutoring sessions for learning the Odin Programming Language
-- Looking together at your code and trying to improve it
-- Explaining game development concepts
+- Tutoring sessions on the Odin Programming Language. Think of it as something similar to my YouTube videos, but on a topic of your choice
+- Looking together at your code and trying to improve it or figure out what is wrong with it
+- Teaching game development concepts
 
 ## My special skills
 
@@ -39,6 +38,10 @@ You pay after the session. I will send you a Stripe invoice to your e-mail.
 ## Languages
 
 I speak fluent English and Swedish
+
+## If I cannot help you
+
+When you schedule an appointment, please make sure to describe what you want help with. This makes it possible for me to cancel the appointment if I think that I cannot help you.
 
 ## Schedule an appointment
 
