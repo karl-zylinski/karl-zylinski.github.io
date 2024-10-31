@@ -5,6 +5,7 @@ cover:
   image: "/odin-tutoring.png"
 
 ShowToc: false
+draft: true
 ---
 
 I provide tutoring and consultation related to the [Odin Programming Language](https://odin-lang.org). If you're trying to learn Odin, but having issues understanding some concepts, then I'd be happy to help!
