@@ -443,15 +443,15 @@ I like using Odin combined with Raylib. Raylib lets me draw graphics and play so
 
 #### Using the DLL version of Raylib
 
-First off, Raylib stores its state internally as global variables. By default, the Raylib package that is shipped with Odin is linked statically. This means that the game DLL will own the Raylib package's global state. So when you hot reload the game DLL, all the Raylib state is cleared and your program probably crashes. This is fixed by using the DLL version of Raylib instead. In order to do this, I recommend the following:
+Raylib stores its state internally as global variables. By default, the Raylib package that is shipped with Odin is linked statically. This means that the game DLL will own the Raylib package's global state. So when you hot reload the game DLL, all the Raylib state is cleared and your program probably crashes. This is fixed by using the DLL version of Raylib instead.
 
-1. Go to where your Odin compiler lives. Go into the `vendor` folder. Copy the whole `raylib` folder to your game's folder.
-2. Open your game's local copy of `raylib/raylib.odin`
-3. Change the line
-    `@(extra_linker_flags="/NODEFAULTLIB:libcmt")` to `@(extra_linker_flags="/NODEFAULTLIB:msvcrt")` and the line `"windows/raylib.lib",` to `"windows/raylibdll.lib",` (this of course is only for Windows, I'm sure you can do something similar on Linux and Mac)
-4. Instead of doing `import rl "vendor:raylib"` just do `import rl "raylib"` to use your game's own copy of Raylib.
+To do this, make sure you compile your `game.dll` with the flag `-define:RAYLIB_SHARED=true`, something like this:
 
-You'll also need to copy the `raylib.dll` file inside `raylib/windows` to where your exe lives.
+```
+odin build game.odin -file -define:RAYLIB_SHARED=true -build-mode:dll -out:game.dll
+```
+
+Windows users may also need to copy `raylib.dll` from `<odin_compiler>/vendor/raylib/windows/raylib.dll` to your project.
 
 #### Split `game_init` into `game_init` and `game_init_window`
 
