@@ -441,6 +441,8 @@ When Visual Studio is attached to main.exe and you try to recompile you'll notic
 
 I like using Odin combined with Raylib. Raylib lets me draw graphics and play sound, sort of like SDL. Hot reload works well with Raylib, but there are a few things you need to do.
 
+**Note: Since writing this blog post, I have made an hot reload + Odin + raylib template that you can check out:** https://github.com/karl-zylinski/odin-raylib-hot-reload-game-template
+
 #### Using the DLL version of Raylib
 
 Raylib stores its state internally as global variables. By default, the Raylib package that is shipped with Odin is linked statically. This means that the game DLL will own the Raylib package's global state. So when you hot reload the game DLL, all the Raylib state is cleared and your program probably crashes. This is fixed by using the DLL version of Raylib instead.
