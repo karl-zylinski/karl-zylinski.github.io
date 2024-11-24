@@ -22,16 +22,16 @@ params:
         Title: "Karl Zylinski"
 
     socialIcons:
-        - name: "Twitter"
-          url: "https://twitter.com/karl_zylinski"
         - name: "YouTube"
           url: "https://www.youtube.com/@karl_zylinski"
-        - name: "GitHub"
-          url: "https://github.com/karl-zylinski"
-        - name: "Mastodon"
-          url: "https://mastodon.gamedev.place/@karl_zylinski"
         - name: "Patreon"
           url: "https://www.patreon.com/karl_zylinski"
+        - name: "Bluesky"
+          url: "https://bsky.app/profile/zylinski.se"  
+        - name: "Twitter"
+          url: "https://twitter.com/karl_zylinski"
+        - name: "GitHub"
+          url: "https://github.com/karl-zylinski"
         - name: "Email"
           url: "mailto:karl@zylinski.se"
 
