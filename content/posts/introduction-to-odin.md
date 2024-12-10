@@ -8,7 +8,7 @@ cover:
 
 ## Preface
 
-**NOTE: I have created a whole book, loosely based on this article! You can ready more about it on [odinbook.com](https://odinbook.com/). For comparison: This article contains 12400 words, the book contains 73000 words.** 
+**NOTE: I have created a whole book, loosely based on this article! You can ready more about it at [odinbook.com](https://odinbook.com/).** For comparison: This article contains 12400 words, the book contains 73000 words.
 
 This article is an introduction to the Odin Programming Language. It is aimed at people who know a bit of programming, but have never touched Odin. It is not a reference guide, rather I try to keep things informal and talk about what I think are important aspects of the language. There will be some notes on differences to C/C++, as Odin in many ways tries to be better C. If you enjoy this article and want to support me, then you can do so by [becoming a patron](https://www.patreon.com/karl_zylinski).
 
