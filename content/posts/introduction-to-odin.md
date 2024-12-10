@@ -1811,7 +1811,7 @@ If you're looking for reference material, then have a look at the [overview](htt
 
 ## Thanks for reading!
 
-I have created a whole book based on this article! You can ready more about it on [odinbook.com](https://odinbook.com/). It 5-6 times longer than this blog post.
+I have created a whole book based on this article! You can ready more about it on [odinbook.com](https://odinbook.com/). It is 5-6 times larger than this blog post.
 
 If you liked this article and want to support me, then you can [become a patron](https://www.patreon.com/karl_zylinski).
 
