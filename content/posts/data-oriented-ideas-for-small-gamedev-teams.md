@@ -50,15 +50,19 @@ There's a thing to realize here: Even if you use `Array<Entity*>` where all obje
 
 > Note: If you don't have any need for storing permanent references, then you do not need handles.
 
+I have an example implementation of a handle-based array here: https://gist.github.com/karl-zylinski/a5c6acd551473f90b872f46a2fa58deb In the comments at the top of the file there are also some links to some other implementations.
+
 ## Knowing when to stop
 
 Once you start going down the route of trying to write more cache-friendly code it is very easy to constantly try to take it one step further. Say that you now have your entities in your cache friendly array. But then you think that you want to introduce components to your entities, so you start writing a whole data-oriented Entity-Component-System (ECS).
 
-For a small indie game or similar, just making sure to do things in a basic, cache friendly way is more than enough. Just avoiding the separate heap allocations is good enough. There's no need to go all the way to an ECS system. Personally, I think ECS is often an over-engineered solution that makes gameplay code both harder and less fun to write.
+For a small indie game or similar, just making sure to do things in a basic, cache friendly way is more than enough. Just avoiding the separate heap allocations is a good start. There's no need to go all the way to an ECS system. Personally, I think ECS is often an over-engineered solution that makes gameplay code both harder and less fun to write.
 
 Try to get a feeling for when the code design decisions you make are hurting your creative flow. Find a good middle-ground between creativity, code tidiness and performance. "Good enough" is very subjective, but you must look at what your goals are and if your technical decisions are helping or hurting your trajectory towards those goals. If your goal is to ship a game, then make sure to keep an eye on your technical decisions, so that they don't add too much friction to your creative programming flow.
 
 ## Thanks for reading!
+
+In my book _Understanding the Odin Programming Language_ I have a chapter that talks about these ideas in more details. Read a sample of the book here: https://odinbook.com/
 
 If you're interested in more gamedev content, then check out my YouTube channel: https://www.youtube.com/@karl_zylinski
 
