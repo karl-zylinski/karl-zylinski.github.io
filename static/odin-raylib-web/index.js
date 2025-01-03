@@ -35,6 +35,202 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
+// include: C:\Users\Karl\AppData\Local\Temp\tmpgp0hzxvu.js
+
+  Module['expectedDataFileDownloads'] ??= 0;
+  Module['expectedDataFileDownloads']++;
+  (() => {
+    // Do not attempt to redownload the virtual filesystem data when in a pthread or a Wasm Worker context.
+    var isPthread = typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD;
+    var isWasmWorker = typeof ENVIRONMENT_IS_WASM_WORKER != 'undefined' && ENVIRONMENT_IS_WASM_WORKER;
+    if (isPthread || isWasmWorker) return;
+    var isNode = typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
+    function loadPackage(metadata) {
+
+      var PACKAGE_PATH = '';
+      if (typeof window === 'object') {
+        PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/');
+      } else if (typeof process === 'undefined' && typeof location !== 'undefined') {
+        // web worker
+        PACKAGE_PATH = encodeURIComponent(location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/');
+      }
+      var PACKAGE_NAME = 'build/web/index.data';
+      var REMOTE_PACKAGE_BASE = 'index.data';
+      var REMOTE_PACKAGE_NAME = Module['locateFile'] ? Module['locateFile'](REMOTE_PACKAGE_BASE, '') : REMOTE_PACKAGE_BASE;
+var REMOTE_PACKAGE_SIZE = metadata['remote_package_size'];
+
+      function fetchRemotePackage(packageName, packageSize, callback, errback) {
+        if (isNode) {
+          require('fs').readFile(packageName, (err, contents) => {
+            if (err) {
+              errback(err);
+            } else {
+              callback(contents.buffer);
+            }
+          });
+          return;
+        }
+        Module['dataFileDownloads'] ??= {};
+        fetch(packageName)
+          .catch((cause) => Promise.reject(new Error(`Network Error: ${packageName}`, {cause}))) // If fetch fails, rewrite the error to include the failing URL & the cause.
+          .then((response) => {
+            if (!response.ok) {
+              return Promise.reject(new Error(`${response.status}: ${response.url}`));
+            }
+
+            if (!response.body && response.arrayBuffer) { // If we're using the polyfill, readers won't be available...
+              return response.arrayBuffer().then(callback);
+            }
+
+            const reader = response.body.getReader();
+            const iterate = () => reader.read().then(handleChunk).catch((cause) => {
+              return Promise.reject(new Error(`Unexpected error while handling : ${response.url} ${cause}`, {cause}));
+            });
+
+            const chunks = [];
+            const headers = response.headers;
+            const total = Number(headers.get('Content-Length') ?? packageSize);
+            let loaded = 0;
+
+            const handleChunk = ({done, value}) => {
+              if (!done) {
+                chunks.push(value);
+                loaded += value.length;
+                Module['dataFileDownloads'][packageName] = {loaded, total};
+
+                let totalLoaded = 0;
+                let totalSize = 0;
+
+                for (const download of Object.values(Module['dataFileDownloads'])) {
+                  totalLoaded += download.loaded;
+                  totalSize += download.total;
+                }
+
+                Module['setStatus']?.(`Downloading data... (${totalLoaded}/${totalSize})`);
+                return iterate();
+              } else {
+                const packageData = new Uint8Array(chunks.map((c) => c.length).reduce((a, b) => a + b, 0));
+                let offset = 0;
+                for (const chunk of chunks) {
+                  packageData.set(chunk, offset);
+                  offset += chunk.length;
+                }
+                callback(packageData.buffer);
+              }
+            };
+
+            Module['setStatus']?.('Downloading data...');
+            return iterate();
+          });
+      };
+
+      function handleError(error) {
+        console.error('package error:', error);
+      };
+
+      var fetchedCallback = null;
+      var fetched = Module['getPreloadedPackage'] ? Module['getPreloadedPackage'](REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE) : null;
+
+      if (!fetched) fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, (data) => {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+
+    function runWithFS(Module) {
+
+      function assert(check, msg) {
+        if (!check) throw msg + new Error().stack;
+      }
+Module['FS_createPath']("/", "assets", true, true);
+
+      /** @constructor */
+      function DataRequest(start, end, audio) {
+        this.start = start;
+        this.end = end;
+        this.audio = audio;
+      }
+      DataRequest.prototype = {
+        requests: {},
+        open: function(mode, name) {
+          this.name = name;
+          this.requests[name] = this;
+          Module['addRunDependency'](`fp ${this.name}`);
+        },
+        send: function() {},
+        onload: function() {
+          var byteArray = this.byteArray.subarray(this.start, this.end);
+          this.finish(byteArray);
+        },
+        finish: function(byteArray) {
+          var that = this;
+          // canOwn this data in the filesystem, it is a slide into the heap that will never change
+          Module['FS_createDataFile'](this.name, null, byteArray, true, true, true);
+          Module['removeRunDependency'](`fp ${that.name}`);
+          this.requests[this.name] = null;
+        }
+      };
+
+      var files = metadata['files'];
+      for (var i = 0; i < files.length; ++i) {
+        new DataRequest(files[i]['start'], files[i]['end'], files[i]['audio'] || 0).open('GET', files[i]['filename']);
+      }
+
+      function processPackageData(arrayBuffer) {
+        assert(arrayBuffer, 'Loading data file failed.');
+        assert(arrayBuffer.constructor.name === ArrayBuffer.name, 'bad input to processPackageData');
+        var byteArray = new Uint8Array(arrayBuffer);
+        var curr;
+        // Reuse the bytearray from the XHR as the source for file reads.
+          DataRequest.prototype.byteArray = byteArray;
+          var files = metadata['files'];
+          for (var i = 0; i < files.length; ++i) {
+            DataRequest.prototype.requests[files[i].filename].onload();
+          }          Module['removeRunDependency']('datafile_build/web/index.data');
+
+      };
+      Module['addRunDependency']('datafile_build/web/index.data');
+
+      Module['preloadResults'] ??= {};
+
+      Module['preloadResults'][PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+
+    }
+    if (Module['calledRun']) {
+      runWithFS(Module);
+    } else {
+      (Module['preRun'] ??= []).push(runWithFS); // FS is not initialized yet, wait for it
+    }
+
+    }
+    loadPackage({"files": [{"filename": "/assets/long_cat.png", "start": 0, "end": 183}, {"filename": "/assets/round_cat.png", "start": 183, "end": 500}], "remote_package_size": 500});
+
+  })();
+
+// end include: C:\Users\Karl\AppData\Local\Temp\tmpgp0hzxvu.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmpyvj1up90.js
+
+    // All the pre-js content up to here must remain later on, we need to run
+    // it.
+    if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
+    var necessaryPreJSTasks = Module['preRun'].slice();
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmpyvj1up90.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmp7_n9hl4m.js
+
+    if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
+    necessaryPreJSTasks.forEach((task) => {
+      if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
+    });
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmp7_n9hl4m.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -253,6 +449,32 @@ if (typeof WebAssembly != 'object') {
   err('no native wasm support detected');
 }
 
+// include: base64Utils.js
+// Converts a string of base64 into a byte array (Uint8Array).
+function intArrayFromBase64(s) {
+  if (typeof ENVIRONMENT_IS_NODE != 'undefined' && ENVIRONMENT_IS_NODE) {
+    var buf = Buffer.from(s, 'base64');
+    return new Uint8Array(buf.buffer, buf.byteOffset, buf.length);
+  }
+
+  var decoded = atob(s);
+  var bytes = new Uint8Array(decoded.length);
+  for (var i = 0 ; i < decoded.length ; ++i) {
+    bytes[i] = decoded.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// If filename is a base64 data URI, parses and returns data (Buffer on node,
+// Uint8Array otherwise). If filename is not a base64 data URI, returns undefined.
+function tryParseAsDataURI(filename) {
+  if (!isDataURI(filename)) {
+    return;
+  }
+
+  return intArrayFromBase64(filename.slice(dataURIPrefix.length));
+}
+// end include: base64Utils.js
 // Wasm globals
 
 var wasmMemory;
@@ -880,48 +1102,48 @@ function dbg(...args) {
 // === Body ===
 
 var ASM_CONSTS = {
-  129048: () => { if (document.fullscreenElement) return 1; },  
- 129094: () => { return document.getElementById('canvas').width; },  
- 129146: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 129214: () => { document.exitFullscreen(); },  
- 129241: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 129314: () => { if (document.fullscreenElement) return 1; },  
- 129360: () => { return document.getElementById('canvas').width; },  
- 129412: () => { return screen.width; },  
- 129437: () => { document.exitFullscreen(); },  
- 129464: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 129597: () => { return window.innerWidth; },  
- 129623: () => { return window.innerHeight; },  
- 129650: () => { if (document.fullscreenElement) return 1; },  
- 129696: () => { return document.getElementById('canvas').width; },  
- 129748: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 129816: () => { if (document.fullscreenElement) return 1; },  
- 129862: () => { return document.getElementById('canvas').width; },  
- 129914: () => { return screen.width; },  
- 129939: () => { return window.innerWidth; },  
- 129965: () => { return window.innerHeight; },  
- 129992: () => { if (document.fullscreenElement) return 1; },  
- 130038: () => { return document.getElementById('canvas').width; },  
- 130090: () => { return screen.width; },  
- 130115: () => { document.exitFullscreen(); },  
- 130142: () => { if (document.fullscreenElement) return 1; },  
- 130188: () => { return document.getElementById('canvas').width; },  
- 130240: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 130308: () => { document.exitFullscreen(); },  
- 130335: ($0) => { document.getElementById('canvas').style.opacity = $0; },  
- 130393: () => { return screen.width; },  
- 130418: () => { return screen.height; },  
- 130444: () => { return window.screenX; },  
- 130471: () => { return window.screenY; },  
- 130498: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 130551: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 130622: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 130679: ($0, $1, $2, $3) => { try { navigator.getGamepads()[$0].vibrationActuator.playEffect('dual-rumble', { startDelay: 0, duration: $3, weakMagnitude: $1, strongMagnitude: $2 }); } catch (e) { try { navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3); } catch (e) { } } },  
- 130935: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 131006: () => { if (document.fullscreenElement) return 1; },  
- 131052: () => { return window.innerWidth; },  
- 131078: () => { return window.innerHeight; },  
- 131105: () => { if (document.pointerLockElement) return 1; }
+  130104: () => { if (document.fullscreenElement) return 1; },  
+ 130150: () => { return document.getElementById('canvas').width; },  
+ 130202: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 130270: () => { document.exitFullscreen(); },  
+ 130297: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 130370: () => { if (document.fullscreenElement) return 1; },  
+ 130416: () => { return document.getElementById('canvas').width; },  
+ 130468: () => { return screen.width; },  
+ 130493: () => { document.exitFullscreen(); },  
+ 130520: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 130653: () => { return window.innerWidth; },  
+ 130679: () => { return window.innerHeight; },  
+ 130706: () => { if (document.fullscreenElement) return 1; },  
+ 130752: () => { return document.getElementById('canvas').width; },  
+ 130804: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 130872: () => { if (document.fullscreenElement) return 1; },  
+ 130918: () => { return document.getElementById('canvas').width; },  
+ 130970: () => { return screen.width; },  
+ 130995: () => { return window.innerWidth; },  
+ 131021: () => { return window.innerHeight; },  
+ 131048: () => { if (document.fullscreenElement) return 1; },  
+ 131094: () => { return document.getElementById('canvas').width; },  
+ 131146: () => { return screen.width; },  
+ 131171: () => { document.exitFullscreen(); },  
+ 131198: () => { if (document.fullscreenElement) return 1; },  
+ 131244: () => { return document.getElementById('canvas').width; },  
+ 131296: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 131364: () => { document.exitFullscreen(); },  
+ 131391: ($0) => { document.getElementById('canvas').style.opacity = $0; },  
+ 131449: () => { return screen.width; },  
+ 131474: () => { return screen.height; },  
+ 131500: () => { return window.screenX; },  
+ 131527: () => { return window.screenY; },  
+ 131554: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 131607: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 131678: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 131735: ($0, $1, $2, $3) => { try { navigator.getGamepads()[$0].vibrationActuator.playEffect('dual-rumble', { startDelay: 0, duration: $3, weakMagnitude: $1, strongMagnitude: $2 }); } catch (e) { try { navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3); } catch (e) { } } },  
+ 131991: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 132062: () => { if (document.fullscreenElement) return 1; },  
+ 132108: () => { return window.innerWidth; },  
+ 132134: () => { return window.innerHeight; },  
+ 132161: () => { if (document.pointerLockElement) return 1; }
 };
 
 // end include: preamble.js
@@ -9048,6 +9270,7 @@ var ASM_CONSTS = {
 
 
 
+
   var runAndAbortIfError = (func) => {
       try {
         return func();
@@ -9335,9 +9558,25 @@ var ASM_CONSTS = {
       },
   };
 
+  var FS_createPath = FS.createPath;
+
+
+
+  var FS_unlink = (path) => FS.unlink(path);
+
+  var FS_createLazyFile = FS.createLazyFile;
+
+  var FS_createDevice = FS.createDevice;
+
   FS.createPreloadedFile = FS_createPreloadedFile;
   FS.staticInit();
   // Set module methods based on EXPORTED_RUNTIME_METHODS
+  Module["FS_createPath"] = FS.createPath;
+  Module["FS_createDataFile"] = FS.createDataFile;
+  Module["FS_createPreloadedFile"] = FS.createPreloadedFile;
+  Module["FS_unlink"] = FS.unlink;
+  Module["FS_createLazyFile"] = FS.createLazyFile;
+  Module["FS_createDevice"] = FS.createDevice;
   ;
 for (var i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));;
 var miniTempWebGLFloatBuffersStorage = new Float32Array(288);
@@ -9928,9 +10167,9 @@ var __emscripten_stack_alloc = (a0) => (__emscripten_stack_alloc = wasmExports['
 var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
 var dynCall_iiii = Module['dynCall_iiii'] = createExportWrapper('dynCall_iiii', 4);
 var dynCall_v = Module['dynCall_v'] = createExportWrapper('dynCall_v', 1);
-var dynCall_viiiiiii = Module['dynCall_viiiiiii'] = createExportWrapper('dynCall_viiiiiii', 8);
 var dynCall_iiiiiiiiii = Module['dynCall_iiiiiiiiii'] = createExportWrapper('dynCall_iiiiiiiiii', 10);
 var dynCall_viiiiii = Module['dynCall_viiiiii'] = createExportWrapper('dynCall_viiiiii', 7);
+var dynCall_viiiiiii = Module['dynCall_viiiiiii'] = createExportWrapper('dynCall_viiiiiii', 8);
 var dynCall_viiiii = Module['dynCall_viiiii'] = createExportWrapper('dynCall_viiiii', 6);
 var dynCall_viiiiijii = Module['dynCall_viiiiijii'] = createExportWrapper('dynCall_viiiiijii', 10);
 var dynCall_iii = Module['dynCall_iii'] = createExportWrapper('dynCall_iii', 3);
@@ -9965,6 +10204,14 @@ var _asyncify_stop_rewind = createExportWrapper('asyncify_stop_rewind', 0);
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
 
+Module['addRunDependency'] = addRunDependency;
+Module['removeRunDependency'] = removeRunDependency;
+Module['FS_createPreloadedFile'] = FS_createPreloadedFile;
+Module['FS_unlink'] = FS_unlink;
+Module['FS_createPath'] = FS_createPath;
+Module['FS_createDevice'] = FS_createDevice;
+Module['FS_createDataFile'] = FS_createDataFile;
+Module['FS_createLazyFile'] = FS_createLazyFile;
 var missingLibrarySymbols = [
   'writeI53ToI64Clamped',
   'writeI53ToI64Signaling',
@@ -10077,7 +10324,6 @@ var missingLibrarySymbols = [
   'addDays',
   'getSocketFromFD',
   'getSocketAddress',
-  'FS_unlink',
   'FS_mkdirTree',
   '_setNetworkCallback',
   'writeGLArray',
@@ -10100,8 +10346,6 @@ var unexportedSymbols = [
   'addOnPreMain',
   'addOnExit',
   'addOnPostRun',
-  'addRunDependency',
-  'removeRunDependency',
   'out',
   'err',
   'callMain',
@@ -10200,17 +10444,12 @@ var unexportedSymbols = [
   'MONTH_DAYS_LEAP_CUMULATIVE',
   'SYSCALLS',
   'preloadPlugins',
-  'FS_createPreloadedFile',
   'FS_modeStringToFlags',
   'FS_getMode',
   'FS_stdin_getChar_buffer',
   'FS_stdin_getChar',
-  'FS_createPath',
-  'FS_createDevice',
   'FS_readFile',
   'FS',
-  'FS_createDataFile',
-  'FS_createLazyFile',
   'MEMFS',
   'TTY',
   'PIPEFS',
