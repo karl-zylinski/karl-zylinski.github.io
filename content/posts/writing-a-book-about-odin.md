@@ -385,6 +385,9 @@ The same program that generates the HTML version generates the EPUB version. How
 
 When I first tried to open my book on a real Kindle, it took like 2 minutes to load. Through trial and error, I figured out that it was because I had bundled the base64 encoded fonts. I didn't need the fonts, I had just forgotten to remove the CSS file that contained them. Don't do that. The eReader will decide on fonts itself. You really have to "let go of control" on eReaders. Just make sure the book looks OK on the popular eReaders and EPUB reading apps, and make minimal CSS changes to fix anything that is wrong.
 
+## The future
+I still haven't decided on if I want to make a physical book. I would have to do _a lot_ of extra work to get that done. Physical books need to be manually typeset to look good. That means putting the text in and then going over every page and making sure everything is in the right place and looking tidy. It's much more than just PDF-printing the HTML or EPUB version.
+
 ## Thanks for reading
 
 Check out the book at https://odinbook.com/
