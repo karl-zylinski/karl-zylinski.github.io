@@ -16,7 +16,7 @@ Exactly how one gets started on a project varies. I didn't plan to write a book 
 
 The resulting blog post is called "Introduction to the Odin Programming Language". It took a few days to write. It's mostly improvised, I just wrote down things I wanted people to understand, while trying to make it friendly to newcomers. You can read it here: https://zylinski.se/posts/introduction-to-odin/
 
-My creative projects often seem to start with some kind of "happy accident": Something small that leads to something bigger. I didn't know I had written the seed a whole book, and that I would be working on it for many months.
+My creative projects often seem to start with some kind of "happy accident": Something small that leads to something bigger. I didn't know I had written the seed of a whole book and that I would be working on it for many months.
 
 ## Book ideas
 
