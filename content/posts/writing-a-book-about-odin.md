@@ -1,5 +1,5 @@
 ---
-title: "Writing 'Understanding the Odin Programming Langauge'"
+title: "Writing 'Understanding the Odin Programming Language'"
 date: 2025-01-21T16:28:00+01:00
 
 cover:
