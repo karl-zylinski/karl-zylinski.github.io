@@ -4,33 +4,67 @@
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-	<title>Odin + SOKOL on the web</title>
-	<meta name="title" content="Odin + SOKOL on the web">
-	<meta name="description" content="Make games using Odin + SOKOL that work in the browser">
+	<title>Odin + sokol on the web</title>
+	<meta name="title" content="Odin + sokol on the web">
+	<meta name="description" content="Make games using Odin + sokol that work in the browser">
 	<meta name="viewport" content="width=device-width">
 
 	<style>
 		body { 
-			margin: 0px; 
-			overflow: hidden; 
+			margin: 0;
 			background-color: black;
 		}
-		canvas.game_canvas { 
-			border: 0px none; 
-			background-color: black;
-			padding-left: 0;
-			padding-right: 0;
-			margin-left: auto;
-			margin-right: auto;
+		canvas.game_canvas {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			margin: 0px;
+			border: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
 			display: block;
+			image-rendering: optimizeSpeed;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: optimize-contrast;
+			image-rendering: crisp-edges;
+			image-rendering: pixelated;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+		.heading {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			color: #fff1e4;
+			text-decoration: none;
+			z-index: 1;
+			font-family: "Arial", sans-serif;
+			font-size: 24px;
+			font-weight: bold;
+		}
+		.heading span {
+			display: inline-block;
+			margin-right: 24px;
+		}
+		.heading a {
+			color: #0d528f;
 		}
 	</style>
 </head>
 <body>
 	<canvas class="game_canvas" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+
+	<div class="heading">
+		<span>Odin + Sokol on the web</span>
+		<span><a href="https://github.com/karl-zylinski/odin-sokol-web">Source</a></span>
+	</div>
 	<script type="text/javascript" src="odin.js"></script>
 	<script>
 		var odinMemoryInterface = new odin.WasmMemoryInterface();
+
+		// `4` for `js_wasm32` target, `8` for `js_wasm64p32` target.
 		odinMemoryInterface.setIntSize(4);
 		var odinImports = odin.setupDefaultImports(odinMemoryInterface);
 
@@ -43,46 +77,20 @@
 					...imports
 				}
 
+				// This will load the WASM file with the game inside. It will
+				// use both the emscripten and odin.js imports. This makes it
+				// possible to use the `js` "OS" in our Odin code.
 				return WebAssembly.instantiateStreaming(fetch("index.wasm"), newImports).then(function(output) {
 					var e = output.instance.exports
 					odinMemoryInterface.setExports(e)
 					odinMemoryInterface.setMemory(e.memory)
 					successCallback(output.instance);
 
-					// Calls any procedure marked with @init
+					// This calls all procedures tagged with `@init` and then
+					// it calls the `main` proc. Any procs marked with `@fini`
+					// are called when sokol shuts down.
 					e._start()
 
-					// See source/main_web/main_web.odin for main_start,
-					// main_update and main_end.
-					e.main_start()
-
-					function send_resize() {
-						var canvas = document.getElementById('canvas');
-						e.web_window_size_changed(canvas.width, canvas.height)
-					}
-
-					window.addEventListener('resize', function(event) {
-						send_resize()
-					}, true);
-
-					// This can probably be done better: Ideally we'd feed the
-					// initial size to `main_start`. But there seems to be a
-					// race condition. `canvas` doesn't have it's correct size yet.
-					send_resize()
-
-					// Runs the "main loop".
-					/*function do_main_update() {
-						if (!e.main_update()) {
-							e.main_end()
-
-							// Calls procedures marked with @fini
-							e._end();
-							return;
-						}
-						window.requestAnimationFrame(do_main_update);
-					}
-
-					window.requestAnimationFrame(do_main_update);*/
 					return output.instance.exports;
 				});
 			},
