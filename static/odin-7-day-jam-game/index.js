@@ -35,7 +35,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\Karl\AppData\Local\Temp\tmp94g_i4vx.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmpkjr7zbch.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -216,21 +216,21 @@ Module['FS_createPath']("/", "assets", true, true);
 
   })();
 
-// end include: C:\Users\Karl\AppData\Local\Temp\tmp94g_i4vx.js
-// include: C:\Users\Karl\AppData\Local\Temp\tmpee884i6h.js
+// end include: C:\Users\Karl\AppData\Local\Temp\tmpkjr7zbch.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmp92gn265c.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\Karl\AppData\Local\Temp\tmpee884i6h.js
-// include: C:\Users\Karl\AppData\Local\Temp\tmpdl67sj4_.js
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmp92gn265c.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmpge2b2rbj.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\Karl\AppData\Local\Temp\tmpdl67sj4_.js
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmpge2b2rbj.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -6543,10 +6543,10 @@ var _game_app_default_desc = Module['_game_app_default_desc'] = createExportWrap
 var __start = Module['__start'] = createExportWrapper('_start', 0);
 var __end = Module['__end'] = createExportWrapper('_end', 0);
 var _game_init = Module['_game_init'] = createExportWrapper('game_init', 1);
+var _game_hot_reloaded = Module['_game_hot_reloaded'] = createExportWrapper('game_hot_reloaded', 2);
 var _game_frame = Module['_game_frame'] = createExportWrapper('game_frame', 1);
 var _game_event = Module['_game_event'] = createExportWrapper('game_event', 2);
 var _game_cleanup = Module['_game_cleanup'] = createExportWrapper('game_cleanup', 1);
-var _game_hot_reloaded = Module['_game_hot_reloaded'] = createExportWrapper('game_hot_reloaded', 2);
 var _game_memory = Module['_game_memory'] = createExportWrapper('game_memory', 1);
 var _game_memory_size = Module['_game_memory_size'] = createExportWrapper('game_memory_size', 1);
 var _game_force_restart = Module['_game_force_restart'] = createExportWrapper('game_force_restart', 1);
