@@ -35,7 +35,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: C:\Users\Karl\AppData\Local\Temp\tmpkjr7zbch.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmpasmlx3my.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -216,21 +216,21 @@ Module['FS_createPath']("/", "assets", true, true);
 
   })();
 
-// end include: C:\Users\Karl\AppData\Local\Temp\tmpkjr7zbch.js
-// include: C:\Users\Karl\AppData\Local\Temp\tmp92gn265c.js
+// end include: C:\Users\Karl\AppData\Local\Temp\tmpasmlx3my.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmp6gni4p4d.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: C:\Users\Karl\AppData\Local\Temp\tmp92gn265c.js
-// include: C:\Users\Karl\AppData\Local\Temp\tmpge2b2rbj.js
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmp6gni4p4d.js
+// include: C:\Users\Karl\AppData\Local\Temp\tmpj16dcob9.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: C:\Users\Karl\AppData\Local\Temp\tmpge2b2rbj.js
+  // end include: C:\Users\Karl\AppData\Local\Temp\tmpj16dcob9.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -1190,6 +1190,82 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       }
     };
 
+  var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined;
+  
+    /**
+     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
+     * array that contains uint8 values, returns a copy of that string as a
+     * Javascript String object.
+     * heapOrArray is either a regular array, or a JavaScript typed array view.
+     * @param {number=} idx
+     * @param {number=} maxBytesToRead
+     * @return {string}
+     */
+  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
+      var endIdx = idx + maxBytesToRead;
+      var endPtr = idx;
+      // TextDecoder needs to know the byte length in advance, it doesn't stop on
+      // null terminator by itself.  Also, use the length info to avoid running tiny
+      // strings through TextDecoder, since .subarray() allocates garbage.
+      // (As a tiny code save trick, compare endPtr against endIdx using a negation,
+      // so that undefined/NaN means Infinity)
+      while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
+  
+      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
+        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
+      }
+      var str = '';
+      // If building with TextDecoder, we have already computed the string length
+      // above, so test loop end condition against that
+      while (idx < endPtr) {
+        // For UTF8 byte structure, see:
+        // http://en.wikipedia.org/wiki/UTF-8#Description
+        // https://www.ietf.org/rfc/rfc2279.txt
+        // https://tools.ietf.org/html/rfc3629
+        var u0 = heapOrArray[idx++];
+        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
+        var u1 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
+        var u2 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xF0) == 0xE0) {
+          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
+        } else {
+          if ((u0 & 0xF8) != 0xF0) warnOnce('Invalid UTF-8 leading byte ' + ptrToString(u0) + ' encountered when deserializing a UTF-8 string in wasm memory to a JS string!');
+          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
+        }
+  
+        if (u0 < 0x10000) {
+          str += String.fromCharCode(u0);
+        } else {
+          var ch = u0 - 0x10000;
+          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
+        }
+      }
+      return str;
+    };
+  
+    /**
+     * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
+     * emscripten HEAP, returns a copy of that string as a Javascript String object.
+     *
+     * @param {number} ptr
+     * @param {number=} maxBytesToRead - An optional length that specifies the
+     *   maximum number of bytes to read. You can omit this parameter to scan the
+     *   string until the first 0 byte. If maxBytesToRead is passed, and the string
+     *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
+     *   string will cut short at that byte index (i.e. maxBytesToRead will not
+     *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
+     *   frequent uses of UTF8ToString() with and without maxBytesToRead may throw
+     *   JS JIT optimizations off, so it is worth to consider consistently using one
+     * @return {string}
+     */
+  var UTF8ToString = (ptr, maxBytesToRead) => {
+      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
+      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : '';
+    };
+  var ___assert_fail = (condition, filename, line, func) =>
+      abort(`Assertion failed: ${UTF8ToString(condition)}, at: ` + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
+
   var __abort_js = () =>
       abort('native code called abort()');
 
@@ -1646,79 +1722,6 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       },
   };
   
-  var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined;
-  
-    /**
-     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
-     * array that contains uint8 values, returns a copy of that string as a
-     * Javascript String object.
-     * heapOrArray is either a regular array, or a JavaScript typed array view.
-     * @param {number=} idx
-     * @param {number=} maxBytesToRead
-     * @return {string}
-     */
-  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
-      var endIdx = idx + maxBytesToRead;
-      var endPtr = idx;
-      // TextDecoder needs to know the byte length in advance, it doesn't stop on
-      // null terminator by itself.  Also, use the length info to avoid running tiny
-      // strings through TextDecoder, since .subarray() allocates garbage.
-      // (As a tiny code save trick, compare endPtr against endIdx using a negation,
-      // so that undefined/NaN means Infinity)
-      while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
-  
-      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
-        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
-      }
-      var str = '';
-      // If building with TextDecoder, we have already computed the string length
-      // above, so test loop end condition against that
-      while (idx < endPtr) {
-        // For UTF8 byte structure, see:
-        // http://en.wikipedia.org/wiki/UTF-8#Description
-        // https://www.ietf.org/rfc/rfc2279.txt
-        // https://tools.ietf.org/html/rfc3629
-        var u0 = heapOrArray[idx++];
-        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
-        var u1 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
-        var u2 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xF0) == 0xE0) {
-          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
-        } else {
-          if ((u0 & 0xF8) != 0xF0) warnOnce('Invalid UTF-8 leading byte ' + ptrToString(u0) + ' encountered when deserializing a UTF-8 string in wasm memory to a JS string!');
-          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
-        }
-  
-        if (u0 < 0x10000) {
-          str += String.fromCharCode(u0);
-        } else {
-          var ch = u0 - 0x10000;
-          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
-        }
-      }
-      return str;
-    };
-  
-    /**
-     * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
-     * emscripten HEAP, returns a copy of that string as a Javascript String object.
-     *
-     * @param {number} ptr
-     * @param {number=} maxBytesToRead - An optional length that specifies the
-     *   maximum number of bytes to read. You can omit this parameter to scan the
-     *   string until the first 0 byte. If maxBytesToRead is passed, and the string
-     *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
-     *   string will cut short at that byte index (i.e. maxBytesToRead will not
-     *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
-     *   frequent uses of UTF8ToString() with and without maxBytesToRead may throw
-     *   JS JIT optimizations off, so it is worth to consider consistently using one
-     * @return {string}
-     */
-  var UTF8ToString = (ptr, maxBytesToRead) => {
-      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
-      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : '';
-    };
   var maybeCStringToJsString = (cString) => {
       // "cString > 2" checks if the input is a number, and isn't of the special
       // values we accept here, EMSCRIPTEN_EVENT_TARGET_* (which map to 0, 1, 2).
@@ -2696,6 +2699,10 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
   
     };
 
+  var _glBindRenderbuffer = (target, renderbuffer) => {
+      GLctx.bindRenderbuffer(target, GL.renderbuffers[renderbuffer]);
+    };
+
   var _glBindSampler = (unit, sampler) => {
       GLctx.bindSampler(unit, GL.samplers[sampler]);
     };
@@ -2745,6 +2752,8 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       GLctx.bufferSubData(target, offset, HEAPU8.subarray(data, data+size));
     };
 
+  var _glCheckFramebufferStatus = (x0) => GLctx.checkFramebufferStatus(x0);
+
   var _glClearBufferfi = (x0, x1, x2, x3) => GLctx.clearBufferfi(x0, x1, x2, x3);
 
   var _glClearBufferfv = (buffer, drawbuffer, value) => {
@@ -2763,6 +2772,31 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
 
   var _glCompileShader = (shader) => {
       GLctx.compileShader(GL.shaders[shader]);
+    };
+
+  var _glCompressedTexImage2D = (target, level, internalFormat, width, height, border, imageSize, data) => {
+      // `data` may be null here, which means "allocate uniniitalized space but
+      // don't upload" in GLES parlance, but `compressedTexImage2D` requires the
+      // final data parameter, so we simply pass a heap view starting at zero
+      // effectively uploading whatever happens to be near address zero.  See
+      // https://github.com/emscripten-core/emscripten/issues/19300.
+      if (GL.currentContext.version >= 2) {
+        if (GLctx.currentPixelUnpackBufferBinding || !imageSize) {
+          GLctx.compressedTexImage2D(target, level, internalFormat, width, height, border, imageSize, data);
+          return;
+        }
+        GLctx.compressedTexImage2D(target, level, internalFormat, width, height, border, HEAPU8, data, imageSize);
+        return;
+      }
+      GLctx.compressedTexImage2D(target, level, internalFormat, width, height, border, HEAPU8.subarray((data), data+imageSize));
+    };
+
+  var _glCompressedTexImage3D = (target, level, internalFormat, width, height, depth, border, imageSize, data) => {
+      if (GLctx.currentPixelUnpackBufferBinding) {
+        GLctx.compressedTexImage3D(target, level, internalFormat, width, height, depth, border, imageSize, data);
+      } else {
+        GLctx.compressedTexImage3D(target, level, internalFormat, width, height, depth, border, HEAPU8, data, imageSize);
+      }
     };
 
   var _glCreateProgram = () => {
@@ -2908,6 +2942,18 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       GLctx.drawArraysInstanced(mode, first, count, primcount);
     };
 
+  var tempFixedLengthArray = [];
+  
+  var _glDrawBuffers = (n, bufs) => {
+  
+      var bufArray = tempFixedLengthArray[n];
+      for (var i = 0; i < n; i++) {
+        bufArray[i] = HEAP32[(((bufs)+(i*4))>>2)];
+      }
+  
+      GLctx.drawBuffers(bufArray);
+    };
+
   var _glDrawElements = (mode, count, type, indices) => {
   
       GLctx.drawElements(mode, count, type, indices);
@@ -2924,10 +2970,44 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       GLctx.enableVertexAttribArray(index);
     };
 
+  var _glFramebufferRenderbuffer = (target, attachment, renderbuffertarget, renderbuffer) => {
+      GLctx.framebufferRenderbuffer(target, attachment, renderbuffertarget,
+                                         GL.renderbuffers[renderbuffer]);
+    };
+
+  var _glFramebufferTexture2D = (target, attachment, textarget, texture, level) => {
+      GLctx.framebufferTexture2D(target, attachment, textarget,
+                                      GL.textures[texture], level);
+    };
+
+  var _glFramebufferTextureLayer = (target, attachment, texture, level, layer) => {
+      GLctx.framebufferTextureLayer(target, attachment, GL.textures[texture], level, layer);
+    };
+
   var _glFrontFace = (x0) => GLctx.frontFace(x0);
 
   var _glGenBuffers = (n, buffers) => {
       GL.genObject(n, buffers, 'createBuffer', GL.buffers
+        );
+    };
+
+  var _glGenFramebuffers = (n, ids) => {
+      GL.genObject(n, ids, 'createFramebuffer', GL.framebuffers
+        );
+    };
+
+  var _glGenRenderbuffers = (n, renderbuffers) => {
+      GL.genObject(n, renderbuffers, 'createRenderbuffer', GL.renderbuffers
+        );
+    };
+
+  var _glGenSamplers = (n, samplers) => {
+      GL.genObject(n, samplers, 'createSampler', GL.samplers
+        );
+    };
+
+  var _glGenTextures = (n, textures) => {
+      GL.genObject(n, textures, 'createTexture', GL.textures
         );
     };
 
@@ -2939,6 +3019,12 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
   
   var _glGetAttribLocation = (program, name) =>
       GLctx.getAttribLocation(GL.programs[program], UTF8ToString(name));
+
+  var _glGetError = () => {
+      var error = GLctx.getError() || GL.lastError;
+      GL.lastError = 0/*GL_NO_ERROR*/;
+      return error;
+    };
 
   var readI53FromI64 = (ptr) => {
       return HEAPU32[((ptr)>>2)] + HEAP32[(((ptr)+(4))>>2)] * 4294967296;
@@ -3347,7 +3433,6 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
       return -1;
     };
 
-  var tempFixedLengthArray = [];
   var _glInvalidateFramebuffer = (target, numAttachments, attachments) => {
       var list = tempFixedLengthArray[numAttachments];
       for (var i = 0; i < numAttachments; i++) {
@@ -3379,6 +3464,16 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
 
   var _glReadBuffer = (x0) => GLctx.readBuffer(x0);
 
+  var _glRenderbufferStorageMultisample = (x0, x1, x2, x3, x4) => GLctx.renderbufferStorageMultisample(x0, x1, x2, x3, x4);
+
+  var _glSamplerParameterf = (sampler, pname, param) => {
+      GLctx.samplerParameterf(GL.samplers[sampler], pname, param);
+    };
+
+  var _glSamplerParameteri = (sampler, pname, param) => {
+      GLctx.samplerParameteri(GL.samplers[sampler], pname, param);
+    };
+
   var _glScissor = (x0, x1, x2, x3) => GLctx.scissor(x0, x1, x2, x3);
 
   var _glShaderSource = (shader, count, string, length) => {
@@ -3396,6 +3491,113 @@ function slog_js_log(level,c_str) { const str = UTF8ToString(c_str); switch (lev
   var _glStencilOp = (x0, x1, x2) => GLctx.stencilOp(x0, x1, x2);
 
   var _glStencilOpSeparate = (x0, x1, x2, x3) => GLctx.stencilOpSeparate(x0, x1, x2, x3);
+
+  var computeUnpackAlignedImageSize = (width, height, sizePerPixel) => {
+      function roundedToNextMultipleOf(x, y) {
+        return (x + y - 1) & -y;
+      }
+      var plainRowSize = (GL.unpackRowLength || width) * sizePerPixel;
+      var alignedRowSize = roundedToNextMultipleOf(plainRowSize, GL.unpackAlignment);
+      return height * alignedRowSize;
+    };
+  
+  var colorChannelsInGlTextureFormat = (format) => {
+      // Micro-optimizations for size: map format to size by subtracting smallest
+      // enum value (0x1902) from all values first.  Also omit the most common
+      // size value (1) from the list, which is assumed by formats not on the
+      // list.
+      var colorChannels = {
+        // 0x1902 /* GL_DEPTH_COMPONENT */ - 0x1902: 1,
+        // 0x1906 /* GL_ALPHA */ - 0x1902: 1,
+        5: 3,
+        6: 4,
+        // 0x1909 /* GL_LUMINANCE */ - 0x1902: 1,
+        8: 2,
+        29502: 3,
+        29504: 4,
+        // 0x1903 /* GL_RED */ - 0x1902: 1,
+        26917: 2,
+        26918: 2,
+        // 0x8D94 /* GL_RED_INTEGER */ - 0x1902: 1,
+        29846: 3,
+        29847: 4
+      };
+      return colorChannels[format - 0x1902]||1;
+    };
+  
+  var heapObjectForWebGLType = (type) => {
+      // Micro-optimization for size: Subtract lowest GL enum number (0x1400/* GL_BYTE */) from type to compare
+      // smaller values for the heap, for shorter generated code size.
+      // Also the type HEAPU16 is not tested for explicitly, but any unrecognized type will return out HEAPU16.
+      // (since most types are HEAPU16)
+      type -= 0x1400;
+      if (type == 0) return HEAP8;
+  
+      if (type == 1) return HEAPU8;
+  
+      if (type == 2) return HEAP16;
+  
+      if (type == 4) return HEAP32;
+  
+      if (type == 6) return HEAPF32;
+  
+      if (type == 5
+        || type == 28922
+        || type == 28520
+        || type == 30779
+        || type == 30782
+        )
+        return HEAPU32;
+  
+      return HEAPU16;
+    };
+  
+  var toTypedArrayIndex = (pointer, heap) =>
+      pointer >>> (31 - Math.clz32(heap.BYTES_PER_ELEMENT));
+  
+  var emscriptenWebGLGetTexPixelData = (type, format, width, height, pixels, internalFormat) => {
+      var heap = heapObjectForWebGLType(type);
+      var sizePerPixel = colorChannelsInGlTextureFormat(format) * heap.BYTES_PER_ELEMENT;
+      var bytes = computeUnpackAlignedImageSize(width, height, sizePerPixel);
+      return heap.subarray(toTypedArrayIndex(pixels, heap), toTypedArrayIndex(pixels + bytes, heap));
+    };
+  
+  
+  
+  var _glTexImage2D = (target, level, internalFormat, width, height, border, format, type, pixels) => {
+      if (GL.currentContext.version >= 2) {
+        if (GLctx.currentPixelUnpackBufferBinding) {
+          GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
+          return;
+        }
+        if (pixels) {
+          var heap = heapObjectForWebGLType(type);
+          var index = toTypedArrayIndex(pixels, heap);
+          GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, heap, index);
+          return;
+        }
+      }
+      var pixelData = pixels ? emscriptenWebGLGetTexPixelData(type, format, width, height, pixels, internalFormat) : null;
+      GLctx.texImage2D(target, level, internalFormat, width, height, border, format, type, pixelData);
+    };
+
+  
+  var _glTexImage3D = (target, level, internalFormat, width, height, depth, border, format, type, pixels) => {
+      if (GLctx.currentPixelUnpackBufferBinding) {
+        GLctx.texImage3D(target, level, internalFormat, width, height, depth, border, format, type, pixels);
+      } else if (pixels) {
+        var heap = heapObjectForWebGLType(type);
+        GLctx.texImage3D(target, level, internalFormat, width, height, depth, border, format, type, heap, toTypedArrayIndex(pixels, heap));
+      } else {
+        GLctx.texImage3D(target, level, internalFormat, width, height, depth, border, format, type, null);
+      }
+    };
+
+  var _glTexParameteri = (x0, x1, x2) => GLctx.texParameteri(x0, x1, x2);
+
+  var _glTexStorage2D = (x0, x1, x2, x3, x4) => GLctx.texStorage2D(x0, x1, x2, x3, x4);
+
+  var _glTexStorage3D = (x0, x1, x2, x3, x4, x5) => GLctx.texStorage3D(x0, x1, x2, x3, x4, x5);
 
   var webglGetUniformLocation = (location) => {
       var p = GLctx.currentProgram;
@@ -6287,6 +6489,8 @@ function checkIncomingModuleAPI() {
 }
 var wasmImports = {
   /** @export */
+  __assert_fail: ___assert_fail,
+  /** @export */
   _abort_js: __abort_js,
   /** @export */
   cos: _cos,
@@ -6361,6 +6565,8 @@ var wasmImports = {
   /** @export */
   glBindFramebuffer: _glBindFramebuffer,
   /** @export */
+  glBindRenderbuffer: _glBindRenderbuffer,
+  /** @export */
   glBindSampler: _glBindSampler,
   /** @export */
   glBindTexture: _glBindTexture,
@@ -6379,6 +6585,8 @@ var wasmImports = {
   /** @export */
   glBufferSubData: _glBufferSubData,
   /** @export */
+  glCheckFramebufferStatus: _glCheckFramebufferStatus,
+  /** @export */
   glClearBufferfi: _glClearBufferfi,
   /** @export */
   glClearBufferfv: _glClearBufferfv,
@@ -6388,6 +6596,10 @@ var wasmImports = {
   glColorMask: _glColorMask,
   /** @export */
   glCompileShader: _glCompileShader,
+  /** @export */
+  glCompressedTexImage2D: _glCompressedTexImage2D,
+  /** @export */
+  glCompressedTexImage3D: _glCompressedTexImage3D,
   /** @export */
   glCreateProgram: _glCreateProgram,
   /** @export */
@@ -6423,6 +6635,8 @@ var wasmImports = {
   /** @export */
   glDrawArraysInstanced: _glDrawArraysInstanced,
   /** @export */
+  glDrawBuffers: _glDrawBuffers,
+  /** @export */
   glDrawElements: _glDrawElements,
   /** @export */
   glDrawElementsInstanced: _glDrawElementsInstanced,
@@ -6431,13 +6645,29 @@ var wasmImports = {
   /** @export */
   glEnableVertexAttribArray: _glEnableVertexAttribArray,
   /** @export */
+  glFramebufferRenderbuffer: _glFramebufferRenderbuffer,
+  /** @export */
+  glFramebufferTexture2D: _glFramebufferTexture2D,
+  /** @export */
+  glFramebufferTextureLayer: _glFramebufferTextureLayer,
+  /** @export */
   glFrontFace: _glFrontFace,
   /** @export */
   glGenBuffers: _glGenBuffers,
   /** @export */
+  glGenFramebuffers: _glGenFramebuffers,
+  /** @export */
+  glGenRenderbuffers: _glGenRenderbuffers,
+  /** @export */
+  glGenSamplers: _glGenSamplers,
+  /** @export */
+  glGenTextures: _glGenTextures,
+  /** @export */
   glGenVertexArrays: _glGenVertexArrays,
   /** @export */
   glGetAttribLocation: _glGetAttribLocation,
+  /** @export */
+  glGetError: _glGetError,
   /** @export */
   glGetIntegerv: _glGetIntegerv,
   /** @export */
@@ -6463,6 +6693,12 @@ var wasmImports = {
   /** @export */
   glReadBuffer: _glReadBuffer,
   /** @export */
+  glRenderbufferStorageMultisample: _glRenderbufferStorageMultisample,
+  /** @export */
+  glSamplerParameterf: _glSamplerParameterf,
+  /** @export */
+  glSamplerParameteri: _glSamplerParameteri,
+  /** @export */
   glScissor: _glScissor,
   /** @export */
   glShaderSource: _glShaderSource,
@@ -6476,6 +6712,16 @@ var wasmImports = {
   glStencilOp: _glStencilOp,
   /** @export */
   glStencilOpSeparate: _glStencilOpSeparate,
+  /** @export */
+  glTexImage2D: _glTexImage2D,
+  /** @export */
+  glTexImage3D: _glTexImage3D,
+  /** @export */
+  glTexParameteri: _glTexParameteri,
+  /** @export */
+  glTexStorage2D: _glTexStorage2D,
+  /** @export */
+  glTexStorage3D: _glTexStorage3D,
   /** @export */
   glUniform1fv: _glUniform1fv,
   /** @export */
@@ -6543,9 +6789,9 @@ var _game_app_default_desc = Module['_game_app_default_desc'] = createExportWrap
 var __start = Module['__start'] = createExportWrapper('_start', 0);
 var __end = Module['__end'] = createExportWrapper('_end', 0);
 var _game_init = Module['_game_init'] = createExportWrapper('game_init', 1);
-var _game_hot_reloaded = Module['_game_hot_reloaded'] = createExportWrapper('game_hot_reloaded', 2);
 var _game_frame = Module['_game_frame'] = createExportWrapper('game_frame', 1);
 var _game_event = Module['_game_event'] = createExportWrapper('game_event', 2);
+var _game_hot_reloaded = Module['_game_hot_reloaded'] = createExportWrapper('game_hot_reloaded', 2);
 var _game_cleanup = Module['_game_cleanup'] = createExportWrapper('game_cleanup', 1);
 var _game_memory = Module['_game_memory'] = createExportWrapper('game_memory', 1);
 var _game_memory_size = Module['_game_memory_size'] = createExportWrapper('game_memory_size', 1);
@@ -6699,11 +6945,6 @@ var missingLibrarySymbols = [
   'getSocketAddress',
   'FS_mkdirTree',
   '_setNetworkCallback',
-  'heapObjectForWebGLType',
-  'toTypedArrayIndex',
-  'computeUnpackAlignedImageSize',
-  'colorChannelsInGlTextureFormat',
-  'emscriptenWebGLGetTexPixelData',
   'emscriptenWebGLGetUniform',
   'emscriptenWebGLGetVertexAttrib',
   '__glGetActiveAttribOrUniform',
@@ -6833,6 +7074,8 @@ var unexportedSymbols = [
   'tempFixedLengthArray',
   'miniTempWebGLFloatBuffers',
   'miniTempWebGLIntBuffers',
+  'heapObjectForWebGLType',
+  'toTypedArrayIndex',
   'webgl_enable_ANGLE_instanced_arrays',
   'webgl_enable_OES_vertex_array_object',
   'webgl_enable_WEBGL_draw_buffers',
@@ -6842,6 +7085,9 @@ var unexportedSymbols = [
   'webgl_enable_WEBGL_polygon_mode',
   'GL',
   'emscriptenWebGLGet',
+  'computeUnpackAlignedImageSize',
+  'colorChannelsInGlTextureFormat',
+  'emscriptenWebGLGetTexPixelData',
   'webglGetUniformLocation',
   'webglPrepareUniformLocationsBeforeFirstUse',
   'webglGetLeftBracePos',
