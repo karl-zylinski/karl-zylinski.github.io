@@ -26,7 +26,7 @@ In the first case every entity is separately heap allocated and ends up just abo
 
 > NOTE: Doing `new` doesn't _really have to mean that heap allocations occur_. In some languages you can use custom allocators in and in that case you could have `new` allocate into some kind of memory arena. But the default behavior in most language would be a heap allocation.
 
-Using something like `Array<Entity>`, i.e. not heap allocating the separate elements, _is much faster_. Why? Because of a thing called the CPU cache. Imagine that your code loops over the `Array<Entity>`. When the computer fetches the memory related to one entity, then that data ends up in the CPU cache, which is a tiny piece of memory that is physically very close to the CPU and also very fast. However, since the entities are laid out in such a simple way (next to one another in the array) it is also able to _prefetch_ additional memory from the array and also put that into the cache. So when it gets to the next lap of the loop, then it probably already has data related to the next entity in the cache, so it just uses it straight away. Using the cache right away is a lot faster than having to go to the "normal" memory and fetch another item.
+Using something like `Array<Entity>`, i.e. not heap allocating the separate elements, _is much faster_. Why? Because of a thing called the CPU cache. Imagine that your code loops over the `Array<Entity>`. When the computer fetches the memory related to one entity, then that data ends up in the CPU cache, which is a tiny piece of memory that is physically very close to the CPU and also very fast. However, since the entities are laid out in such a simple way (next to one another in the array) it is also able to fetch additional memory from the array and also put that into the cache. So when it gets to the next lap of the loop, then it probably already has data related to the next entity in the cache, so it just uses it straight away. Using the cache right away is a lot faster than having to go to the "normal" memory and fetch another item.
 
 This is also why iterating something like `Array<Entity*>` is so much slower: The separately heap allocated entities can be anywhere in memory, they are not laid out in a simple way in the computer's memory. So when memory for one entity is fetched, then it has no good way to predict where data related to the next entity is. When it gets to the next lap of the loop, then the cache probably doesn't contain anything related to the next entity. This means that the cache has to be refilled on almost every lap of the loop. Such a refill is known as a "cache miss". It means that your CPU sits and waits for the data to be fetched from memory.
 
@@ -62,7 +62,7 @@ Try to get a feeling for when the code design decisions you make are hurting you
 
 ## Thanks for reading!
 
-In my book _Understanding the Odin Programming Language_ I have a chapter that talks about these ideas in more details. Read a sample of the book here: https://odinbook.com/
+In my book _Understanding the Odin Programming Language_ I have a chapter that talks about these ideas in more detail. Read a sample of the book here: https://odinbook.com/
 
 If you're interested in more gamedev content, then check out my YouTube channel: https://www.youtube.com/@karl_zylinski
 
