@@ -18,10 +18,22 @@
     border-radius: 5px;
 }
 
+.projects {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    column-gap: 20px;
+    row-gap: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+    .projects {
+        grid-template-columns: auto;
+    }
+}
+
 .project {
     background: var(--entry);
     border-radius: 20px;
-    padding-bottom: 10px;
 }
 
 .project .cover {
@@ -30,8 +42,11 @@
 }
 
 .project p {
-
     margin-top: 10px;
+}
+
+.project .desc {
+    display: block;
 }
 
 .project .links {
