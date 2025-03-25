@@ -277,7 +277,7 @@ for e in ha_iter_ptr(&ent_iter) {
 }
 ```
 
-Why is a custom iterator is required? Why can't you just do `for e in entities.items {}`? Because `items` contains unused items if anything has been removed from the array. It is like that in order to keep the indices stable. This iterator will skip those holes.
+Why is a custom iterator required? Why can't you just do `for e in entities.items {}`? Because `items` contains unused items if anything has been removed from the array. It is like that in order to keep the indices stable. This iterator will skip those holes.
 
 > An unused item is defined as it having `handle.idx == 0`. The zero index is never used. You can see how `ha_add` always adds a "dummy element" at index 0. This is good for zero-is-initialized programming: Handles can be zero initialized without accidentally referring to the first item in an array.
 
