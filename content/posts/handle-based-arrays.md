@@ -254,7 +254,7 @@ The if-statement first checks that the index inside the handle is within the ran
 ```go
 ha.items[h.idx].handle == h
 ```
-Remember: The handle contains both the index _and_ the generation. The handle `h` and the `handle` field of the element will only be equal if both the index and the generation match. This makes sure that the thing at that index _has not been replaced_. This is why generation is so important: It makes it possible to store a handle and be sure that it still refers to the same thing that it initially did.
+Remember: The handle contains both the index _and_ the generation. The handle `h` and the `handle` field of the element will only be equal if both the index and the generation match. This makes sure that the thing at that index _has not been replaced_. This is why the generation is so important: It makes it possible to store a handle and be sure that it still refers to the same thing that it initially did.
 
 There's also a `ha_get` procedure that returns a value instead of a pointer:
 
