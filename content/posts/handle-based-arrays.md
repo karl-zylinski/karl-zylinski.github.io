@@ -320,6 +320,8 @@ What does this code do? It seems to do a cool thing with an entity pointer. Let'
 
 Initially you may think that you can avoid this by making sure that no code that adds anything to the array is called while you're doing stuff with a pointer. But when you are trying to ship something, then you'll start adding polish. Polish means adding lots of tiny extra things. Such as effects. And you'll add them in the most convenient places, so that you don't break any other code. You _will_ end up with dangling pointers sooner or later.
 
+Let's talk about how to fix that!
+
 ### Solution 1: Fixed-size array
 
 In my game [CAT & ONION](https://zylinski.itch.io/cat-and-onion) I worked around this by changing the implementation of `Handle_Array` to use a fixed-size dynamic array. It is not allowed to grow. I just estimate a good upper boundary for it. This means that adding things to it will never create dangling pointers. It's always at maximum capacity!
