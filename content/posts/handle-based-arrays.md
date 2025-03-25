@@ -656,7 +656,7 @@ ha_test :: proc() {
 }
 ```
 
-Look, it even comes with a `test` proc that you can use to see how it works! The thing to note here is that it calls `ha_commit_new` when it wants to move new things into the main array. You could do that at end of the frame, when nothing more will happen and all pointers-resolved-from-handles have gone to bed.
+Look, it even comes with a `test` proc that you can use to see how it works! The thing to note here is that it calls `ha_commit_new` when it wants to move new things from `new_items` into `items`. You could do that at end of the frame, when nothing more will happen and all pointers-resolved-from-handles have gone to bed.
 
 This implementation even comes with an iterator that makes sure to include the newly added things. The newly added things live in a separate array. Each new item is separately allocated into a growing virtual arena. See these lines in the `Handle_Array` struct:
 ```go
