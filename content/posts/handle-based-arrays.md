@@ -674,7 +674,7 @@ new_items: [dynamic]^T,
 new_items_arena: vmem.Arena,
 ```
 
-We separately allocate the new items using an arena because if you did `new_items: [dynamic]T`, then some pointer to a newly-added-by-not-yet-committed item may become invalid if `new_items` grow. Which is... the problem we tried to solve for the main `items` array.
+We separately allocate the new items using an arena because if you did `new_items: [dynamic]T`, then some pointer to a newly-added-but-not-yet-committed item may become invalid if `new_items` grow. Which is... the problem we tried to solve for the main `items` array.
 
 Now you may have galaxy brain moment: "Wait, if using the virtual growing arena makes things not move in memory, couldn't I use it for everything in the handle-based array?"
 
