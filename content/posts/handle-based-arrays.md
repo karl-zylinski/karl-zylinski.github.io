@@ -693,12 +693,14 @@ And then change `ha_add` to add items to the arena using that allocator, like so
 
 ```go
 items_allocator := vmem.arena_allocator(&ha.items_arena)
-item := new(T, new_items_allocator)
+item := new(T, items_allocator)
 item^ = v
 append(&ha.items, item)
 ```
 
-Even though `items` consists of pointers, all those pointers actually point to things that live one-next-to-each-other in memory, thanks to the nature of the arena allocator.
+Even though `items` consists of pointers, all those pointers actually point to things that live one-next-to-the-other in memory, thanks to the nature of the arena allocator.
+
+> For performance reasons, it's important that array elements live one-next-to-the-other. I wrote about this in my article ["Data-oriented ideas for small gamedev teams"](https://zylinski.se/posts/data-oriented-ideas-for-small-gamedev-teams/).
 
 But like I said, I have not tried this, but perhaps it's a nice way for you.
 
