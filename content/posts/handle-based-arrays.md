@@ -205,11 +205,13 @@ ha_iter_ptr :: proc(it: ^Handle_Array_Iter($T, $HT)) -> (val: ^T, h: HT, cond: b
 Create a handle-based array like this:
 
 ```go
+Entity_Handle :: distinct Handle
+
 Entity :: struct {
 	my_data: int,
+	handle: Entity_Handle,
 }
 
-Entity_Handle :: distinct Handle
 entities: Handle_Array(Entity, Entity_Handle)
 ```
 
