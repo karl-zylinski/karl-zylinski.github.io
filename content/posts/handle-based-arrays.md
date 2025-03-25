@@ -346,7 +346,7 @@ Now you may go: "But if the array is of fixed size, why do you then need handles
 
 Sure, you can now store a pointer to an array item. But how can you be sure that it is still the same item 10 minutes later? You still need the handle because it contains the _generation_, and the generation makes sure that things are not replaced under your nose.
 
-### Solution 2: Grow array when its safe
+### Solution 2: Grow array when it is safe
 
 You could also add the newly added things to a separate array, and only _commit_ those things into the main array at a "safe spot" in your code.
 
