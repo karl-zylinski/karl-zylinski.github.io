@@ -326,7 +326,7 @@ Let's talk about how to fix that!
 
 In my game [CAT & ONION](https://zylinski.itch.io/cat-and-onion) I worked around this by changing the implementation of `Handle_Array` to use a fixed-size dynamic array. It is not allowed to grow. I just estimate a good upper boundary for it. This means that adding things to it will never create dangling pointers. It's always at maximum capacity!
 
-You can do that by either using actual fixed arrays, or by allocating a dynamic array once and setting its allocator to the panic allocator. The latter is what CAT & ONION does:
+You can do that by either using actual fixed array, or by allocating a dynamic array once and setting its allocator to the panic allocator. The latter is what CAT & ONION does:
 
 ```
 ha_add :: proc(ha: ^Handle_Array($T, $HT), v: T) -> HT {
