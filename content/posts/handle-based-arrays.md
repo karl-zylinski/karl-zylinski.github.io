@@ -215,7 +215,7 @@ entities: Handle_Array(Entity, Entity_Handle)
 
 > Here `Entity` means an object in a game world.
 
-We define a distinct type for a handle. This makes the handle type safe, we don't want to accidentally mix up different kinds of handles.
+We define a distinct type `Entity_Handle` for our handles. This makes the handles type safe. We don't want to accidentally mix up different kinds of handles.
 
 ## Adding and getting items
 
