@@ -30,7 +30,7 @@ The `index` field is the index of an array element. The `generation` is used to 
 
 ## An example implementation
 
-Let me dump an example implementation here. Then we can discuss what it does and how to use it. Then we'll discuss how you can improve it.
+Let me dump an example implementation here. Then I'll discuss what it does and how to use it. After that we'll discuss how you can improve it.
 
 > Use this code by copying this file into your program's package and changing the `package game` line.
 
