@@ -11,7 +11,7 @@ Andre Weissflog wrote an article in 2018 called ["Handles are the better pointer
 
 I think there are many nuances regarding handles that only become apparent after some real-world usage. Here we'll look at an implementation in Odin and discuss it.
 
-> I use the [Odin Programming Language](https://odin-lang.org) and the example are game development-centric.
+> I use the [Odin Programming Language](https://odin-lang.org) and the examples are game development-centric.
 
 ## What's a handle?
 
