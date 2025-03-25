@@ -217,6 +217,8 @@ entities: Handle_Array(Entity, Entity_Handle)
 
 We define a distinct type `Entity_Handle` for our handles. This makes the handles type safe. We don't want to accidentally mix up different kinds of handles.
 
+> Note: The implementation assumes that each `Entity` has a field called `handle` of type `Entity_Handle`. It's nice to have the handle on the actual entity, so that you can refer to your own handle when you're dealing with a pointer or a value of type `Entity`.
+
 ## Adding and getting items
 
 Add to the array like so:
