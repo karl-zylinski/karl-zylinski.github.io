@@ -299,7 +299,7 @@ if e != nil {
 }
 ```
 
-The `ha_add` call may grow the array and thus make the pointer `e` invalid!
+The `ha_add` call may grow the array and thus made the pointer `e` invalid!
 
 Now you may shout: "But that's exactly what you shouldn't do!! Just fetch the item using the handle when you need it, and use it!"
 
