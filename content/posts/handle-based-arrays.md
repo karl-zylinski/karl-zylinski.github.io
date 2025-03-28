@@ -728,6 +728,8 @@ Bill wrote an example of this that has many similarities to what I showed here: 
 
 If you enjoyed this article, then perhaps you'd enjoy my book ["Understanding the Odin Programming Language"](https://odinbook.com). Read a free sample [here](https://odinbook.com/sample.html).
 
+Ask questions on [my Discord server](https://discord.gg/4FsHgtBmFK).
+
 You may also want to [sign up for my newsletter](https://karlzylinski.substack.com/), where I summarize all my content month-by-month.
 
 You can support my blog, my YouTube channel and my open-source projects by [becoming a patron](https://patreon.com/karl_zylinski/).
