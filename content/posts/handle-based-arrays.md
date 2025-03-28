@@ -706,6 +706,12 @@ Even though `items` consists of pointers, all those pointers actually point to t
 
 But like I said, I have not tried this, but perhaps it's a nice way for you.
 
+### Update: I've implemented this now!
+
+I've published a "handle map" library where all the items live within a growing virtual arena, making the pointers stable. Check it out: https://github.com/karl-zylinski/odin-handle-map
+
+It also works on web, see this live demo: https://zylinski.se/odin-handle-map-example/ -- Note that on web it can't use virtual memory (WASM does not support it). Instead it uses a "Dynamic Arena" on web, which is slightly less memory efficient. With that in mind I use smaller arena blocks on web compared to non-web.
+
 ## This got complicated! What are your recommendations?
 
 I know, that's why I wrote this. These things are simple at first, but can turn complicated quickly.
