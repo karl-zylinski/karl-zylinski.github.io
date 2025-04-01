@@ -8,7 +8,7 @@ cover:
 
 In this post I'll share some details on how I wrote the first book about the Odin Programming Language. I'll talk about how I got started, what the process was like, as well as some technical things related to writing programming books.
 
-> This book is called "Understanding the Odin Programming" language. It's a digital book (HTML and EPUB). It was released on December 6, 2024. The book is available at https://odinbook.com/
+> The book is called "Understanding the Odin Programming" language. It's a digital book (HTML and EPUB). It was released on December 6, 2024. The book is available at https://odinbook.com/
 
 ## A happy accident
 
