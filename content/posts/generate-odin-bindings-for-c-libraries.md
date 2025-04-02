@@ -34,7 +34,7 @@ In order to generate the bindings you would:
 - Run the binding generator and feed it the `raylib` folder: `bindgen.exe examples/raylib`
 - (optional) Test the bindings using the program in `examples/raylib/test`.
 
-Below I'll talk about what's inside that `examples/raylib` folder and how it all fits together.
+Below I'll talk about how to configure the generator.
 
 ### The `bindgen.sjson` configuration file
 
