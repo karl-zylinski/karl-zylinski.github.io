@@ -385,7 +385,11 @@ On the right side, you can also write `[^]` and `#by_ptr` instead of a complete 
 
 ## Another example: Generated `ufbx` bindings
 
-For another example, you can have a look at this generator setup for the `ufbx` library: https://github.com/karl-zylinski/odin-c-bindgen/tree/main/examples/ufbx. It comes with a small test program that uses the generated bindings to load an FBX model and then display it using Raylib.
+For another example, you can have a look at this generator setup for the `ufbx` library: https://github.com/karl-zylinski/odin-c-bindgen/tree/main/examples/ufbx.
+
+![A program written using raylib that displays an FBX model. The FBX model has been loaded using the generated `ufbx` bindings](/bindgen/ufbx.png)
+
+The picture shows a test program that is included with this example. It uses the generated `ufbx` bindings to load a model and display it using raylib.
 
 > FBX is a common format for 3D models.
 
