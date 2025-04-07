@@ -1,17 +1,9 @@
 ---
-title: "Dynamic Arrays and Arenas"
+title: "Arenas in Odin: Dynamic Array Trouble"
 date: 2025-04-04T12:29:00+02:00
 
-draft: true
-
-#cover:
-  #image: "hba/cover.jpg"
-
-
-# more things:
-# - Make this into a "everything dyn arr + arenas" blog post? It's a bit weird and unfocused. Idk
-# - fixed size dynamic array into arena + panic allocator
-# - arena + new + store ptrs in dyn arr (with picture)
+cover:
+  image: "arena-mistakes/cover.png"
 ---
 
 When programming in Odin you can use arena allocators. If you use an arena allocator combined with a dynamic array, then there are a couple of pitfalls that may not be apparent at first. Let's look at what arenas are, how you can run into trouble when naively using them with dynamic arrays and what you can do instead.
@@ -63,13 +55,13 @@ number1 allocated at address 0x206B51F7048 (2227831795784)
 number2 allocated at address 0x206B51F7050 (2227831795792)
 ```
 
-As you can see `number1` is allocated at the start of the arena's memory block. The address of `number2` is `8` bytes after `number1`. That's because `number1` is of type `int`, which needs 8 bytes of memory.
+As you can see `number1` has the same address as the first byte of the arena's memory block: It sits right at the beginning of the arena's memory block. The address of `number2` is `8` bytes after `number1`.
 
 ![Shows how number1 and number2 end up one-after-the other in the arena's memory, each takes 8 bytes](/arena-mistakes/arena_memory.png)
 
-What we can understand from this is that this arena allocates in a _linear_ fashion. The things we allocate go into the arena's memory block one-after-another, in the order they are allocated.
+What we can understand from this is that this arena allocates in a _linear_ fashion. The things we allocate go into the arena's memory block one-after-another, in the order they are allocated. The size of an `int` is `8` bytes (on 64 bit machines), so `number2` ends up `8` bytes from the start of the arena, right after `number1`.
 
-Note that it is _not_ possible to do `free(number1)` or `free(number2)`. That will just return the error `Mode_Not_Implemented`. You can only deallocate everything in the arena, not individual parts of it. This makes sense, since the arena is meant for _things that have the same lifetime_. In this case you deallocate arena by deleting the memory block itself:
+Note that it is _not_ possible to do `free(number1)` or `free(number2)`. That will just return the error `Mode_Not_Implemented`. You can only deallocate everything in the arena, not individual parts of it. This makes sense, since the arena is meant for _things that have the same lifetime_. In the case of `mem.Arena`, you deallocate arena by deleting the memory block itself:
 
 ```
 delete(arena_mem)
@@ -136,14 +128,14 @@ That's not the beginning of the arena! How far away from the beginning is it? Su
 
 Initially the dynamic array has no memory allocated at all. After 1 append it will have allocated some initial memory. This initial memory will have capacity for 8 items. That's the default for dynamic arrays. Imagine that 8 more items are then appended. This will make the dynamic array run out of capacity, forcing it to grow again. The new capacity will probably be something like 24.
 
-So each time the dynamic array grows, it does this:
+Each time the dynamic array grows, it does this:
 - Tell arena allocator to allocate memory for new data block: OK! It gives you that many bytes (as long as it is not full).
 - Copy old data to new data block: OK!
 - Tell allocator to deallocate the old data: Nope! Arena allocators don't implement individual allocations. This step will have no effect.
 
 Internally, when the dynamic array tries to free the old block, the allocator reports an `Mode_Not_Implemented` error. The dynamic array does not care about that error.
 
-So the old memory block is just left in the arena. Think of what happens if the dynamic array grows several times: You'll waste _a lot_ of memory. It's just a graveyard of old blocks in a trail behind the currently used block. That's why we have `130304` bytes between the start of the arena and the first item of the dynamic array. It's the old trash left by the dynamic array.
+So the old memory block is just left in the arena. Think of what happens if the dynamic array grows several times: You'll waste _a lot_ of memory. It's just a graveyard of old blocks in a trail behind the currently used block. That's why we have `130304` bytes between the start of the arena and the first item of the dynamic array.
 
 ## Why can't the arena just deallocate the old block?
 
@@ -151,9 +143,9 @@ As I showed earlier, this kind of arena grows linearly. It just starts at the be
 
 It's a simple allocator: It just knows where to take memory from and how much memory it has left. It does not keep track of all the previous allocations.
 
-So individual deallocations can't happpen: It does not keep track of enough information to do that.
+So individual deallocations can't happen: It does not keep track of enough information to do that.
 
-And even if it did track that information, doing deallocations in a linear block of memory like that would quickly lead to memory fragmentation: Imagine if you allocate using `new(Some_Type, arena_allocator)` and mix allocations of different sizes. Any deallocation would leave a hole of that size. Quite soon you'd have many tiny unusable "holes" in the memory.
+And even if it did track that information, doing deallocations in a linear block of memory like that would quickly lead to _memory fragmentation_: Imagine if you allocate using `new(Some_Type, arena_allocator)` and mix allocations of different sizes. Any deallocation would leave a hole of that size. Quite soon you'd have many tiny unusable "holes" in the memory.
 
 ## It's all about lifetimes
 
@@ -163,11 +155,30 @@ This is another reason why individual allocations don't make any sense when work
 
 This is the whole point of the arena: You put things into it that should all be destroyed at the same time. It's not a silver bullet for making manual memory management "magically easy". It's just a way to group allocations so you don't have to do lots of separate `free` and `delete` calls in order to clean up.
 
-## Growing virtual arena shenanigans
+## Alternatives: Use default allocator
+
+In general, just use the default allocator `context.allocator` with your dynamic arrays. Then they can grow and deallocate their old memory as expected. If you have trouble with their memory leaking, then use the tracking allocator in your development build. Set it up like this: https://odin-lang.org/docs/overview/#tracking-allocator
+
+## Alternatives: Preallocate with maximum size
+
+If you know the maximum number of things that can go into the dynamic array, then you can do something like this:
+
+```go
+dyn_arr := make([dynamic]int, 0, 2000, arena_alloc)
+dyn_arr.allocator = mem.panic_allocator()
+```
+
+This will construct a dynamic array with capacity for `2000` elements. That amount of memory will immediately get allocated into the arena. The `0` is the _length_ of the dynamic array. That's how many of those `2000` elements that are used.
+
+This means that you can `append` as usual into this dynamic array. Note the line `dyn_arr.allocator = mem.panic_allocator()` -- This will make your program panic (crash on purpose) if the dynamic array tries to grow, as that would litter the arena in the ways we've talked about. If you run into that crash, then perhaps you should increase the capacity.
+
+If the size of the dynamic arrays in your program vary wildly depending on what the user does, then perhaps you should not use an arena. An example is if you're making a video editing software: Some users may use 10 megabytes of memory, while others may use 200 gigabytes, depending on their project sizes. Pre-allocating for the worst-case scenario in these cases is probably not a great idea. The software is used in a very dynamic way, so you'll have to be more dynamic with your memory usage.
+
+## Are growing virtual arenas magical?
 
 A very useful kind of arena is the growing virtual arena. It's arena that uses blocks of memory, when the current block is full, it allocates a new one and does allocations into that.
 
-> My book [Understanding the Odin Programming Langauge](https://odinbook.com) goes into virtual memory arenas in more depth.
+> My book [Understanding the Odin Programming Language](https://odinbook.com) goes into virtual memory arenas in more depth.
 
 If you re-write our initial sample using a virtual growing arena, it would look like this:
 
@@ -203,11 +214,21 @@ Wait a minute! It still has the same address after the 10000 appends! Is the gro
 
 This is just a red herring.
 
-There's a special case in this arena that makes it reuse the same address if nothing else has been allocated in-between.
+There's a special case in this arena that makes it reuse the same address if that allocation is still the most recent one into the arena.
 
-So if you had done any more allocation into the arena, then it would not be able to reuse the same address. It would have to move, and in so doing leave behind the derelict old data in the arena.
+So it would not work if you had done any allocation into the arena between the moments when the dynamic array grew. It would have to move further on into he arena, and in so doing leave behind the derelict old data in the arena.
 
-You could of course have an virtual arena used only by the dynamic array, but then you might as well just use the default heap allocator.
+You could have a virtual arena dedicated to a single dynamic array, but then you might as well just use the default heap allocator.
+
+> An interesting thing you can do is use a virtual growing arena for separately allocating the items of a dynamic array, but have the dynamic array itself use the default allocator. That way the items in the array can never move, but they live fairly compact in memory. My "Handle-based map for Odin" library uses that technique: https://github.com/karl-zylinski/odin-handle-map
+
+## You can also skip dynamic memory completely
+
+If you don't use dynamic memory, then you never have deallocate anything.
+
+See `Small_Array` for a dynamic-array-like structure: https://pkg.odin-lang.org/core/container/small_array/
+
+See Jakub's "Static Data Structures" for a bunch of different data structures that don't use dynamic memory at all: https://github.com/jakubtomsu/sds
 
 ## Thanks for reading!
 
