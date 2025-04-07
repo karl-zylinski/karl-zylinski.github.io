@@ -303,6 +303,11 @@ See `Small_Array` for a dynamic-array-like structure: https://pkg.odin-lang.org/
 
 See Jakub's "Static Data Structures" for a bunch of different data structures that don't use dynamic memory at all: https://github.com/jakubtomsu/sds
 
+## Video
+
+I've made a video that says pretty much the same stuff as this article:
+{{< youtube 1WnqZPD-qVc >}}
+
 ## Thanks for reading!
 
 If you enjoyed this article, then perhaps you'd enjoy my book ["Understanding the Odin Programming Language"](https://odinbook.com). Read a free sample [here](https://odinbook.com/sample.html).
