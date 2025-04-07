@@ -1,5 +1,5 @@
 ---
-title: "Dynamic Arrays in Arenas"
+title: "Mistakes and cool things to do with arena allocators"
 date: 2025-04-04T12:29:00+02:00
 
 cover:
