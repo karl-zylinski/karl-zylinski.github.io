@@ -1,5 +1,5 @@
 ---
-title: "Arenas in Odin: Dynamic Array Trouble"
+title: "Dynamic Arrays in Arenas"
 date: 2025-04-04T12:29:00+02:00
 
 cover:
@@ -159,6 +159,8 @@ This is the whole point of the arena: You put things into it that should all be 
 
 In general, just use the default allocator `context.allocator` with your dynamic arrays. Then they can grow and deallocate their old memory as expected. If you have trouble with their memory leaking, then use the tracking allocator in your development build. Set it up like this: https://odin-lang.org/docs/overview/#tracking-allocator
 
+If you have trouble with the memory of the dynamic array moving, then you can look at the section about the Virtual Growing Arena, below.
+
 ## Alternatives: Preallocate with maximum size
 
 If you know the maximum number of things that can go into the dynamic array, then you can do something like this:
@@ -174,16 +176,17 @@ This means that you can `append` as usual into this dynamic array. Note the line
 
 If the size of the dynamic arrays in your program vary wildly depending on what the user does, then perhaps you should not use an arena. An example is if you're making a video editing software: Some users may use 10 megabytes of memory, while others may use 200 gigabytes, depending on their project sizes. Pre-allocating for the worst-case scenario in these cases is probably not a great idea. The software is used in a very dynamic way, so you'll have to be more dynamic with your memory usage.
 
-## Are growing virtual arenas magical?
+## The virtual growing arena
 
 A very useful kind of arena is the growing virtual arena. It's arena that uses blocks of memory, when the current block is full, it allocates a new one and does allocations into that.
 
+> Virtual memory can be _reserved_ without causing the actual memory usage of the computer to increase. A virtual arena allocator can _commit_ parts of that reserved memory, in order to map it to actual memory.
 > My book [Understanding the Odin Programming Language](https://odinbook.com) goes into virtual memory arenas in more depth.
 
 If you re-write our initial sample using a virtual growing arena, it would look like this:
 
 ```go
-package dynamic_array_mistake_virtual
+package dynamic_array_virtual
 
 import "core:fmt"
 import vmem "core:mem/virtual"
@@ -212,15 +215,83 @@ After 10000 appends to dynamic array, address of first element is: 0x1A682440038
 
 Wait a minute! It still has the same address after the 10000 appends! Is the growing virtual arena magical? Does it support individual deallocations somehow?! The first element seems to always sit at the same address.
 
-This is just a red herring.
+There's nothing magical going on. This behavior is due to a special case in the virtual growing arena. It reuses the same address if that allocation is still the most recent one into the arena.
 
-There's a special case in this arena that makes it reuse the same address if that allocation is still the most recent one into the arena.
+> The `Arena` in `core:mem` does not have this special reuse-address-behavior. Perhaps it'll get added in the future, in which case the earlier examples that used `mem.Arena` would start behaving like this one.
 
-So it would not work if you had done any allocation into the arena between the moments when the dynamic array grew. It would have to move further on into he arena, and in so doing leave behind the derelict old data in the arena.
+So this would not work if you had done any allocation into the arena between the moments when the dynamic array grew. It would have to move further on into the arena, and in so doing leave behind the old data.
 
-You could have a virtual arena dedicated to a single dynamic array, but then you might as well just use the default heap allocator.
+Is there then a good reason for doing this? Yes, because the elements in the dynamic array will not move in memory when it grows.
 
-> An interesting thing you can do is use a virtual growing arena for separately allocating the items of a dynamic array, but have the dynamic array itself use the default allocator. That way the items in the array can never move, but they live fairly compact in memory. My "Handle-based map for Odin" library uses that technique: https://github.com/karl-zylinski/odin-handle-map
+Is there a catch? Yes. If the dynamic array grows past the block size of the arena, then it will have to move to a new block. In the example below I've added the line `arena_err := vmem.arena_init_growing(&arena, 4000)`. This will initialize the growing arena with a initial block size of `4000 bytes`. The contents of the dynamic array will eventually go past that size. That will cause a new block to be created, and the dynamic array will be moved to it. In code:
+
+```go
+package dynamic_array_virtual
+
+import "core:fmt"
+import vmem "core:mem/virtual"
+import "core:math/rand"
+
+main :: proc() {
+	arena: vmem.Arena
+	arena_err := vmem.arena_init_growing(&arena, 4000)
+	assert(arena_err == nil)
+	arena_alloc := vmem.arena_allocator(&arena)
+	dyn_arr := make([dynamic]int, arena_alloc)
+	append(&dyn_arr, 7)
+	fmt.println("After 1 append to dynamic array, address of first element is:", &dyn_arr[0])
+
+	for i in 0..<9999 {
+		append(&dyn_arr, rand.int_max(100000))
+	}
+
+	fmt.println("After 10000 appends to dynamic array, address of first element is:", &dyn_arr[0])
+}
+```
+
+The program above would print:
+```txt
+After 1 append to dynamic array, address of first element is: 0x2745AB00038
+After 10000 appends to dynamic array, address of first element is: 0x2745AD30038
+```
+As you can see the address changed. So due to the small block size we are back to the dynamic array moving around within the arena.
+
+## The static virtual arena
+
+Similarly to our previous example of using the `panic_allocator`, you could also use a _static virtual arena_ to make it an error if the dynamic array tries to grow past the current block size. The static virtual arena also uses virtual memory, but it only has a single block. In code:
+
+```go
+package dynamic_array_virtual_static
+
+import "core:fmt"
+import vmem "core:mem/virtual"
+import "core:math/rand"
+
+main :: proc() {
+	arena: vmem.Arena
+	arena_err := vmem.arena_init_static(&arena, 4000)
+	assert(arena_err == nil)
+	arena_alloc := vmem.arena_allocator(&arena)
+	dyn_arr := make([dynamic]int, arena_alloc)
+	append(&dyn_arr, 7)
+	fmt.println("After 1 append to dynamic array, address of first element is:", &dyn_arr[0])
+
+	for i in 0..<9999 {
+		_, err := append(&dyn_arr, rand.int_max(100000))
+		fmt.assertf(err == nil, "Error when adding to dynamic array: %v", err)
+	}
+
+	fmt.println("After 10000 appends to dynamic array, address of first element is:", &dyn_arr[0])
+}
+```
+
+The code above would error with:
+```txt
+Error when adding to dynamic array: Out_Of_Memory
+```
+Because of the `append` trying to grow past the end of the arena. In other words, it is able to reuse the same address over and over, but eventually fills the block. Then it must move. But it can't, since a static virtual arena only has one block.
+
+However, this number `4000` that I feed into `arena_init_static` is _tiny_ when we talk about virtual memory. Each application has the whole 64 bit virtual addressing space to use. So you could easily use something like `1*mem.Gigabyte` here and never worry about a reallocation. The reserved amount will not make your program's memory usage go up: Only when the memory is actually _committed_, meaning that it is used for an actual allocation, does the usage go up. This committing is done in chunks called _pages_. A page is `4096` bytes on many systems.
 
 ## You can also skip dynamic memory completely
 
