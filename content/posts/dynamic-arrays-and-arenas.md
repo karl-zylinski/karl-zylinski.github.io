@@ -256,6 +256,8 @@ After 10000 appends to dynamic array, address of first element is: 0x2745AD30038
 ```
 As you can see the address changed. So due to the small block size we are back to the dynamic array moving around within the arena.
 
+> Note: WASM does not support virtual memory. If you need a growing arena on WASM, then you can use `Dynamic_Arena` from `core:mem`. That one also uses blocks, but they are not virtually allocated, so the blocks always use as much physical memory as they are big, even when they are not full. I use `Dynamic_Arena` as a fallback for WASM in my Handle Map implementation: https://github.com/karl-zylinski/odin-handle-map
+
 ## The static virtual arena
 
 Similarly to our previous example of using the `panic_allocator`, you could also use a _static virtual arena_ to make it an error if the dynamic array tries to grow past the current block size. The static virtual arena also uses virtual memory, but it only has a single block. In code:
@@ -291,7 +293,7 @@ Error when adding to dynamic array: Out_Of_Memory
 ```
 Because of the `append` trying to grow past the end of the arena. In other words, it is able to reuse the same address over and over, but eventually fills the block. Then it must move. But it can't, since a static virtual arena only has one block.
 
-However, this number `4000` that I feed into `arena_init_static` is _tiny_ when we talk about virtual memory. Each application has the whole 64 bit virtual addressing space to use. So you could easily use something like `1*mem.Gigabyte` here and never worry about a reallocation. The reserved amount will not make your program's memory usage go up: Only when the memory is actually _committed_, meaning that it is used for an actual allocation, does the usage go up. This committing is done in chunks called _pages_. A page is `4096` bytes on many systems.
+However, this number `4000` that I feed into `arena_init_static` is _tiny_ when we talk about virtual memory. Each application has the whole 64 bit virtual addressing space to use. So you could easily use something like `1*mem.Gigabyte` here and never worry about a reallocation. The reserved amount will not make your program's memory usage go up: Only when the memory is actually _committed_, meaning that it is used for an actual allocation, does the usage go up. This committing is done in chunks called _pages_. A page is `4096` bytes on many systems. This is also why the default block size of the _growing_ virtual arena is fairly large: It's 1 megabyte. It reserves blocks of that size and then fills them by committing it as the arena allocator asks for more and more memory.
 
 ## You can also skip dynamic memory completely
 
