@@ -295,6 +295,8 @@ Because of the `append` trying to grow past the end of the arena. In other words
 
 However, this number `4000` that I feed into `arena_init_static` is _tiny_ when we talk about virtual memory. Each application has the whole 64 bit virtual addressing space to use. So you could easily use something like `1*mem.Gigabyte` here and never worry about a reallocation. The reserved amount will not make your program's memory usage go up: Only when the memory is actually _committed_, meaning that it is used for an actual allocation, does the usage go up. This committing is done in chunks called _pages_. A page is `4096` bytes on many systems. This is also why the default block size of the _growing_ virtual arena is fairly large: It's 1 megabyte. It reserves blocks of that size and then fills them by committing it as the arena allocator asks for more and more memory.
 
+> When I say "64 bit virtual addressing space" I refer to the address space that is available to a 64 bit pointer. That address doesn't actually use all 64 bits, but more commonly 48 bits.
+
 ## You can also skip dynamic memory completely
 
 If you don't use dynamic memory, then you never have deallocate anything.
