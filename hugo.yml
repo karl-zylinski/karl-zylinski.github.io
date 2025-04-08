@@ -30,6 +30,8 @@ params:
           url: "https://bsky.app/profile/zylinski.se"  
         - name: "GitHub"
           url: "https://github.com/karl-zylinski"
+        - name: "Substack"
+          url: "https://news.zylinski.se/"
         - name: "Email"
           url: "mailto:karl@zylinski.se"
 
