@@ -339,6 +339,12 @@ Here we resolve handle `some_handle` to pointer `e`. Then we remove that entity 
 
 I'd say that this is _fine_. It's much less of a problem than unstable-pointers-when-the-array-grows. It may sometimes cause a slight logic error, but it won't make your program crash.
 
+## Video
+
+I've made a video that covers roughly the same stuff as this blog post:
+
+{{< youtube MzR1us2nZPY >}}
+
 ## Thanks for reading!
 
 If you enjoyed this article, then perhaps you'd enjoy my book ["Understanding the Odin Programming Language"](https://odinbook.com). It contains deep dives into manual memory management and how dynamic arrays work, and much much more! Read a free sample [here](https://odinbook.com/sample.html).
