@@ -386,5 +386,7 @@ Ask questions on my Discord server: https://discord.gg/4FsHgtBmFK
 
 Sign up for my monthly newsletter: https://news.zylinski.se/
 
+You can support my blog, my YouTube channel and my open-source projects by [becoming a patron](https://patreon.com/karl_zylinski/) or by [sponsoring me on GitHub](https://github.com/sponsors/karl-zylinski).
+
 Have a nice day!
 /Karl Zylinski
