@@ -6,7 +6,7 @@ cover:
   image: "/no-engine/cover.png"
 ---
 
-Games can be made in many different ways. I enjoy using the Odin Programming Language combined with Raylib.
+Games can be made in many different ways. Many games are made using big, general purpose game engines such as Unity and Godot. I enjoy using the Odin Programming Language combined with Raylib.
 
 Odin is a C-like programming language and Raylib is library for drawing graphics, checking input and playing sounds.
 
