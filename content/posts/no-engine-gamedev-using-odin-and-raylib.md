@@ -367,6 +367,18 @@ The cube is unshaded and looks like this:
 
 You can use `rl.LoadModel` to load complete 3D models from a file, including any materials. You can use `rl.LoadShader` to load shaders, making it possible to create custom lighting and effects.
 
+## Hot reload
+
+I think code hot reload can be very beneficial for tweaking gameplay code. It essentially means that you swap out the code but keep the same "game memory".
+
+I've written about this before [here](https://zylinski.se/posts/hot-reload-gameplay-code/) and I have made an [Odin + Raylib + Hot Reload template](https://github.com/karl-zylinski/odin-raylib-hot-reload-game-template). The template might be good starting point for a game if you want hot reload capabilities.
+
+## Web builds
+
+Being able to put a game on the web can be very important when for example participating in a gamejam.
+
+The hot reload template I linked in the previous section has web build support. I also have a separate ["Odin + Raylib on the web" repository](https://github.com/karl-zylinski/odin-raylib-web) if you just want the web stuff. The web build has some limitations. Please see the "Troubleshooting" section in the README if you run into any problems.
+
 ## Learning more
 
 I've written a book on Odin. It's great for people who come from other languages and also want a friendly introduction to low-level programming: https://odinbook.com
