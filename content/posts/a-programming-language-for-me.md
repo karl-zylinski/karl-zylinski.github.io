@@ -126,7 +126,7 @@ persons: #soa[128]Person
 
 Odin is very simple language. The reason my job used C over C++ was partially because of the simplicity of C. But we did sometimes miss some modern ideas of C++. However, C++ is a massive beast. We didn't want to open that can of worms.
 
-Odin retains the simplicity of C while bringing along some nice modern things, such as generics and (explicit) overloading. But the language is still kept small and simple. And it is meant to remain so. Very few language features has been added to Odin over the last few years, mainly the `core` libraries are getting major changes at this point.
+Odin retains the simplicity of C while bringing along some nice modern things, such as generics and (explicit) overloading. But the language is still kept small and simple. And it is meant to remain so. Very few language features have been added to Odin over the last few years, mainly the `core` libraries are getting major changes at this point.
 
 ## Not everyone has my programming background
 
