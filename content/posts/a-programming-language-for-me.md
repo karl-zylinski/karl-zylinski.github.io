@@ -10,7 +10,7 @@ In my book [Understanding the Odin Programming Language](https://odinbook.com) I
 
 This brings me to talking a bit about a previous job I had. Back in 2021 I worked at a place called [Our Machinery](https://ruby0x1.github.io/machinery_blog_archive/). We were creating a whole game engine in plain C. We used a very comfortable and powerful way to program C.
 
-We relied in concepts such as:
+We relied on concepts such as:
 
 - Custom allocators
 - Temporary allocators
@@ -19,11 +19,11 @@ We relied in concepts such as:
 - Zero is initialized
 - Cache friendly programming
 
-While working there, I stumbled into Odin. I read a bit about it. It seemed to incorporate all these things. In many ways it seemed like a language built around the specific way in which we programmed C at my job. Since I liked that way of programming, it almost seemed like a language built for me!
+While working there, I stumbled upon Odin. I read a bit about it. It seemed to incorporate all these things. In many ways it seemed like a language built around the specific way in which we programmed C at my job. Since I liked that way of programming, it almost seemed like a language built for me!
 
 ## Custom allocators
 
-At my job we had implemented our own `Allocator` interface in C. An allocator provides a custom way in which one can do dynamic memory allocations. C programmers are used to `malloc` and `free`. But you can make allocators that provide more advanced allocation strategies. Our `Allocator` interface me it possible to reason about allocators in a uniform way and pass them around to functions.
+At my job we had implemented our own `Allocator` interface in C. An allocator provides a custom way in which one can do dynamic memory allocations. C programmers are used to `malloc` and `free`. But you can make allocators that provide more advanced allocation strategies. Our `Allocator` interface made it possible to reason about allocators in a uniform way and pass them around to functions.
 
 If a function accepted a parameter of type `Allocator`, then it was a hint that its return value was dynamically allocated.
 
@@ -107,18 +107,66 @@ x := My_Type {
 
 The CPU has some memory inside it that is very fast. It's called a cache. If you keep the cache filled with whatever data the CPU might need next, then your program will run very fast.
 
-At my job we had an entity-component-system (ECS) that used what is known as "Structure of Arrays" (SoA). Anyone who has written SoA data types in C knows it's not very fun.
+At my job we had an entity-component-system (ECS) that used what is known as "Structure of Arrays" (SoA). That's a memory layout that can, in certain circumstances, help fill your CPU cache with relevant data. Anyone who has written SoA data types in C knows it's not very fun.
 
 However, Odin comes with built in SoA support. Just put `#soa` in front of an array declaration. It'll automatically re-arrange the memory layout for you.
 
+As an example, the following code uses the "default layout". Also known as "Arrays of Structures" (AoS):
+
 ```go
 Person :: struct {
+	health: int,
 	age: int,
-	height: f32
 }
 
-persons: #soa[128]Person
+people: [128]Person
 ```
+
+The memory layout of that array looks like this:
+
+```txt
+people[0].health
+people[0].age
+people[1].health
+people[1].age
+people[2].health
+people[2].age
+people[3].health
+people[3].age
+people[4].health
+people[4].age
+... etc
+```
+
+If you add `#soa` in front of `[128]Person`, like so:
+
+```go
+Person :: struct {
+	health: int,
+	age: int,
+}
+
+people: #soa[128]Person
+```
+
+then the memory layout will instead look like this:
+
+```txt
+people[0].health
+people[1].health
+people[2].health
+people[3].health
+people[4].health
+... and 123 more health items
+people[0].age
+people[1].age
+people[2].age
+people[3].age
+people[4].age
+... and 123 more age items
+```
+
+In C achieving this is manual work. But here you just add `#soa`.
 
 > By the way, I discourage anyone who is making their own video game from making an ECS. It's usually not a good idea. Perhaps it's a good idea for some massive game engines. But for a small project it might just make your code harder to write and thereby your game worse. I feel like people who write an ECS before starting on their gameplay code are people who actually don't want to make games: They went to make general purpose game engines. That's fine, but make sure you're not lying to yourself about what it is you want to do. If you want to make a game, then just make a game. Write the code that you need for the problem at hand, don't pretend to be a giant game engine company.
 
