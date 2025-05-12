@@ -166,7 +166,7 @@ people[4].age
 ... and 123 more age items
 ```
 
-In C achieving this is manual work. But here you just add `#soa`.
+Achieving this in C is manual work. But here you just add `#soa`.
 
 > By the way, I discourage anyone who is making their own video game from making an ECS. It's usually not a good idea. Perhaps it's a good idea for some massive game engines. But for a small project it might just make your code harder to write and thereby your game worse. I feel like people who write an ECS before starting on their gameplay code are people who actually don't want to make games: They went to make general purpose game engines. That's fine, but make sure you're not lying to yourself about what it is you want to do. If you want to make a game, then just make a game. Write the code that you need for the problem at hand, don't pretend to be a giant game engine company.
 
