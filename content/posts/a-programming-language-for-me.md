@@ -122,7 +122,7 @@ Person :: struct {
 people: [128]Person
 ```
 
-The memory layout of that array looks like this:
+The memory layout of the `people` array looks like this:
 
 ```txt
 people[0].health
@@ -149,7 +149,7 @@ Person :: struct {
 people: #soa[128]Person
 ```
 
-then the memory layout will instead look like this:
+then the memory layout of `people` will instead look like this:
 
 ```txt
 people[0].health
