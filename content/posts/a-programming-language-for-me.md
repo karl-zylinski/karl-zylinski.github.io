@@ -35,17 +35,17 @@ This is exactly how it works in Odin. But the `Allocator` interface [is built in
 
 Temporary memory allocators provide a way to do dynamic memory allocations that are only needed for a short while. What's "a short while"? Video games have a very convenient "short while": A single frame.
 
-Gone are the days where you need to manually `malloc` and `free` strings and arrays that you need for a short while. Just use the temp allocator. It'll be gone the next frame!
+At my C job we had a temporary allocator that I used _a lot_. Gone was the need to manually `malloc` and `free` strings and arrays that were only needed for a short while. Just use the temp allocator. It'll be gone the next frame! And it's more efficient: The temp allocator allocates into pre-allocated blocks of memory.
 
-> Odin lets you choose where to put `free_all(context.temp_allocator)`. That's the line that empties the temp allocator. So in a video game I put it as the last line of the "main game loop".
+I was happy to discover that Odin came with exactly this functionality. There's a built in temp allocator available under the name `context.temp_allocator`. And again, the `core` libraries and my code uses the same `Allocator` interface. So I can just pass `context.temp_allocator` into any `core` library procedure that accepts an `Allocator` parameter. Whatever that procedure allocates will then be temporary. Nice!
 
-Again, the `core` library and my code uses the same `Allocator` interface. I can just pass `context.temp_allocator` into any `core` library procedure that accepts an `Allocator` parameter.
+> Odin lets you choose when to clear the temp allocator. You do that by putting `free_all(context.temp_allocator)` somewhere in your code. In a video game, I'd put it as the last line of the "main game loop".
 
 ## Tracking allocators
 
 Manual memory management may seem hard. How do you know if you're leaking memory?
 
-At my job we had a special tracking allocator that could wrap any other allocator. It recorded when an allocation happened, and recorded when it was deallocated. That way we could display a warning on shutdown, if anything hadn't been deallocated.
+At my C job we had a special tracking allocator that could wrap any other allocator. It recorded when an allocation happened, and recorded when it was deallocated. That way we could display a warning on shutdown, if anything hadn't been deallocated.
 
 This is exactly how the tracking allocator that comes with Odin works. Just plop the code below at the top of your `main` procedure. It'll print a list of memory leaks on shutdown.
 
@@ -107,7 +107,7 @@ x := My_Type {
 
 The CPU has some memory inside it that is very fast. It's called a cache. If you keep the cache filled with whatever data the CPU might need next, then your program will run very fast.
 
-At my job we had an entity-component-system (ECS) that used what is known as "Structure of Arrays" (SoA). That's a memory layout that can, in certain circumstances, help fill your CPU cache with relevant data. Anyone who has written SoA data types in C knows it's not very fun.
+At my C job we had an entity-component-system (ECS) that used what is known as "Structure of Arrays" (SoA). That's a memory layout that can, in certain circumstances, help fill your CPU cache with relevant data. Anyone who has written SoA data types in C knows it's not very fun.
 
 However, Odin comes with built in SoA support. Just put `#soa` in front of an array declaration. It'll automatically re-arrange the memory layout for you.
 
