@@ -1,5 +1,5 @@
 ---
-title: "A programming language made for me"
+title: "Odin: A programming language made for me"
 date: 2025-05-12T13:04:00+02:00
 
 cover:
