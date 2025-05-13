@@ -19,7 +19,7 @@ We relied on concepts such as:
 - Zero is initialized
 - Cache friendly programming
 
-While working there, I stumbled upon Odin. I read a bit about it. It seemed to incorporate all these things. In many ways it seemed like a language built around the specific way in which we programmed C at my job. Since I liked that way of programming, it almost seemed like a language built for me!
+While working there, I [stumbled upon Odin](https://odin-lang.org). I read a bit about it. It seemed to incorporate all these things. In many ways it seemed like a language built around the specific way in which we programmed C at my job. Since I liked that way of programming, it almost seemed like a language built for me!
 
 ## Custom allocators
 
