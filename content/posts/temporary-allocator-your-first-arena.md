@@ -14,7 +14,7 @@ But you can also think along these lines: Can I simplify things a bit, so I don'
 
 What you can do is to try to use the temporary allocator whenever possible. Let's look at a real-world example.
 
-In my game [CAT & ONION](https://zylinski.itch.io/cat-and-onion) I draw a UI of all the actions in the game. You see this UI in the bottom left of this screenshot:
+In my game [CAT & ONION](https://zylinski.itch.io/cat-and-onion) I draw a UI that shows all the player's possible actions. You see this UI in the bottom left of this screenshot:
 
 ![A screenshot of a video game with a UI displaying some possible actions in the bottom left corner](/temporary-allocator/cat_and_onion.png)
 
@@ -96,7 +96,8 @@ get_all_player_actions :: proc() -> [dynamic]PlayerAction {
 }
 ```
 
-> The line `actions := make([dynamic]PlayerAction, context.temp_allocator)` does not cause any allocation. It just returns a dynamic array with its internal `allocator` field set to `context.temp_allocator`. The allocations happen later, as `append` runs. The dynamic array will need to grow at least once (it has the initial size of zero). It will then use the temporary allocator we fed into `make`.
+> The line `actions := make([dynamic]PlayerAction, context.temp_allocator)` does not cause any allocation. It just returns a dynamic array with its internal `allocator` field set to `context.temp_allocator`. The allocations happen later, as `append` runs. The dynamic array will need to grow at least once (it has the initial size of zero). When growing, it will use the temporary allocator we fed into `make`.
+>
 > This "internal `allocator` field" exists on the struct `Raw_Dynamic_Array`, which is the type that a dynamic array uses "behind the scenes". You can see that type here: https://pkg.odin-lang.org/base/runtime/#Raw_Dynamic_Array
 
 Everything that goes into the temporary allocator is valid until you clear it. You clear it by placing `free_all(context.temp_allocator)` somewhere in your program. In games that often happens at the "end of each frame":
@@ -111,7 +112,7 @@ main :: proc() {
 }
 ```
 
-Now, when drawing the icons, I can skip the `delete(actions)` line:
+Now when drawing the icons, I can skip the `delete(actions)` line:
 
 ```go
 actions := get_all_player_actions()
@@ -125,7 +126,7 @@ The `actions` array will thus be valid until `free_all(context.temp_allocator)` 
 
 ## Your first arena allocator
 
-You may have heard about arena allocators. You may be a bit confused of when it is a good idea to use them.
+You may have heard about arena allocators. You may be a bit confused about when it is a good idea to use them.
 
 An arena allocator has the property that all the allocations into it shares a common _lifetime_. This means that they will all get deallocated at the same time.
 
