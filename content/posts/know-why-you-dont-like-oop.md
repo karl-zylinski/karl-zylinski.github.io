@@ -23,7 +23,7 @@ With that in mind, I'd like to share my experiences. I won't say "don't use any 
 ## Interfaces: Fine
 Interfaces are used in many big code-bases, OOP or not. If you have a program that wants to support multiple rendering APIs (Direct3D, Vulkan, OpenGL), then that that's a great use of interfaces.
 
-Providing support for allocators is another great example. In that case you want some kind of generic interface with multiple implementations. One implementation for each kind of allocator. You can feed that then feed such interface implementations into functions and easily switch allocator.
+Providing support for allocators is another great example. In that case you want some kind of generic interface with multiple implementations. One implementation for each kind of allocator. You can then feed such interface implementations into functions and easily switch allocator.
 
 You don't need any OOP features in the language to implement an interface. In C you can create an interface with with a simple struct that contains some function pointers.
 
@@ -35,7 +35,7 @@ I have no concrete experience that methods are inherently bad. People like to ar
 ## Encapsulation: It depends
 Hiding things for the sake of hiding them will just create friction. For example, when you know that a private field contains useful state, but you can't access it, then it's just annoying, with little benefit.
 
-However, I can see the value of sometimes having a black-box API. Perhaps you want a strict, versioned, black-box API. You want to avoid breaking changes in the API. In that case hiding internal things can be good, so you know exactly what parts the end-users are exposed to. That's the API surface. That's the stuff you must be careful with changing.
+However, I can see the value of sometimes having a black-box API. Perhaps you want a strict, versioned API. You want to avoid breaking changes in the API. In that case, hiding internal things can be good. That way you know exactly what parts the end-users are exposed to. That's the API surface. That's the stuff you must be careful with changing.
 
 I'd default to everything being public and never using encapsulation. It's just annoying. But you probably know when you need to create a black-box API. And in that case you'll end up with encapsulation as a byproduct.
 
@@ -50,11 +50,13 @@ The reason for using a pointer type, from an OOP perspective, may be that `Entit
 entities.add(new Some_Entity_Subclass(some, constructor, parameters));
 ```
 
-This means that your entities end up all over the place in memory, since each one is separately allocated. That can be _terrible_ for performance. CPUs have things called _caches_ inside them. While iterating over an array, those caches can only be filled properly if things are laid out in a predictable way. Lots of separately allocated things is the opposite of a predictable memory pattern. Having the computer go to RAM instead of the CPU cache can be orders of magnitude slower.
+This means that your array items will end up all over the place in memory, since each one is separately allocated. That can be _terrible_ for performance. Why? CPUs have things called _caches_ inside them. While iterating over an array, those caches can only be filled properly if things are laid out in a predictable way. Lots of separately allocated things is the opposite of a predictable memory pattern. So the CPU cache can't be filled properly. Having the computer go to RAM instead of the CPU cache is orders of magnitude slower.
 
 So: Inheritance leads to separate allocations, which leads to bad performance. So I suggest to just do `Array<Entity>`. No elements of pointer type! This will lead to all the items in the array being laid out one-next-to-the-other in memory. Very predictable. Your CPU will love you. But then you _cannot_ use inheritance. If you are in an OOP-language, then by all means use methods and interfaces. But avoid separately allocating lots of objects because you want to use inheritance.
 
 If you have an array with a small number of items, then you can still do something like `Array<Some_Type*>` and separately allocate them. It's not going to matter. Understand when you have high-performance requirements, and when you do not. _If you iterate a huge array very often, then you probably don't want it to be slow_.
+
+In my book [Understanding the Odin Programming Language](https://odinbook.com/) I have a whole chapter on _data-oriented design_. In that chapter I go deeper into these issues and provide benchmarks.
 
 > In C#, any type that is a `class` will get separately allocated when you create those objects. Use the `struct` keyword to create things in C# that do not get separately allocated. However, when you do that a lot of other things in C# become so tedious that it feels pointless to use that language. So to me, it's a cursed language.
 
