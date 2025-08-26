@@ -58,8 +58,6 @@ If you have an array with a small number of items, then you can still do somethi
 
 In my book [Understanding the Odin Programming Language](https://odinbook.com/) I have a whole chapter on _data-oriented design_. In that chapter I go deeper into these issues and provide benchmarks.
 
-> In C#, any type that is a `class` will get separately allocated when you create those objects. Use the `struct` keyword to create things in C# that do not get separately allocated. However, when you do that a lot of other things in C# become so tedious that it feels pointless to use that language. So to me, it's a cursed language.
-
 ## Modelling after the real world: Who even does this?
 
 You went to school and learnt in the first OOP lecture that `Animal` is a base class and `Cat` is a sub class. Sure. But ridiculing OOP over this is quite silly. Most OOP code-bases use classes in order to describe the data that the program needs, just like any other code base would. Pushing that OOP is bad because "OOP people try to model everything after the real world" will just make OOP people ignore you, since you are just ridiculing them over a strange corner case.
