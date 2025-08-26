@@ -23,7 +23,7 @@ With that in mind, I'd like to share my experiences. I won't say "don't use any 
 ## Interfaces: Fine
 Interfaces are used in many big code-bases, OOP or not. If you have a program that wants to support multiple rendering APIs (Direct3D, Vulkan, OpenGL), then that that's a great use of interfaces.
 
-Providing support for allocators is another great example. In that case you want some kind of generic interface multiple implementations, depending on the kind of allocator. You can feed that interface into functions and thus easily switch allocator.
+Providing support for allocators is another great example. In that case you want some kind of generic interface with multiple implementations. One implementation for each kind of allocator. You can feed that then feed such interface implementations into functions and easily switch allocator.
 
 You don't need any OOP features in the language to implement an interface. In C you can create an interface with with a simple struct that contains some function pointers.
 
