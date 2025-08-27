@@ -64,7 +64,7 @@ You went to school and learnt in the first OOP lecture that `Animal` is a base c
 
 ## Conclusion
 
-My opinion is this: Use methods and inheritance if you want, it's fine. Avoid inheritance, especially for large arrays that you iterate often. But also understand _why_. Make up your own mind, based on actual experience. Don't just rebroadcast what some YouTuber (including myself) told you.
+My opinion is this: Use methods and interfaces if you want, it's fine. Avoid inheritance, especially for large arrays that you iterate often. But also understand _why_. Make up your own mind, based on actual experience. Don't just rebroadcast what some YouTuber (including myself) told you.
 
 Thanks for reading, have a nice day!
 /Karl Zylinski
