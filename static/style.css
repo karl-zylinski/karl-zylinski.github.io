@@ -6,16 +6,25 @@ img[src$='#floatleft']
 }
 
 .need-help-box {
-    border: 2px dashed var(--friendly);
-    border-radius: 10px;
     margin: 0 auto;
-    vertical-align: middle;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    padding: 15px;
-    max-width: 400px;
+    max-width: calc(var(--main-width) + var(--gap) * 2);
 }
 
-.need-help-box p:first-child {
-    margin-bottom: 15px;
+.need-help-box-inner {
+    margin-top: 10px;
+    text-align: center;
+    margin-left: var(--gap);
+    margin-right: var(--gap);
+    border: 2px dashed var(--friendly);
+    border-radius: 10px;
+    padding: 5px 7px 10px 7px;
 }
+
+.need-help-box a {
+    text-decoration: underline;
+}
+
+.need-help-box a:hover {
+    color: var(--primary);
+}
+
