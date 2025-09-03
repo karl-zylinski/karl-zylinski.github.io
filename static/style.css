@@ -17,7 +17,7 @@ img[src$='#floatleft']
     margin-right: var(--gap);
     border: 2px dashed var(--friendly);
     border-radius: 10px;
-    padding: 5px 7px 10px 7px;
+    padding: 5px 10px 10px 10px;
 }
 
 .need-help-box a {
