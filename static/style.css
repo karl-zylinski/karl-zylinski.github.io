@@ -28,3 +28,6 @@ img[src$='#floatleft']
     color: var(--primary);
 }
 
+.csw-branding {
+    display: none;
+}
