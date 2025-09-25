@@ -110,7 +110,7 @@ The output is:
 
 Let's manually go through the bytes, construct Unicode runes from them and print each one to verify that we did it correctly.
 
-**Rune `C` (byte `01000011`)**
+**Rune C (byte `01000011`)**
 
 `01000011`: The first bit (the left-most bit) is zero. This means that this is a single-byte rune. The byte just needs to be cast into a rune in order to complete the decoding:
 
@@ -119,7 +119,7 @@ Let's manually go through the bytes, construct Unicode runes from them and print
 
 Note that a rune is just a 32 bit number. But we cast to `rune` instead of `i32`. This is so `fmt.println` shows it as a character instead of a number. But memory-wise, `i32` and `rune` are identical.
 
-**Rune `ä` (bytes `11000011` and `10100100`)**
+**Rune ä (bytes `11000011` and `10100100`)**
 
 `11000011`: Start with `110`. This means that this is the beginning of a multi-byte rune. The number of bytes to expect for this rune is two, because there are two `1`s. We throw away the initial `110` and remember the rest: `00011`. Then we move to the next byte. 
 
@@ -129,20 +129,20 @@ Note that a rune is just a 32 bit number. But we cast to `rune` instead of `i32`
 
 As you see, the main work in decoding UTF-8 is the following: Check if the byte starts with a `1`. If it does, then you count how many `1`s there are until the first `0`. Then use that information to classify the byte.
 
-**Rune `t` (byte `01110100`)**
+**Rune t (byte `01110100`)**
 
 `01110100`: The first bit is zero, this is a single-byte rune. Just cast into `rune` and print:
 
 `fmt.println(rune(0b01110100))` prints `t`
 > Here you also see why UTF-8 is backwards compatible with the first 128 values of ASCII. ASCII uses a single byte for each character. UTF-8 can also represent some characters using a single byte, if the first bit is zero. But then there are only 7 out of 8 bits left. 7 bits gives us a numeric range of `0-127`, or 128 values. Those 128 values have been chosen to represent the same characters as in ASCII.
 
-**Rune `=` (byte `00111101`)**
+**Rune = (byte `00111101`)**
 
 `00111101`: The first bit zero. Just cast into `rune` and print:
 
 `fmt.println(rune(0b00111101))` prints `=`
 
-**Rune `猫` (bytes `11100111`, `10001100` and `10101011`)**
+**Rune 猫 (bytes `11100111`, `10001100` and `10101011`)**
 
 `11100111`: Starts with `1110`: Three `1`s mean that this is the start of a triple-byte rune. Throw away `1110` and remember the rest: `0111`.
 
