@@ -2,11 +2,10 @@
 title: "Iterating strings and manually decoding UTF-8"
 date: 2025-09-23T09:29:00+02:00
 
-#cover:
-#  image: "arena-mistakes/cover.png"
+cover:
+  image: "strings/cover.png"
 
 ShowContractorLink: false
-draft: true
 ShowToc: false
 ---
 
