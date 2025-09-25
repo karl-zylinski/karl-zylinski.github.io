@@ -10,13 +10,13 @@ draft: true
 ShowToc: false
 ---
 
-__This post is an excerpt from _Understanding the Odin Programming Language_ -- the acclaimed eBook on learning Odin and understanding low-level concepts. It is on 25% sale until October 9, 2025! Visit https://odinbook.com for more information.__
+__This post is an adapted excerpt from _Understanding the Odin Programming Language_ -- the acclaimed eBook on learning Odin and understanding low-level concepts. It is on 25% sale until October 9, 2025! Visit https://odinbook.com for more information.__
 
 Text strings in Odin use Unicode. Unicode is a standard that makes it possible to use characters from most languages. You can mix different languages within the same string, and even use exotic things such as emojis!
 
 Odin has two primary types for representing text: `string` and `cstring`. You'll mainly use the `string` type in your Odin code. The `cstring` type is for working with libraries written in the C programming language. Both types use the _UTF-8_ encoding, short for _Unicode Transformation Format - 8 bit_. UTF-8 is the most popular way of storing Unicode text in memory. 
 
-> There are two more string types called `string16` and `cstring16`. Those use the _UTF-16_ encoding. They are only used in some specific cases (such as when using the Windows API). They are covered in the full eBook.
+> There are two more string types called `string16` and `cstring16`. Those use the _UTF-16_ encoding. They are only used in some specific cases (such as with the Windows API). They are covered in the full eBook.
 
 This post is about understanding the interplay between UTF-8 and Unicode. We'll talk about _runes_ (Unicode code points) and how iterating a UTF-8 string automatically decodes it into runes. Thereafter we'll look at how to manually decode a UTF-8 string by inspecting its memory.
 
