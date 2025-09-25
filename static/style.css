@@ -14,8 +14,8 @@ img[src$='#floatleft']
 .need-help-box-inner {
     margin-top: 20px;
     text-align: center;
-    margin-left: calc(var(--gap) + 100px);
-    margin-right: calc(var(--gap) + 100px);
+    margin-left: var(--gap);
+    margin-right: var(--gap);
     border: 2px dashed var(--friendly);
     border-radius: 10px;
     padding: 5px 8px 8px 8px;
