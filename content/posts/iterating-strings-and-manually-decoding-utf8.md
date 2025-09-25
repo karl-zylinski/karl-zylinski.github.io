@@ -185,6 +185,8 @@ There's a procedure in `core:unicode/utf8` called [`decode_rune`](https://pkg.od
 
 If you enjoyed the contents and style of this blog post, then check out _Understanding the Odin Programming Language_. It is an eBook entirely written in this casual, friendly style. The book is on 25% sale until October 9, 2025, at https://odinbook.com.
 
+> The book is roughly 47 times the size of this blog post.
+
 There's also a video version of this blog post:
 {{< youtube Zl1Gs8iUpi0 >}}
 
