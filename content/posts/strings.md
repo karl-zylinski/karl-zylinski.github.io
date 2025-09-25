@@ -1,5 +1,5 @@
 ---
-title: "Strings in Odin"
+title: "Iterating strings and manually decoding UTF-8"
 date: 2025-09-23T09:29:00+02:00
 
 #cover:
@@ -14,80 +14,16 @@ Text strings in Odin use Unicode. Unicode is a standard that makes it possible t
 
 Odin has two primary types for representing text: `string` and `cstring`. You'll mainly use the `string` type in your Odin code. The `cstring` type is for working with libraries written in the C programming language. Both types use the _UTF-8_ encoding, short for _Unicode Transformation Format - 8 bit_. UTF-8 is the most popular way of storing Unicode text in memory. 
 
-There are two more string types called `string16` and `cstring16`. Those use the _UTF-16_ encoding.
+> There are two more string types called `string16` and `cstring16`. Those use the _UTF-16_ encoding. They are only used in some specific cases (such as when using the Windows API). They are covered in the full eBook.
 
-In this chapter we'll learn how to work with strings. At the same time, we'll build an understanding of UTF-8, and how it relates to Unicode. We'll also learn how to dynamically build new strings and how the `string` type looks on the inside. Towards the end of the chapter we'll look at how to manually decode UTF-8, so you understand how Odin does it for you. In the final section we'll see an example of when UTF-16 is needed.
-> Some parts of this chapter are omitted and only available in the full book.
-
-## String variables and string constants
-
-Create a string variable and assign a value to it like this:
-
-```go
-my_string: string
-my_string = "Hellope!"
-```
-
-Or, on a single line with type inference:
-
-```go
-my_string := "Hellope!"
-```
-The type of `my_string` is inferred to `string`.
-
-`"Hellope!"` is a string constant, or string literal. It's called a literal because it's there, literally, in the code. String literals are valid for as long as the program runs and do not require any manual memory management.
-> Your program may crash if you write `delete(my_string)` where the variable `my_string` was created from a string literal.
-
-You can create a named string constant, like so:
-
-```go
-A_STRING_CONSTANT :: "Hellope!"
-```
-
-Both the literal `"Hellope!"` and `A_STRING_CONSTANT` are of type Untyped String. In other words, a string literal is just a nameless string constant. 
-> As we shall see in [section 11.6.1 (included in full book)](#ambiguities-when-talking-about-string-constants), talking about "string constants" can be ambiguous.
-
-Untyped Strings can be implicitly cast to the variable types `string`, `cstring`, `string16` and `cstring16`. These lines are all valid:
-```go
-STR :: "Hellope!"
-str: string = STR
-cstr: cstring = STR
-str16: string16 = STR
-cstr16: cstring16 = STR
-```
-
-The cast is done at compile time, including any needed UTF-8 or UTF-16 encoding.
-
-### Combining string constants
-
-String constants can only be created from values that are available at compile time. You can combine string constants into longer strings at compile time using `+`. Here's an example:
-```go
-A_CONSTANT :: "Hellope!"
-my_string := A_CONSTANT + " How are you?"
-fmt.println(my_string) // Hellope! How are you?
-```
-
-You cannot use `+` in combination with non-constant strings. The following will not compile because `a_variable` is not a string constant:
-
-```go
-A_CONSTANT :: "My name is"
-a_variable := "Patches"
-
-// ERROR: "String concatenation is only allowed with constant strings".
-combined := A_CONSTANT + " " + a_variable
-```
-
-If you need to combine string variables into bigger strings (or turn non-strings into strings), then use a procedure from `fmt` or a string builder. We'll look at those things in [section 11.4 (included in full book)](#construct-strings-using-fmt) and [section 11.5 (included in full book)](#construct-strings-using-a-string-builder).
-
-To understand why `+` does not work with string variables, you can think of the compiler as "copy-pasting" together the strings you put to the left and right of the `+`. It cannot do such "compile-time copy-pasting" with something in a variable, because it is only known at run time what that variable contains.
-> This discussion is only related to strings. Adding numeric variables using `+` works fine.
+This post is about understanding the interplay between UTF-8 and Unicode. We'll talk about _runes_ (Unicode code points) and how iterating a UTF-8 string automatically decodes it into runes. Thereafter we'll look at how to manually decode a UTF-8 string by inspecting its memory.
 
 ## Iterating strings
 
-In the following example we iterate a string. For each lap of the loop, the loop variable `r` will contain a character from the string.
+In the following example we iterate a UTF-8 string. For each lap of the loop, the loop variable `r` will contain a character from the string.
 
 ```go
-str := "Important Words"
+str: string = "Important Words"
 
 for r in str {
 	// r is of type `rune`
@@ -98,10 +34,12 @@ The loop variable `r` is of type _rune_. A rune is just a 32 bit (4 byte) number
 > The numeric values of code points are decided by the organization known as the Unicode consortium. They try to make a wide variety of characters, from many languages, possible to express using code points. For example, they've decided that the letter `Q` has the code point value `81` and that the Chinese character `猫` has the code point value `29483`.
 > 
 > &nbsp;
->
-> When we talk about [grapheme clusters (included in full book)](#grapheme-clusters) you'll understand why I wrote "In many cases (but not all!), a rune represents a single character". 
+> 
+> When we talk about _grapheme clusters (full eBook only)_ you'll understand why I wrote "In many cases (but not all!), a rune represents a single character". 
 
-When a program stores a string in memory, then it doesn't store it as a series of 4 byte rune values. Instead, it stores each rune using 1 to 4 bytes. That's the UTF-8 encoding. As the loop in our example runs through the UTF-8-encoded string, it decodes sequences of 1-4 bytes into runes. You can see it as a type of compression: A rune is a 4 byte integer. But in many cases you can store such a number using fewer bytes. For example, the letter `A` has the code point value `65`. UTF-8 encodes that using just a single byte, saving you three whole bytes of memory!
+When our program stores a string in memory, such as in the variable `str`, then it doesn't store it as a series of 4 byte rune values. Instead, it stores each rune using 1 to 4 bytes. That's the UTF-8 encoding. As the loop in our example runs through the UTF-8-encoded string, it decodes sequences of 1-4 bytes into runes.
+
+You can see it as a type of compression: A rune is a 4 byte integer. But in many cases you can store such a number using fewer bytes. For example, the letter `W` has the code point value `119`. UTF-8 encodes that using just a single byte, saving you three whole bytes of memory!
 
 In UTF-8 encoded strings, all English characters need just a single byte. But characters from other languages may use more than a single byte. In the following example we iterate a string written in Simplified Chinese:
 
@@ -120,17 +58,15 @@ Which will print:
 ```
 
 Within the memory of the UTF-8 string `str`, these Chinese characters use 3 bytes each. As the loop runs through the string, it decodes those groups of 3 bytes into proper 4 byte runes.
-> The UTF-8 decoder knows if it is processing a 1, 2, 3 or 4 byte rune. A few bits in each byte is dedicated to signaling if the rune continues, or if it is complete. In [section 11.11](#under-the-hood-manually-decoding-utf-8) I'll show how to manually decode UTF-8 by inspecting the value of each byte.
-> 
+> The UTF-8 decoder knows if it is processing a 1, 2, 3 or 4 byte rune. A few bits in each byte is dedicated to signaling if the rune continues, or if it is complete. In the next section, I'll show how to manually decode UTF-8 by inspecting the value of each byte.
+>
 > &nbsp;
 >
-> **A note for Windows users:** You may see garbage in the command prompt when printing the Chinese characters. In that case, try running `chcp 65001` in the command prompt, before executing the program. Alternatively, add `windows.SetConsoleOutputCP(.UTF8)` at the top of the `main` proc (`import "core:sys/windows`). This works fine on Windows 11. If you are on Windows 10, then you might need a better command prompt program than `cmd`. I recommend [ConEmu](https://conemu.github.io/), which wraps `cmd` with some nice features. I don't recommend PowerShell, it is buggy.
+> *A note for Windows users*: You may see garbage in the command prompt when printing the Chinese characters. In that case, try running `chcp 65001` in the command prompt, before executing the program. Alternatively, add `windows.SetConsoleOutputCP(.UTF8)` at the top of the `main` proc (`import "core:sys/windows`). This works fine on Windows 11. If you are on Windows 10, then you might need a better command prompt program than `cmd`. I recommend [ConEmu](https://conemu.github.io/), which wraps `cmd` with some nice features. I don't recommend PowerShell, it is buggy.
 
 It's important to understand that a rune, or Unicode code point, is independent of how the string is encoded. There are several different encodings, such as UTF-8 and UTF-16. Those encodings just decide how the string is stored in memory and how to turn that memory back into runes. The decoded value of the rune is the same, regardless of encoding.
 
-__... 8 sections from full book omitted ...__
-
-## Under the hood: Manually decoding UTF-8
+## Manually decoding UTF-8
 
 Let's take a look at what the memory of a UTF-8 string looks like and how you can manually decode it into runes. A loop such as as `for r in str {}` does this decoding for us. This section will help us understand what work that loop actually does.
 
@@ -155,10 +91,7 @@ for b in str_bytes {
 }
 ```
 > `transmute([]u8)(str)` takes the memory of the string and "pretends" it to be of type `[]u8`. A slice of bytes and a string are more or less the same thing. But no automatic UTF-8 decoding will happen when we loop through the `[]u8` version. This makes it possible for us to inspect the encoded bytes.
-> 
-> &nbsp;
->
-> The `%8b` format string tells `printfln` to print the number in binary. The `8` in `%8b` tells it to add zero padding if the binary representation is less than 8 characters.
+> The `%8b` format string tells `printfln` to print the number in binary. The `8` in `%8b` tells it to add zero padding on the left, so we always see 8 binary bits.
 
 The output is:
 
@@ -175,16 +108,16 @@ The output is:
 
 Let's manually go through the bytes, construct Unicode runes from them and print each one to verify that we did it correctly.
 
-**C (`01000011`)**
+**Rune `C` (byte `01000011`)**
 
 `01000011`: The first bit (the left-most bit) is zero. This means that this is a single-byte rune. The byte just needs to be cast into a rune in order to complete the decoding:
 
 `fmt.println(rune(0b01000011))` prints `C`.
 > The `0b` prefix tells the compiler that we have provided a binary value.
 
-Note that a rune is just a 32 bit number. But we cast to `rune`, not `i32`. This is so `fmt.println` shows it as a character instead of a number. But memory-wise, `i32` and `rune` are identical.
+Note that a rune is just a 32 bit number. But we cast to `rune` instead of `i32`. This is so `fmt.println` shows it as a character instead of a number. But memory-wise, `i32` and `rune` are identical.
 
-**ä (`11000011`, `10100100`)**
+**Rune `ä` (bytes `11000011` and `10100100`)**
 
 `11000011`: Start with `110`. This means that this is the beginning of a multi-byte rune. The number of bytes to expect for this rune is two, because there are two `1`s. We throw away the initial `110` and remember the rest: `00011`. Then we move to the next byte. 
 
@@ -192,28 +125,27 @@ Note that a rune is just a 32 bit number. But we cast to `rune`, not `i32`. This
 
 `fmt.println(rune(0b00011100100))` prints `ä`.
 
-As you see, the main work in decoding UTF-8 is the following: Check if the byte starts with a `1`. If it does, then you count how many `1`s there are until the first `0`. Then you use that information to classify the byte.
+As you see, the main work in decoding UTF-8 is the following: Check if the byte starts with a `1`. If it does, then you count how many `1`s there are until the first `0`. Then use that information to classify the byte.
 
-**t (`01110100`)**
+**Rune `t` (byte `01110100`)**
 
 `01110100`: The first bit is zero, this is a single-byte rune. Just cast into `rune` and print:
 
 `fmt.println(rune(0b01110100))` prints `t`
-> Here you also see why UTF-8 is backwards compatible with the first 128 values of ASCII. ASCII uses a byte for each character. A UTF-8 encoded rune that starts with a zero, also represents a single character with just a byte. But since the first bit must be zero, we have 7 bits left. 7 bits gives us a numeric range of `0-127`, or 128 values.
+> Here you also see why UTF-8 is backwards compatible with the first 128 values of ASCII. ASCII uses a single byte for each character. UTF-8 can also represent some characters using a single byte, if the first bit is zero. But then there are only 7 out of 8 bits left. 7 bits gives us a numeric range of `0-127`, or 128 values. Those 128 values have been chosen to represent the same characters as in ASCII.
 
-
-**= (`00111101`)**
+**Rune `=` (byte `00111101`)**
 
 `00111101`: The first bit zero. Just cast into `rune` and print:
 
 `fmt.println(rune(0b00111101))` prints `=`
 
-**猫 (`11100111`, `10001100`, `10101011`)**
+**Rune `猫` (bytes `11100111`, `10001100` and `10101011`)**
 
 `11100111`: Starts with `1110`: Three `1`s mean that this is the start of a triple-byte rune. Throw away `1110` and remember the rest: `0111`.
 
 `10001100`: Starts with `10`: This is a continued multi-byte rune. Throw away the `10` and remember the rest: `001100`
-> Imagine looking at a random byte in a UTF-8 string and noticing that it start with the bits `10`. This means that you are looking at a piece of a multi-byte rune! You can just loop backwards in order to find where the rune starts. Because of this, UTF-8 is said to be "self-synchronizing".
+> UTF-8 is said to be "self-synchronizing": Imagine looking at a random byte in a UTF-8 string and noticing that it start with the bits `10`. Those starting bits are only used for "continuation bytes". You can always find where the rune starts by stepping backwards in the string, byte-by-byte, looking for the first byte that doesn't start with `10`.
 
 `10101011`: Starts with `10`: Continued multi-byte rune. Throw away the `10` and remember the rest: `101011`. This is the last byte in the three-byte sequence. Copy-paste the bits together: `0111`, `001100`, `101011` -> `0111001100101011`. Cast to `rune` and print:
 
@@ -222,9 +154,9 @@ As you see, the main work in decoding UTF-8 is the following: Check if the byte 
 **And we are done!**
 
 We didn't see any four-byte runes. But it's the same dance: The first byte starts with `11110` (four `1`s). Then follows three bytes starting with `10`.
-> As an exercise, try adding an emoji to the string and manually decode it. Emojis are usually encoded using four bytes. Also, see if you can find some emojis that are grapheme clusters (multiple runes) and some that are a single rune.
+> As an exercise, try adding an emoji to the string and manually decode it. Many emojis are encoded using four bytes. However, some emojis may use multiple runes (they are grapheme clusters, which I cover in the full eBook).
 
-You can verify these things by looping over the string as usual and printing the decoded runes as binary numbers:
+You can verify our results by looping through the string as usual (loop through `str`, not `str_bytes`) and printing the automatically decoded runes as binary numbers:
 
 ```go
 str := "Cät=猫"
