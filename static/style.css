@@ -6,6 +6,7 @@ img[src$='#floatleft']
 }
 
 .need-help-box {
+    font-size: 16px;
     margin: 0 auto;
     max-width: calc(var(--main-width) + var(--gap) * 2);
 }
@@ -13,11 +14,11 @@ img[src$='#floatleft']
 .need-help-box-inner {
     margin-top: 20px;
     text-align: center;
-    margin-left: var(--gap);
-    margin-right: var(--gap);
+    margin-left: calc(var(--gap) + 100px);
+    margin-right: calc(var(--gap) + 100px);
     border: 2px dashed var(--friendly);
     border-radius: 10px;
-    padding: 5px 10px 10px 10px;
+    padding: 5px 8px 8px 8px;
 }
 
 .need-help-box a {
@@ -26,6 +27,19 @@ img[src$='#floatleft']
 
 .need-help-box a:hover {
     color: var(--primary);
+}
+
+a.social {
+
+}
+
+.logo a svg {
+    margin: 0;
+}
+
+a.social svg {
+    width: 16px;
+    height: 16px;
 }
 
 .csw-branding {

@@ -3,7 +3,12 @@
     margin-top: 10px;
 
     max-width: calc(var(--nav-width) + var(--gap) * 2);
+
+
+    justify-content: center;
+    display: grid;
 }
+
 
 .nav a {
     display: block;
@@ -16,13 +21,24 @@
 }
 
 
+.logo a {
+
+    flex-shrink: 0;
+}
+
+.logo {
+
+}
+
+
 .logo {
     flex-wrap: inherit;
 }
 
 .logo a {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
+    margin-right: 20px;
 }
 
 .logo a img, .logo a svg {
@@ -35,7 +51,7 @@
 }
 
 button#theme-toggle {
-    font-size: 26px;
+    font-size: 22px;
     margin: auto 4px;
 }
 
@@ -78,8 +94,6 @@ body:not(.dark) #sun {
 .lang-switch li,
 .lang-switch ul,
 .logo-switches {
-    display: inline-flex;
-    margin: auto 4px;
 }
 
 .lang-switch {
