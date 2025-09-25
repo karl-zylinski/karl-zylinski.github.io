@@ -12,6 +12,7 @@ params:
     defaultTheme: auto
     ShowShareButtons: true
     ShowToc: true
+    ShowContractorLink: true
     ShowCodeCopyButtons: true
     ShowRssButtonInSectionTermList: true
 

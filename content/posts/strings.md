@@ -5,7 +5,9 @@ date: 2025-09-23T09:29:00+02:00
 #cover:
 #  image: "arena-mistakes/cover.png"
 
+ShowContractorLink: false
 draft: true
+ShowToc: false
 ---
 
 __This post is an excerpt from _Understanding the Odin Programming Language_ -- the acclaimed eBook on learning Odin and understanding low-level concepts. It is on 25% sale until October 9, 2025! Visit https://odinbook.com for more information.__

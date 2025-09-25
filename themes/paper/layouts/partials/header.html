@@ -126,10 +126,11 @@
         {{- $currentPage := . }}
     </nav>
 
-
+    {{ if (.Param "ShowContractorLink") }}
         <div class="need-help-box">
             <div class="need-help-box-inner">
                 <a href="/portfolio">I'm available for contracts in game engine and tools programming.</a>
             </div>
         </div>
+    {{ end }}
 </header>
