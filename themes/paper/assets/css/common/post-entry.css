@@ -38,6 +38,29 @@
     -webkit-line-clamp: unset;
 }
 
+.hello {
+    height: 200px;
+    max-width: 600px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items:center;
+}
+
+.hello img {
+    border-radius: 200px;
+    width: 100px;
+}
+
+.hello div {
+    margin-left: 20px;
+    max-width: 500px;
+}
+
+.hello div p {
+    text-align: left;
+}
+
 .post-entry {
     position: relative;
     margin-bottom: var(--gap);
