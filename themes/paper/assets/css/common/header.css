@@ -1,47 +1,26 @@
 .nav {
     margin: 0 auto;
     margin-top: 10px;
+    margin: auto var(--gap);
+    text-align: center;
+}
 
-    max-width: calc(var(--nav-width) + var(--gap) * 2);
+.nav a {
+    display: inline-block;
+}
 
-
-    justify-content: center;
-    display: grid;
+.nav a {
+    flex-shrink: 0;
 }
 
 
 .nav a {
-    display: block;
-}
-
-.logo,
-#menu {
-    display: flex;
-    margin: auto var(--gap);
-}
-
-
-.logo a {
-
-    flex-shrink: 0;
-}
-
-.logo {
-
-}
-
-
-.logo {
-    flex-wrap: inherit;
-}
-
-.logo a {
     font-size: 20px;
     font-weight: 600;
-    margin-right: 20px;
+    margin-right: 15px;
 }
 
-.logo a img, .logo a svg {
+.nav a img, .nav a svg {
     display: inline;
     vertical-align: middle;
     pointer-events: none;
@@ -51,12 +30,10 @@
 }
 
 button#theme-toggle {
-    font-size: 22px;
-    margin: auto 4px;
+    vertical-align: middle;
 }
 
 body.dark #moon {
-    vertical-align: middle;
     display: none;
 }
 

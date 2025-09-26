@@ -29,19 +29,6 @@ img[src$='#floatleft']
     color: var(--primary);
 }
 
-a.social {
-
-}
-
-.logo a svg {
-    margin: 0;
-}
-
-a.social svg {
-    width: 16px;
-    height: 16px;
-}
-
 .csw-branding {
     display: none;
 }
