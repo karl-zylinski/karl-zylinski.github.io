@@ -4,8 +4,9 @@
 }
 
 .post-title {
-    margin-bottom: 2px;
+    margin-bottom: 10px;
     font-size: 40px;
+    margin-top: 30px;
 }
 
 .post-description {
@@ -57,12 +58,12 @@
 }
 
 .post-content h1 {
-    margin: 40px auto 32px;
+    margin: 90px auto 42px;
     font-size: 40px;
 }
 
 .post-content h2 {
-    margin: 60px auto 24px;
+    margin: 70px auto 30px;
     font-size: 32px;
 }
 
@@ -110,11 +111,12 @@
 
 .post-content ol,
 .post-content ul {
+    margin-bottom: 30px;
     padding-inline-start: 20px;
 }
 
 .post-content li {
-    margin-top: 5px;
+    margin-top: 7px;
 }
 
 .post-content li p {
@@ -268,6 +270,10 @@
 
 .post-content figure:has(.youtube) {
     width: 100%;
+}
+
+.youtube {
+    margin-bottom: 15px;
 }
 
 .post-content figure > img {

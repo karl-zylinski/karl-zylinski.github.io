@@ -1,0 +1,1 @@
+Contracting page moved [here](/contracting).
