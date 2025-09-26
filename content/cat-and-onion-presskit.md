@@ -37,8 +37,6 @@ Marketing by Karl Zylinski and Geraldine Lee.
 
 {{<youtube xVmVRtJUSOY>}}
 
-<br>
-
 [Download the trailer (mp4, 29.3 MB)](https://drive.google.com/file/d/11XVcoJ99oMJD-F2dz3MF9FuYCFmqq5OJ/view?usp=sharing)
 
 ## Screenshots
