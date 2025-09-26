@@ -39,12 +39,13 @@
 }
 
 .hello {
-    height: 200px;
     max-width: 600px;
     margin: 0 auto;
 
     display: flex;
     align-items:center;
+    margin-top: 10px;
+    margin-bottom: 40px;
 }
 
 .hello img {
