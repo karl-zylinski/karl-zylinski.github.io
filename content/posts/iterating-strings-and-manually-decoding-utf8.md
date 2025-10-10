@@ -9,7 +9,7 @@ ShowContractorLink: false
 ShowToc: false
 ---
 
-__This post is an adapted excerpt from _Understanding the Odin Programming Language_ -- the acclaimed eBook on learning Odin and understanding low-level concepts. It is on 25% sale until October 9, 2025! Visit https://odinbook.com for more information.__
+__This post is an adapted excerpt from _Understanding the Odin Programming Language_ -- the acclaimed eBook on learning Odin and understanding low-level concepts. Visit https://odinbook.com for more information.__
 
 Text strings in Odin use Unicode. Unicode is a standard that makes it possible to use characters from most languages. You can mix different languages within the same string, and even use exotic things such as emojis!
 
@@ -183,7 +183,7 @@ There's a procedure in `core:unicode/utf8` called [`decode_rune`](https://pkg.od
 
 ## Thanks for reading!
 
-If you enjoyed the contents and style of this blog post, then check out _Understanding the Odin Programming Language_. It is an eBook entirely written in this casual, friendly style. The book is on 25% sale until October 9, 2025, at https://odinbook.com.
+If you enjoyed the contents and style of this blog post, then check out _Understanding the Odin Programming Language_. It is an eBook entirely written in this casual, friendly style: https://odinbook.com.
 
 > The book is roughly 47 times the size of this blog post.
 
