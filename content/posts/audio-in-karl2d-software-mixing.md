@@ -458,6 +458,8 @@ Thanks for reading!
 
 If you want to support the creation of Karl2D, then support me by sponsoring me on [GitHub](https://github.com/sponsors/karl-zylinski) or [Patreon](https://www.patreon.com/karl_zylinski).
 
+Further reading on this topic: [Writing a Low-Level Sound System — You Can Do It!](https://ruby0x1.github.io/machinery_blog_archive/post/writing-a-low-level-sound-system/index.html) on the Our Machinery blog archive.
+
 Have a nice day!
 /Karl
 
