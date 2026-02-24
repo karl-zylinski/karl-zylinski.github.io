@@ -73,8 +73,9 @@ As you can see, this is a very simple interface. Since we're doing software mixi
 `mix_buffer` is a big array of audio samples, where and `Audio_Sample` is defined as `Audio_Sample :: [2]f32`. It has two channels (left and right) and each sample is stored as a floating point value. This is the format used by the mixer and loaded stereo sounds.
 
 > You may ask: "Don't you need more channels. What about mixing surround sound and such?". I don't see surround in 2D game very often. So I'm starting without it. Those who play 2D games on surround speaker systems tend to just "mirror" the stereo signal to the rear speakers.
->
-> This is also the format used for loaded WAV files. For mono sounds I'll probably have to add another format, at which point the loaded WAV might need an abstraction of the data format to support both samples that are just `[2]f32` and `f32`. The alternative is clone the mono data to both channels when you load the sound. But that is wasteful. 
+> 
+> 
+> `Audio_Sample` is also the format used for loaded WAV sounds. For mono sounds I'll probably have to add another format, at which point the loaded WAV might need an abstraction of the data format to support samples of type `[2]f32` as well as `f32`. The alternative is to clone the mono data to both channels when you load the sound. But that is wasteful. 
 
 Loading of sounds is done by `load_sound_from_file` and `load_sound_from_bytes` in [karl2d.odin](https://github.com/karl-zylinski/karl2d/blob/master/karl2d.odin). The `load_sound_from_bytes` procedure implements some homemade WAV loading based on what I read in the [WAV wikipedia article](https://en.wikipedia.org/wiki/WAV#WAV_file_header). The samples of each loaded sound is stored as `Sound_Data` structs:
 
@@ -124,7 +125,7 @@ play_sound :: proc(snd: Sound, loop := false) {
 }
 ```
 
-The "playing sounds" will be processed by the mixer procedure. That procedure is rather big; see [appendix A](#appendix-a-update_audio_mixer) for the complete procedure, or for `update_audio_mixer` in [karl2d.odin](https://github.com/karl-zylinski/karl2d/blob/master/karl2d.odin) to see the whole thing. Here I will go through the important parts.
+The "playing sounds" will be processed by the mixer procedure. That procedure is rather big; see [appendix A](#appendix-a-update_audio_mixer) for the complete procedure, or search for `update_audio_mixer` in [karl2d.odin](https://github.com/karl-zylinski/karl2d/blob/master/karl2d.odin) to see the latest code. Here I will go through the important parts.
 
 The abstract structure of `update_audio_mixer` is like this:
 ```go
