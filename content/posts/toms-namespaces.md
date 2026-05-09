@@ -87,4 +87,8 @@ Tom is actually me, Karl Zylinski. I went through this kind of namespace philoso
 
 The reason I thought that C++ namespaces were good was because I had mostly worked in small C++ projects. When you have a bigger project, then they mostly become annoying. In a big project you must really make sure it is easy to find stuff. And the best way to find stuff is by making sure that things have simple names.
 
+Tom's co-worker Bob says that these issues are tooling problems. Tom's reply "Too bad most of the tools I've tried don't solve this then..." is important: These things _aren't_ really solved in any good way. And there another thing to consider here: If your codebase requires lots of fancy tools to be explored, then perhaps you don't have a very readable codebase. I would argue that if your code is not possible to navigate in the most simple of source code editor, then you have a problem. You can't assume that everyone has the same tools as you.
+
+> Perhaps at a big company you can make everyone use the same tools while working on a product. That's the exception.
+
 Odin actually has this issue within its `core` libraries: There are lots of procedure names that are common to many packages in `core`. It can sometimes be a bit cumbersome to find the right one. Since I stopped caring for package-local namespaces, I have even sometimes thought that perhaps C is right: Perhaps adding prefixes on the procedure name within libraries is good. But I think there is a compromise to be found here. The jungle of similar names across core is worth it, it having the namespace defined at the import location is nice, as you don't have to worry about name collisions when designing a library.
