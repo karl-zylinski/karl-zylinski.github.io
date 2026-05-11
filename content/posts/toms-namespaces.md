@@ -3,6 +3,7 @@ title: "Tom's Namespaces: An Odin Fanfic"
 date: 2026-05-11T12:15:00+01:00
 cover:
   image: "/toms_namespaces.png"
+  caption: "Cover art by [Gerry](https://gerry.website/)"
 ---
 
 Tom likes making games. He has worked professionally as a game developer, but he also likes to make games in his free time, as a hobby. He makes these hobby games in a "from scratch" kind of way. This means that he just has a `main` procedure and imports some libraries and builds things as needed.
