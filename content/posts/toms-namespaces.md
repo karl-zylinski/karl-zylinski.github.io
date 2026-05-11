@@ -2,7 +2,7 @@
 title: "Tom's Namespaces: An Odin Fanfic"
 date: 2026-05-11T12:15:00+01:00
 cover:
-  image: "/toms_namespaces.png"
+  image: "/toms_namespaces.jpg"
   caption: "Cover art by [Gerry](https://gerry.website/)"
 ---
 
