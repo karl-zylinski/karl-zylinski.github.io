@@ -79,7 +79,7 @@ But at least he'll get to use the nice C++ namespaces! The C++ code base even ha
 
 As he was working in another part of the code base, he actually needed to look at the implementation of `add` in the `world` namespace. So he pops up a "find symbol" window and types `add`. Enter. He gets 23 hits and it is not very easy for him to find the one he needs.
 
-Oh boy, this codebase is really big. At it has a lot of namespaces! There are lots of function names that are reused in many different namespaces. Tom actually finds it so hard to search for functions in namespaces, that he suddenly catches himself with thinking: If I could just type something like `world_add` instead.
+Oh boy, this codebase is really big. And it has a lot of namespaces! There are lots of function names that are reused in many different namespaces. Tom actually finds it so hard to search for functions in namespaces, that he suddenly catches himself with thinking: If I could just type something like `world_add` instead.
 
 He talks to his co-worker Bob about it. Toms says that he finds it a bit annoying to navigate. Bob says that Tom's editor probably isn't very good. A good editor should show the namespace and allow you to fuzzy search using namespace and function name. "It's a tooling problem!" Bob says.
 
