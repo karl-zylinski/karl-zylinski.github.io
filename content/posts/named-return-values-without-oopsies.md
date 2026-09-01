@@ -42,6 +42,7 @@ Naked returns send back whatever is in `stream` and `ok` when `return` happens. 
 However, `load_audio_stream_from_file` is a long procedure. I had a lot of error states where I needed to do `return AUDIO_STREAM_NONE, false`. For _that reason_ I added named return values so I could just write `return` and send back the zero value of both `stream` and `ok`. `AUDIO_STREAM_NONE` was in this case the same as the zero value. In other words: I just wanted naked `return`s for a single thing: returning everything zeroed, to signal that an error had happened.
 
 > Named return values also allow you to use `or_return`, which many like.
+> Sometimes named return values make it clearer what is returned, for example `-> (min: f32, max: f32)` is clearer than `-> (f32, f32)`.
 
 Now the problem with adding a named return value to my proc `load_audio_stream_from_file` was that I had this code at the bottom:
 
