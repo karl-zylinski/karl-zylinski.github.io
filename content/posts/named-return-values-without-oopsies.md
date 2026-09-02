@@ -1,7 +1,9 @@
 ---
 title: "Named Return Values Without Oopsies"
 date: 2026-09-01T22:35:00+01:00
-draft: true
+cover:
+  image: "/named_returns.jpg"
+  caption: "Cover art by [Gerry](https://gerry.website/)"
 ---
 
 I have devised a new way of working with named return values in Odin. In some situations, named return values tend to make me a bit uneasy. This new way removes that.
