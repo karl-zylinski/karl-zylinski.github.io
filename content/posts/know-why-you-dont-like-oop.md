@@ -25,7 +25,7 @@ Interfaces are used in many big code-bases, OOP or not. If you have a program th
 
 Providing support for allocators is another great example. In that case you want some kind of generic interface with multiple implementations. One implementation for each kind of allocator. You can then feed such interface implementations into functions and easily switch allocator.
 
-You don't need any OOP features in the language to implement an interface. In C you can create an interface with with a simple struct that contains some function pointers.
+You don't need any OOP features in the language to implement an interface. In C you can create an interface with a simple struct that contains some function pointers.
 
 > My readers who use the Odin Programming Language can note that the `Allocator` type in Odin is an interface.
 
