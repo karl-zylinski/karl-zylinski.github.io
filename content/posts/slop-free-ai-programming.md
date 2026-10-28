@@ -4,7 +4,7 @@ date: 2026-10-27T11:23:00+01:00
 draft: true
 ---
 
-I've tried AI-assisted programming tools such as GitHub Copilot and Claude every now and then. I know a lot of people are very anti-AI, but I'd rather try myself than blindly trust others. In the past, whenever I tried these tools, I found them to not be very good. They made obvious mistakes and wrote code of poor quality. I like programming in Odin. In 2025 these AI tools made such basic mistakes as mixing up Odin with Go. However, when I tried Claude in August 2026, it seemed like things had gotten far enough that I could use these tools for real work. It could very quickly write correct Odin code on first try. It could also deeply analyze code and find bugs.
+I've tried AI-assisted programming tools such as GitHub Copilot and Claude every now and then. I know a lot of people are very anti-AI, but I'd rather try myself than blindly trust others. In the past, whenever I tried these tools, I found them to not be very good. They made obvious mistakes and wrote code of poor quality. I like programming in Odin. In 2025 these AI tools made basic mistakes such as mixing up Odin with Go. However, when I tried Claude in August 2026, it seemed like things had gotten far enough that I could use it for real work. Claude could very quickly write correct Odin code on first try. It could also deeply analyze code and find bugs.
 
 However, as I tried using Claude to implement some missing features in my 2D game creation library [Karl2D](https://karl2d.com), I noticed something: I slowly but surely started to accept code that Claude wrote, without properly understanding it. Something about the code Claude wrote was overwhelming me. It was somehow leading me down on a slippery slope towards _slop_.
 > By "slop" I mean code that solves a problem without proper care for code quality. You don't have involve an AI to generate slop. It just means that you didn't pay enough attention to what the code actually did.
@@ -34,7 +34,7 @@ The content of my `CLAUDE.md` is as follows:
 
 > Never write any comments in the code. The human will review the code and write any comments themselves. If you change any code that invalidates an existing comment, then prefix the comment with `// TODO-UPDATE-COMMENT: Reason\n// ---`.
 
-This is the most important rule. And perhaps the most controversial one. The code that Claude output for me never has a single comment. The only time it writes comments is when it changes some code that causes an already existing comment to become outdated. In that case it will write `// TODO-UPDATE-COMMENT: blabla` in front of the outdated comment. It's an easy thing to search for in the diff.
+This is the most important rule. And perhaps the most controversial one. The code that Claude outputs for me never has a single comment. The only time it writes comments is when it changes some code that causes an already existing comment to become outdated. In that case it will write `// TODO-UPDATE-COMMENT: blabla` in front of the outdated comment. It's an easy thing to search for in the diff.
 
 How did I arrive at this rule?
 
