@@ -1,7 +1,11 @@
 ---
 title: "Slop-free AI programming"
-date: 2026-10-27T11:23:00+01:00
-draft: true
+date: 2026-10-28T21:15:00+01:00
+summary: "Have you tried AI programming, but felt like it was a slippery slope towards slop? I felt this! In this article I discuss a trick to make AI programming more tolerable: Forbidding AI-written comments."
+
+cover:
+  image: "/slop/slop.png"
+  caption: "Cover art by [Gerry](https://gerry.website/)"
 ---
 
 Every now and then, I've tried AI programming tools such as GitHub Copilot and Claude Code. I know a lot of people are very anti-AI, but I'd rather try myself than blindly trust others. In the past, whenever I tried these tools, I found that they were not good. They made obvious mistakes and wrote code of poor quality. I like programming in Odin. In 2025 these AI tools made basic mistakes such as mixing up Odin with Go. However, when I tried Claude in August 2026, it seemed like it had gotten good enough that I could use it for real work. Claude could very quickly write correct Odin code on first try. It could also deeply analyze code and find bugs.
@@ -122,3 +126,9 @@ My suggestion to any junior programmer is as follows:
 - Have some AI-free side projects. Try to build some smaller projects completely without any AI-assistance.
 
 The idea is not to go hardcore in either direction. Use AI tools in such a way that you learn from the resulting code. On top of that, in order to train your independent thinking, have some AI-free projects as well.
+
+## Thanks for reading!
+
+If you want to learn Odin, then please check out my book [Understanding the Odin Programming Language](https://odinbook.com/). It's an informal introduction to Odin and low-level programming in general.
+
+/Karl Zylinski
