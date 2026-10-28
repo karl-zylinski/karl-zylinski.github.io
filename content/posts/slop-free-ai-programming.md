@@ -129,6 +129,8 @@ The idea is not to go hardcore in either direction. Use AI tools in such a way t
 
 ## Thanks for reading!
 
+Discuss the article [on my Discord Server](https://discord.gg/4FsHgtBmFK).
+
 If you want to learn Odin, then please check out my book [Understanding the Odin Programming Language](https://odinbook.com/). It's an informal introduction to Odin and low-level programming in general.
 
 /Karl Zylinski
